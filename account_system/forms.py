@@ -12,4 +12,4 @@ class CustomUserCreationForm(UserCreationForm):
 
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'passwor d'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'password'}))

@@ -1,16 +1,17 @@
 from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, user_logged_in
 
 
 # Create your views here.
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('success')
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-
             return redirect('success')
     else:
         form = CustomUserCreationForm()
@@ -18,6 +19,8 @@ def register(request):
 
 
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect('success')
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, request.POST)
         if form.is_valid():
@@ -38,4 +41,4 @@ def success(request):
 
 def user_logout(request):
     logout(request)
-    return redirect('register')
+    return redirect('login')
