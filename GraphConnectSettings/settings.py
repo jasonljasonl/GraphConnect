@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'account_system',
+    'account',
     'CreatePosts',
 ]
 
@@ -130,4 +130,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'account_system.CustomUser'
+AUTH_USER_MODEL = 'account.CustomUser'
