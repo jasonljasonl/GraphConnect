@@ -3,6 +3,8 @@
     {% for post in posts %}
         <li>
             {{ post.content }} - {{ post.author }}
+            <a href="{% url 'post_update' post.pk %}">Modify</a>
+            <a href="{% url 'post_delete' post.pk %}">Delete</a>
         </li>
 
     {% endfor %}
