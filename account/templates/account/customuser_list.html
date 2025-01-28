@@ -1,0 +1,15 @@
+<ul>
+    {% for user in CustomUser %}
+        <p>{{user.username}}</p>
+        <form method="post" action="{% url 'customuser_follows' pk=user.pk %}">
+            {% csrf_token %}
+            <button type="submit">
+                {% if user in user.user_follows.all %}
+                    Unfollow
+                {% else %}
+                    Follow
+                {% endif %}
+            </button>
+        </form>
+    {% endfor %}
+</ul>

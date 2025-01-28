@@ -1,6 +1,13 @@
-from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View
+from django.views.generic import ListView
+
+from GraphConnectSettings.settings import AUTH_USER_MODEL
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from django.contrib.auth import login, authenticate, logout, user_logged_in
+
+from .models import CustomUser
 
 
 # Create your views here.
@@ -15,7 +22,7 @@ def register(request):
             return redirect('success')
     else:
         form = CustomUserCreationForm()
-        return render(request, 'accounts/register.html', {'form':form})
+        return render(request, 'account/register.html', {'form':form})
 
 
 def user_login(request):
@@ -32,13 +39,29 @@ def user_login(request):
                 return redirect('success')
     else:
         form = CustomAuthenticationForm()
-    return render(request, 'accounts/login.html', {'form':form})
+    return render(request, 'account/login.html', {'form':form})
 
 
 def success(request):
-    return render(request, 'accounts/success.html')
+    return render(request, 'account/success.html')
 
 
 def user_logout(request):
     logout(request)
     return redirect('login')
+
+class users_list(ListView):
+    model = CustomUser
+    template_name = 'customuser_list.html'
+    context_object_name = 'CustomUser'
+
+
+class UserFollowView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        user = get_object_or_404(CustomUser, id=kwargs['pk'])
+        if request.user in user.user_follows.all():
+            user.user_follows.remove(request.user)
+        else:
+            user.user_follows.add(request.user)
+        return redirect('customuser_list')
+

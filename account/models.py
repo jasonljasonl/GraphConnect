@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
+from django.conf import settings
 
 # Create your models here.
 class CustomUserManager(BaseUserManager):
@@ -24,6 +24,8 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     username = models.CharField(unique=True,max_length=50)
     name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
+    user_follows = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="follows", blank=True)
+
 
     is_active = models.BooleanField(default=True)
     is_staff= models.BooleanField(default=False)
