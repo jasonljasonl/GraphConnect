@@ -59,9 +59,9 @@ class users_list(ListView):
 class UserFollowView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         user = get_object_or_404(CustomUser, id=kwargs['pk'])
-        if request.user in user.user_follows.all():
-            user.user_follows.remove(request.user)
-        else:
-            user.user_follows.add(request.user)
+        if request.user != user:
+            if request.user in user.user_follows.all():
+                user.user_follows.remove(request.user)
+            else:
+                user.user_follows.add(request.user)
         return redirect('customuser_list')
-
