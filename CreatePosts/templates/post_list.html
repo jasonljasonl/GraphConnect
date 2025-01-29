@@ -17,7 +17,9 @@
                     {% endif %}
                 </button>
             </form>
-            <img src="{{ post.image_post.url }}" alt=" " width="300px">
+            {% if post.image_post %}
+                <img src="{{ post.image_post.url }}" alt=" " width="300px">
+            {% endif %}
         </li>
     {% endfor %}
 </ul>

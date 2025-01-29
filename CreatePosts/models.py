@@ -9,7 +9,7 @@ def user_directory_path(instance, filename):
 
 # Create your models here.
 class Post(models.Model):
-    image_post = models.ImageField(upload_to='uploaded_images/')
+    image_post = models.ImageField(upload_to='uploaded_images/', blank=True)
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     upload_date = models.DateTimeField(auto_now_add=True)
