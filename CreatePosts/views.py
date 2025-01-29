@@ -1,5 +1,6 @@
+
 from django.shortcuts import get_object_or_404, redirect
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect
 from django.views import View
 from rest_framework.reverse import reverse_lazy
@@ -22,16 +23,25 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-class PostUpdateView(LoginRequiredMixin,UpdateView):
-    model = Post
-    fields = ['content']
-    template_name = 'create_post.html'
-    success_url = reverse_lazy('post_list')
+class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+        model = Post
+        fields = ['content']
+        template_name = 'create_post.html'
+        success_url = reverse_lazy('post_list')
 
-class PostDeleteView(LoginRequiredMixin,DeleteView):
+        def test_func(self, **kwargs):
+            post = self.get_object()
+            return self.request.user == post.author
+
+
+class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model = Post
     template_name = 'post_confirm_delete.html'
     success_url = reverse_lazy('post_list')
+
+    def test_func(self, **kwargs):
+        post = self.get_object()
+        return self.request.user == post.author
 
 
 class PostLikeView(LoginRequiredMixin, View):

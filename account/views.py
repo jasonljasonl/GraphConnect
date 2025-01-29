@@ -1,3 +1,4 @@
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
@@ -20,6 +21,7 @@ def register(request):
             user = form.save()
             login(request, user)
             return redirect('success')
+
     else:
         form = CustomUserCreationForm()
         return render(request, 'account/register.html', {'form':form})
