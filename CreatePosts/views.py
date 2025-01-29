@@ -15,9 +15,10 @@ class PostListView(ListView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['content']
+    fields = ['content','image_post']
     template_name = 'create_post.html'
     success_url = reverse_lazy('post_list')
+
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -25,7 +26,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         model = Post
-        fields = ['content']
+        fields = ['content', 'image_post']
         template_name = 'create_post.html'
         success_url = reverse_lazy('post_list')
 
