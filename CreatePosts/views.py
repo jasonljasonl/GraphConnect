@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from rest_framework.reverse import reverse_lazy
 
-from .models import Post
+from .models import Post, Comment
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 class PostListView(ListView):
@@ -18,7 +18,6 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     fields = ['content','image_post']
     template_name = 'create_post.html'
     success_url = reverse_lazy('post_list')
-
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -53,4 +52,19 @@ class PostLikeView(LoginRequiredMixin, View):
         else:
             post.likes.add(request.user)
         return redirect('post_list')
+
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    fields = ['content']
+    template_name = 'create_comment.html'
+    success_url = reverse_lazy('post_list')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
+        form.instance.related_post = post
+
+        return super().form_valid(form)
+
 
