@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db.models import CASCADE, ForeignKey
 
 
+
 # Create your models here.
 class Post(models.Model):
     image_post = models.ImageField(upload_to='uploaded_images/', blank=True)

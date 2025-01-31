@@ -1,17 +1,27 @@
-
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.views import View
 from rest_framework.reverse import reverse_lazy
 
 from .models import Post, Comment
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+
 
 class PostListView(ListView):
     model = Post
     template_name = 'post_list.html'
     context_object_name = 'posts'
+
+class ViewPostView(DetailView):
+        model = Post
+        template_name = 'view_post.html'
+        context_object_name = 'selected_post'
+
+        def get(self, request, pk):
+            selected_post = get_object_or_404(Post, id=pk)
+            return render(request, 'view_post.html', {'selected_post': selected_post})
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
@@ -59,6 +69,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     fields = ['content']
     template_name = 'create_comment.html'
     success_url = reverse_lazy('post_list')
+    context_object_name = 'comments'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -66,5 +77,3 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
         form.instance.related_post = post
 
         return super().form_valid(form)
-
-

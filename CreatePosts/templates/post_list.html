@@ -2,12 +2,17 @@
 <ul>
     {% for post in posts %}
         <li>
-            {{ post.content }} - {{ comment.content }} - {{ post.author }} - {{ post.upload_date }} - {{ post.likes.count }}
+            {{ post.content }} - {{ post.author }} - {{ post.upload_date }} - {{ post.likes.count }}
             {% if request.user == post.author %}
             <a href="{% url 'post_update' post.pk %}">Modify</a>
             <a href="{% url 'post_delete' post.pk %}">Delete</a>
-            <a href="{% url 'post_comment' post.pk %}">Comment</a>
             {% endif %}
+            <a href="{% url 'post_comment' post.pk %}">Comment</a>
+            <a href="{% url 'view_post' post.pk %}">View post</a>
+
+
+
+
             <form method="post" action="{% url 'post_like' pk=post.id %}">
                 {% csrf_token %}
                 <button type="submit">
@@ -23,5 +28,6 @@
             {% endif %}
         </li>
     {% endfor %}
+
 </ul>
 <a href="{% url 'post_create' %}">create</a>
