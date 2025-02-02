@@ -1,6 +1,11 @@
     <h1>Home</h1>
+
+
 <ul>
     {% for post in posts %}
+
+    {% if post.author in request.user.follows.all or post.author == request.user %}
+
         <li>
             {{ post.content }} - {{ post.author }} - {{ post.upload_date }} - {{ post.likes.count }}
             {% if request.user == post.author %}
@@ -10,7 +15,6 @@
             <a href="{% url 'post_comment' post.pk %}">Comment</a>
             <a href="{% url 'view_post' post.pk %}">View post</a>
             <a href="{% url 'comments_list' post.pk %}">View comments</a>
-
 
             <form method="post" action="{% url 'post_like' pk=post.id %}">
                 {% csrf_token %}
@@ -26,7 +30,11 @@
                 <img src="{{ post.image_post.url }}" alt=" " width="300px">
             {% endif %}
         </li>
+
+    {% endif %}
+
     {% endfor %}
 
 </ul>
+
 <a href="{% url 'post_create' %}">create</a>

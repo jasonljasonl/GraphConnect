@@ -3,7 +3,6 @@ from gc import get_objects
 from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import redirect
-from django.template.defaulttags import comment
 from django.views import View
 from rest_framework.reverse import reverse_lazy
 
