@@ -102,3 +102,26 @@ class CommentLikeView(LoginRequiredMixin, View):
         else:
             comment.likes.add(request.user)
         return redirect('post_list')
+
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    fields = ['content']
+    template_name = 'create_comment.html'
+    success_url = reverse_lazy('post_list')
+
+    def test_func(self, **kwargs):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'post_confirm_delete.html'
+    success_url = reverse_lazy('post_list')
+
+    def test_func(self, **kwargs):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+
