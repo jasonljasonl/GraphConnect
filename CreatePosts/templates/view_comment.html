@@ -1,0 +1,18 @@
+{% for comment in comments %}
+    {% if comment.related_post_id == selected_post.pk %}
+        {{comment.author }} : {{ comment.content }} <br> {{ comment.upload_date }} <br> Likes : {{ comment.likes.count }}
+
+<form method="post" action="{% url 'comment_like' pk=comment.id %}">
+                {% csrf_token %}
+                <button type="submit">
+                    {% if user in comment.likes.all %}
+                        Unlike
+                    {% else %}
+                        Like
+                    {% endif %}
+                </button>
+            </form>
+
+    <hr>
+    {% endif %}
+{% endfor %}

@@ -15,6 +15,7 @@ class Post(models.Model):
     def __str__(self):
         return self.content[:50]
 
+
 class Comment(models.Model):
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -24,3 +25,5 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content[:50]
+
+
