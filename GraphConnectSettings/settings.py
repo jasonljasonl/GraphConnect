@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'account',
     'CreatePosts',
+    'chat_system',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +136,5 @@ AUTH_USER_MODEL = 'account.CustomUser'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploaded_images')
 MEDIA_URL = '/uploaded_images/'
+
+ASGI_APPLICATION = 'GraphConnectSettings.asgi.application'

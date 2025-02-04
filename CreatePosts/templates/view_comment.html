@@ -2,7 +2,7 @@
     {% if comment.related_post_id == selected_post.pk %}
         {{comment.author }} : {{ comment.content }} <br> {{ comment.upload_date }} <br> Likes : {{ comment.likes.count }}
 
-<form method="post" action="{% url 'comment_like' pk=comment.id %}">
+        <form method="post" action="{% url 'comment_like' pk=comment.id %}">
                 {% csrf_token %}
                 <button type="submit">
                     {% if user in comment.likes.all %}
@@ -11,7 +11,7 @@
                         Like
                     {% endif %}
                 </button>
-            </form>
+        </form>
 {% if request.user == comment.author %}
 <a href="{% url 'comment_update' comment.pk %}">Modify</a>
 <a href="{% url 'comment_delete' comment.pk %}">Delete</a>
