@@ -4,7 +4,7 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 
-from chat_system.models import Messages
+from chat_system.models import Message
 
 CustomUser = get_user_model()
 
@@ -32,7 +32,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def create_chat(self, sender_id, message):
         try:
             sender = CustomUser.objects.get(id=sender_id)
-            return Messages.objects.create(sender=sender, content=message)
+            return Message.objects.create(sender=sender, content=message)
         except CustomUser.DoesNotExist:
             return None
 
