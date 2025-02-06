@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView
+from channels.auth import login, logout
 
 from GraphConnectSettings.settings import AUTH_USER_MODEL
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
@@ -50,6 +51,7 @@ def success(request):
 
 def user_logout(request):
     logout(request)
+
     return redirect('login')
 
 class users_list(ListView):
