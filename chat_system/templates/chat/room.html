@@ -7,19 +7,27 @@
     <title>Chat room</title>
 </head>
 <body>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+
+<textarea id="chat-log" cols="100" rows="20">
+    {% for message in messages %}
+        {{ message.message_sender.username }}: {{ message.content }}
+    {% endfor %}
+</textarea>
+
     <input id='chat-message-input' type="text"><br>
     <input id='chat-message-submit' type="button" value="Send">
     {{ room_name|json_script:'room-name' }}
-    <script id="user-id" type="application/json">
-       " {{ user.id }}"
-    </script>
-    <script id="user-username" type="application/json">
-       " {{ user.username }}"
-    </script>
-    <script id="recipient-id" type="application/json">
-       " {{ recipient.id }}"
-    </script>
+    {{ recipient.id|json_script:"recipient-id" }}
+
+<script id="user-id" type="application/json">
+    "{{ user.id }}"
+</script>
+<script id="user-username" type="application/json">
+    "{{ user.username }}"
+</script>
+
+
+
 
     <script>
     const roomName = JSON.parse(document.getElementById('room-name').textContent);
@@ -52,13 +60,15 @@
 
             chatSocket.send(JSON.stringify({
                 'sender': sender,
-                'message': message,
                 'recipient': roomName,
+                'message': message,
             }));
 
             messageInputDom.value = '';
         };
     </script>
+
+
 
 </body>
 </html>

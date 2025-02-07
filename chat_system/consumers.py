@@ -1,53 +1,66 @@
 import json
-
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
-
 from chat_system.models import Message
+from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 CustomUser = get_user_model()
 
-from django.shortcuts import render, get_object_or_404
 
-
-def chat_room(request, room_name,**kwargs):
-    user = request.user
-    recipient = get_object_or_404(CustomUser, id=kwargs['pk'])
-    return render(request, 'room.html', {
-        'room_name': room_name,
-        'username': user.id,
-        'recipient': recipient.id,
-    })
-
-
+# 📌 Récupérer un utilisateur par son ID (asynchrone)
 @database_sync_to_async
-def get_user(sender_id):
-    try:
-        return CustomUser.objects.get(id=sender_id)
-    except CustomUser.DoesNotExist:
-        return None
+def get_user(user_id):
+    return CustomUser.objects.filter(id=user_id).first()
 
 
+# 📌 Récupérer un destinataire par son ID (asynchrone)
+@database_sync_to_async
+def get_recipient(recipient_id):
+    return CustomUser.objects.filter(id=recipient_id).first()
+
+
+# 📌 Sauvegarder un message (asynchrone)
+@database_sync_to_async
+def create_chat(sender_id, recipient_id, message):
+    sender = CustomUser.objects.get(id=sender_id)
+    recipient = get_object_or_404(CustomUser, id=recipient_id)
+    return Message.objects.create(content=message, message_sender=sender, message_recipient=recipient)
+
+
+# 📌 Récupérer les messages entre deux utilisateurs (asynchrone)
+@database_sync_to_async
+def get_chat_messages(sender_id, recipient_id):
+    return list(
+        Message.objects.filter(
+            (Q(message_sender_id=sender_id) & Q(message_recipient_id=recipient_id)) |
+            (Q(message_sender_id=recipient_id) & Q(message_recipient_id=sender_id))
+        ).values("message_sender_id", "message_recipient_id", "content", "send_date")
+    )
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
-    @database_sync_to_async
-    def create_chat(self, sender_id, recipient_id, message):
-        try:
-            sender = CustomUser.objects.get(id=sender_id)
-            recipient = CustomUser.objects.get(id=recipient_id)
-            Message.objects.create(content=message,message_sender=sender, message_recipient=recipient)
-        except CustomUser.DoesNotExist:
-            return None
-
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f'chat_{self.room_name}'
+        self.user = self.scope['user']  # L'utilisateur connecté
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
+
+        # 🔥 Charger les anciens messages au moment de la connexion
+        recipient_id = int(self.room_name)  # ID de l'autre utilisateur
+        messages = await get_chat_messages(self.user.id, recipient_id)
+
+        # 🔄 Envoyer les anciens messages au client
+        for msg in messages:
+            await self.send(text_data=json.dumps({
+                'sender': msg["message_sender_id"],
+                'recipient': msg["message_recipient_id"],
+                'message': msg["content"],
+            }))
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
@@ -62,8 +75,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             recipient_id = text_data_json.get('recipient')
 
             sender = await get_user(sender_id)
-            recipient = await get_user(recipient_id)
+            recipient = await get_recipient(recipient_id)
 
+            if not sender or not recipient:
+                await self.send(text_data=json.dumps({'error': 'Invalid sender or recipient'}))
+                return
+
+            # 🔥 Envoyer le message à la room WebSocket
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -82,6 +100,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event['message']
         recipient = event['recipient']
 
-        await self.create_chat(sender, recipient, message)
+        # 🔥 Sauvegarder le message (asynchrone)
+        await create_chat(sender, recipient, message)
 
-        await self.send(text_data=json.dumps({'sender': sender, 'recipient':recipient, 'message': message}))
+        # 🔄 Envoyer le message au client WebSocket
+        await self.send(text_data=json.dumps({
+            'sender': sender,
+            'recipient': recipient,
+            'message': message
+        }))
