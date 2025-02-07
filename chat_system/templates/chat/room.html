@@ -17,10 +17,14 @@
     <script id="user-username" type="application/json">
        " {{ user.username }}"
     </script>
+    <script id="recipient-id" type="application/json">
+       " {{ recipient.id }}"
+    </script>
+
     <script>
     const roomName = JSON.parse(document.getElementById('room-name').textContent);
     const sender = JSON.parse(document.getElementById('user-id').textContent);
-
+    const recipient = JSON.parse(document.getElementById('recipient-id').textContent);
 
         const chatSocket = new WebSocket(
             'ws://' + window.location.host + '/ws/chat_system/' + roomName + '/'
@@ -48,7 +52,8 @@
 
             chatSocket.send(JSON.stringify({
                 'sender': sender,
-                'message': message
+                'message': message,
+                'recipient': roomName,
             }));
 
             messageInputDom.value = '';

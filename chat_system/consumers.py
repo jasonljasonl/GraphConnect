@@ -8,13 +8,16 @@ from chat_system.models import Message
 
 CustomUser = get_user_model()
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
-def chat_room(request, room_name):
+
+def chat_room(request, room_name,**kwargs):
     user = request.user
+    recipient = get_object_or_404(CustomUser, id=kwargs['pk'])
     return render(request, 'room.html', {
         'room_name': room_name,
         'username': user.id,
+        'recipient': recipient.id,
     })
 
 
@@ -26,13 +29,16 @@ def get_user(sender_id):
         return None
 
 
+
+
 class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
-    def create_chat(self, sender_id, message):
+    def create_chat(self, sender_id, recipient_id, message):
         try:
             sender = CustomUser.objects.get(id=sender_id)
-            return Message.objects.create(sender=sender, content=message)
+            recipient = CustomUser.objects.get(id=recipient_id)
+            Message.objects.create(content=message,message_sender=sender, message_recipient=recipient)
         except CustomUser.DoesNotExist:
             return None
 
@@ -53,15 +59,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             message = text_data_json.get('message', '')
             sender_id = text_data_json.get('sender')
+            recipient_id = text_data_json.get('recipient')
 
             sender = await get_user(sender_id)
+            recipient = await get_user(recipient_id)
 
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'chat_message',
                     'message': message,
-                    'sender': sender.id
+                    'sender': sender.id,
+                    'recipient': recipient.id
                 }
             )
 
@@ -71,7 +80,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         sender = event['sender']
         message = event['message']
+        recipient = event['recipient']
 
-        await self.create_chat(sender, message)
+        await self.create_chat(sender, recipient, message)
 
-        await self.send(text_data=json.dumps({'sender': sender, 'message': message}))
+        await self.send(text_data=json.dumps({'sender': sender, 'recipient':recipient, 'message': message}))

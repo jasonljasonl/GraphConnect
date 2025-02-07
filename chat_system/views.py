@@ -13,6 +13,6 @@ def room(request, room_name):
     return render(request, 'chat/room.html', {'room_name':room_name})
 
 class UserChattingView(LoginRequiredMixin, View):
-    def post(self,request, room_name, **kwargs):
+    def post(self,request, **kwargs):
         user = get_object_or_404(CustomUser, id=kwargs['pk'])
         return render(request, 'chat/room.html', {'room_name':user.id})
