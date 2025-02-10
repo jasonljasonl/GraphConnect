@@ -1,5 +1,6 @@
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView
@@ -69,3 +70,16 @@ class UserFollowView(LoginRequiredMixin, View):
             else:
                 user.user_follows.add(request.user)
         return redirect('customuser_list')
+
+
+class UserSearchView(ListView):
+    model = CustomUser
+    template_name = 'customuser_list.html'
+    context_object_name = 'CustomUser'
+
+    def get_queryset(self):  # new
+        query = self.request.GET.get("q")
+        object_list = CustomUser.objects.filter(
+            Q(name__icontains=query)
+        )
+        return object_list

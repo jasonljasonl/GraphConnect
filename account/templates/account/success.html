@@ -10,6 +10,8 @@
         {% csrf_token %}
         <button type="submit">Logout</button>
     </form>
-
+    <form action="{% url 'search' %}" method="get">
+      <input name="q" type="text" placeholder="Search...">
+    </form>
 </body>
 </html>
