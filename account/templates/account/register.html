@@ -8,10 +8,10 @@
 <body>
 
     <h1>Inscription</h1>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">S'inscrire</button>
+        <button type="submit">Sign in</button>
     </form>
 </body>
 </html>

@@ -7,10 +7,10 @@ class CustomUserManager(BaseUserManager):
     def create_user(self,username, email, password=None, **extra_fields):
         if not email:
             raise ValueError('Not a valid email address.')
-
         email = self.normalize_email(email)
         user = self.model(username=username, email=email, **extra_fields)
         user.set_password(password)
+
         user.save(using=self._db)
 
         return user
@@ -19,9 +19,10 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_staff',True)
         extra_fields.setdefault('is_superuser',True)
 
-        return self.create_user(username,password,**extra_fields)
+        return self.create_user( username,password,**extra_fields)
 
 class CustomUser(AbstractBaseUser,PermissionsMixin):
+    profile_picture = models.ImageField(upload_to='uploaded_images/', blank=True)
     username = models.CharField(unique=True,max_length=50)
     name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)

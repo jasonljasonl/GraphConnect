@@ -1,4 +1,3 @@
-from gc import get_objects
 
 from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -70,7 +69,7 @@ class ViewPostView(DetailView):
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
-    fields = ['content']
+    fields = ['image_comment','content']
     template_name = 'create_comment.html'
     success_url = reverse_lazy('post_list')
 
@@ -105,7 +104,7 @@ class CommentLikeView(LoginRequiredMixin, View):
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
-    fields = ['content']
+    fields = ['image_comment','content']
     template_name = 'create_comment.html'
     success_url = reverse_lazy('post_list')
 

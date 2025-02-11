@@ -1,5 +1,8 @@
 <ul>
     {% for user in CustomUser %}
+        {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt=" " width="100px">
+        {% endif %}
         <p>{{user.username}}</p>
     {% if request.user != user %}
         <form method="post" action="{% url 'customuser_follows' pk=user.pk %}">
