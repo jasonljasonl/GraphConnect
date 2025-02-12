@@ -18,11 +18,17 @@ from django.contrib import admin
 from django.urls import include,path
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework import routers
+from CreatePosts import views
+
+router = routers.DefaultRouter()
+router.register(r'CreatePosts', views.PostsSerializerView, 'CreatePosts')
 
 urlpatterns = [
     path("Home/", include("CreatePosts.urls")),
     path("account/", include("account.urls")),
     path('admin/', admin.site.urls),
     path('chat_system/', include('chat_system.urls')),
+    path('api/', include(router.urls)),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

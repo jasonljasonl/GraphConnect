@@ -6,6 +6,7 @@ from django.db.models import CASCADE, ForeignKey
 
 # Create your models here.
 class Post(models.Model):
+    objects = models.manager
     image_post = models.ImageField(upload_to='uploaded_images/', blank=True)
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

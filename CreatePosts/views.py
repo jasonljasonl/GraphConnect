@@ -3,10 +3,16 @@ from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import redirect
 from django.views import View
+from rest_framework import viewsets
 from rest_framework.reverse import reverse_lazy
-
+from .serializer import PostSerializer
 from .models import Post, Comment
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+
+
+class PostsSerializerView(viewsets.ModelViewSet):
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
