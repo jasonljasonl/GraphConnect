@@ -1,10 +1,14 @@
-
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import redirect
 from django.views import View
 from rest_framework import viewsets
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.reverse import reverse_lazy
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from .serializer import PostSerializer
 from .models import Post, Comment
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -47,14 +51,8 @@ class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
         return self.request.user == post.author
 
 
-class PostLikeView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        post = get_object_or_404(Post, id=kwargs['pk'])
-        if request.user in post.likes.all():
-            post.likes.remove(request.user)
-        else:
-            post.likes.add(request.user)
-        return redirect('post_list')
+
+
 
 
 class PostListView(ListView):
@@ -129,3 +127,26 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == comment.author
 
 
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Only authenticated users can like a post
+@authentication_classes([JWTAuthentication])  # Add JWT authentication
+def PostLikeView(request, pk):  # Use 'pk' here
+    try:
+        # Find the post by its ID (using pk)
+        post = Post.objects.get(id=pk)
+
+        # Logic for liking the post
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user)
+        post.save()
+
+        # Return a JSON response with a success message
+        return JsonResponse({'message': 'Post liked successfully'})
+    except Post.DoesNotExist:
+        # Return an error response if the post is not found
+        return JsonResponse({'error': 'Post not found'}, status=404)
