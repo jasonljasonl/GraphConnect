@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import Post from '../components/PostComponent.jsx'
+import GetUsers from '../components/getUsersComponent.jsx'
 import {NavBar} from '../components/NavBar.jsx'
 import {Login} from "../components/Login";
 import {Logout} from "../components/Logout";

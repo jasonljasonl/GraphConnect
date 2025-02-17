@@ -3,20 +3,19 @@ from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import redirect
 from django.views import View
-from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.reverse import reverse_lazy
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializer import PostSerializer
 from .models import Post, Comment
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
+from rest_framework import viewsets, serializers
 
-class PostsSerializerView(viewsets.ModelViewSet):
-    serializer_class = PostSerializer
-    queryset = Post.objects.all()
+from CreatePosts.models import Post
+from account.models import CustomUser
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -138,7 +137,7 @@ def PostLikeView(request, pk):  # Use 'pk' here
         # Find the post by its ID (using pk)
         post = Post.objects.get(id=pk)
 
-        # Logic for liking the post
+
         if request.user in post.likes.all():
             post.likes.remove(request.user)
         else:
@@ -150,3 +149,43 @@ def PostLikeView(request, pk):  # Use 'pk' here
     except Post.DoesNotExist:
         # Return an error response if the post is not found
         return JsonResponse({'error': 'Post not found'}, status=404)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+def check_like_status(request, post_id):
+    try:
+        print("Logged in user :", request.user)
+
+        post = get_object_or_404(Post, id=post_id)
+        user = request.user
+
+        has_liked = post.likes.filter(id=user.id).exists()
+
+        return Response({'liked': has_liked})
+
+    except Exception as e:
+        print("Error", str(e))
+        return Response({'error': str(e)}, status=500)
+
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = '__all__'
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = '__all__'
+
+
+class PostsSerializerView(viewsets.ModelViewSet):
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
+
+class CustomUserSerializerView(viewsets.ModelViewSet):
+    serializer_class = CustomUserSerializer
+    queryset = CustomUser.objects.all()
+

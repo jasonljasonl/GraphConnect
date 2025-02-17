@@ -1,30 +1,50 @@
 import axios from 'axios';
-import heart from "./img_component/heart.svg";
-import React, { useState } from 'react';
+import HealthiconsHeart from "./img_component/heart.jsx";
+import React, { useState, useEffect } from 'react';
 
 const LikeComponent = ({ postId }) => {
     const [isLiked, setIsLiked] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    useEffect(() => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            return;
+            }
+
+        if (!postId) return;
+
+        fetch(`http://localhost:8000/api/check-like/${postId}/`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((res) => res.json())
+            .then((data) => setIsLiked(data.liked))
+            .catch((err) => console.error("Error:", err));
+    }, [postId]);
+
     const handleLikeClick = async () => {
         setLoading(true);
-        setError(null);  // Reset any previous errors
+        setError(null);
 
         try {
-            // Get the JWT token from localStorage (or sessionStorage)
             const token = localStorage.getItem('access_token');
-            console.log("JWT Token:", token);
             if (!token) {
                 setError('You need to be logged in.');
                 setLoading(false);
                 return;
             }
 
-            // Make the GET request to like the post
+            // Toggle the like status locally before making the API call
+            setIsLiked((prevIsLiked) => !prevIsLiked);
+
             const response = await axios.post(
                 `http://127.0.0.1:8000/Home/${postId}/like/`,
-                {}, // Empty body since it's just liking the post
+                {},
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -32,26 +52,18 @@ const LikeComponent = ({ postId }) => {
                 }
             );
 
-            // If the like is successful, update the state
-            if (response.data.message === 'Post liked successfully') {
-                setIsLiked(true);
-                console.log('Post liked:', response.data);
-            }
+
         } catch (error) {
-            // Handle any errors (e.g., unauthorized, 404)
-            console.error("Error liking the post:", error);
-            setError('Something went wrong, please try again later.');
+
+            setIsLiked((prevIsLiked) => !prevIsLiked);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div>
-            <button onClick={handleLikeClick} disabled={loading}>
-                {loading ? 'Liking...' : isLiked ? 'Liked' : 'Like'}
-            </button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <div onClick={handleLikeClick} disabled={loading} style={{ cursor: 'pointer' }}>
+            {isLiked ? <HealthiconsHeart color='red' /> : <HealthiconsHeart color='white' />}
         </div>
     );
 };

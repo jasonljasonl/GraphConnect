@@ -19,12 +19,13 @@ from django.urls import include,path
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework import routers
-from CreatePosts import views
 from rest_framework_simplejwt import views as jwt_views
-
+from CreatePosts import views
+from CreatePosts.views import check_like_status
 
 router = routers.DefaultRouter()
 router.register(r'CreatePosts', views.PostsSerializerView, 'CreatePosts')
+router.register(r'account', views.CustomUserSerializerView, 'account')
 
 
 urlpatterns = [
@@ -32,7 +33,10 @@ urlpatterns = [
     path("account/", include("account.urls")),
     path('admin/', admin.site.urls),
     path('chat_system/', include('chat_system.urls')),
+
     path('api/', include(router.urls)),
+    path('api/check-like/<int:post_id>/', check_like_status, name='check_list'),
+
 
     path('token/',jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/',jwt_views.TokenRefreshView.as_view(),name='token_refresh')
