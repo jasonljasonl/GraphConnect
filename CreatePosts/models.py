@@ -18,6 +18,8 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
+    objects = models.manager
+
     image_comment = models.ImageField(upload_to='uploaded_images/', blank=True)
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

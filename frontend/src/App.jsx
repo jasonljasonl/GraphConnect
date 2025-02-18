@@ -1,34 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Post from '../components/PostComponent.jsx'
-import GetUsers from '../components/getUsersComponent.jsx'
-import {NavBar} from '../components/NavBar.jsx'
-import {Login} from "../components/Login";
-import {Logout} from "../components/Logout";
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import React from 'react';
+import './App.css';
+import Post from '../components/PostComponent.jsx';
+import GetUsers from '../components/getUsersComponent.jsx';
+import { NavBar } from '../components/NavBar.jsx';
+import { Login } from "../components/Login";
+import { Logout } from "../components/Logout";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import '../components/axios';
-
+import ViewPostPage from '../components/ViewPostPage.jsx';
 
 function App() {
-
-
     return (
-    <>
-
-       <BrowserRouter>
-        <NavBar></NavBar>
-        <Routes>
-          <Route path="/login" element={<Login/>}/>
-          <Route path="/logout" element={<Logout/>}/>
-        </Routes>
-      </BrowserRouter>;
-
-
-      <Post />
-    </>
-    )
+        <BrowserRouter>
+            <NavBar />
+            <Routes>
+                <Route path="/" element={<Post />} />  {/* Show posts only on home */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/logout" element={<Logout />} />
+                <Route path="/posts/:postId" element={<ViewPostPage />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
-export default App
+export default App;

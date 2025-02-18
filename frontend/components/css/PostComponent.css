@@ -23,9 +23,7 @@ ul {
     margin-bottom: 16px;
 }
 .post_interactions {
+    display:flex;
     justify-self:left;
     margin-top:16px;
-}
-.post_interactions svg {
-    width:50%
 }

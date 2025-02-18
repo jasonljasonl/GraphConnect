@@ -21,11 +21,12 @@ from django.conf import settings
 from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 from CreatePosts import views
-from CreatePosts.views import check_like_status
+from CreatePosts.views import check_like_status, CommentCreateAPIView, PostDetailSerializerView
 
 router = routers.DefaultRouter()
-router.register(r'CreatePosts', views.PostsSerializerView, 'CreatePosts')
+router.register(r'postsList', views.PostsSerializerView, 'postsList')
 router.register(r'account', views.CustomUserSerializerView, 'account')
+router.register(r'commentsList', views.CommentsSerializerView, 'commentsList')
 
 
 urlpatterns = [
@@ -36,7 +37,8 @@ urlpatterns = [
 
     path('api/', include(router.urls)),
     path('api/check-like/<int:post_id>/', check_like_status, name='check_list'),
-
+    path('api/posts/<int:post_id>/posting_comment/', CommentCreateAPIView.as_view(), name='create_comment'),
+    path('api/posts/<int:id>/', PostDetailSerializerView.as_view(), name='post_detail'),
 
     path('token/',jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/',jwt_views.TokenRefreshView.as_view(),name='token_refresh')

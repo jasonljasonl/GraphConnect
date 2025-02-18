@@ -1,3 +1,4 @@
+from OpenSSL.rand import status
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -7,12 +8,13 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse_lazy
+from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models import Post, Comment
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
-from rest_framework import viewsets, serializers
+from rest_framework import viewsets, serializers, generics
 
 from CreatePosts.models import Post
 from account.models import CustomUser
@@ -134,9 +136,7 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 @authentication_classes([JWTAuthentication])  # Add JWT authentication
 def PostLikeView(request, pk):  # Use 'pk' here
     try:
-        # Find the post by its ID (using pk)
         post = Post.objects.get(id=pk)
-
 
         if request.user in post.likes.all():
             post.likes.remove(request.user)
@@ -144,7 +144,6 @@ def PostLikeView(request, pk):  # Use 'pk' here
             post.likes.add(request.user)
         post.save()
 
-        # Return a JSON response with a success message
         return JsonResponse({'message': 'Post liked successfully'})
     except Post.DoesNotExist:
         # Return an error response if the post is not found
@@ -170,6 +169,20 @@ def check_like_status(request, post_id):
         return Response({'error': str(e)}, status=500)
 
 
+class CommentCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id, *args, **kwargs):
+        post = get_object_or_404(Post, pk=post_id)
+        serializers = CommentSerializer(data=request.data)
+        if serializers.is_valid():
+            serializers.save(author=request.user, related_post=post)
+            return Response(serializers.data)
+        return Response(serializers.errors)
+
+
+
+
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -180,6 +193,14 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = '__all__'
 
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.id')
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        read_only_fields = ['author', 'created_at']
+
 
 class PostsSerializerView(viewsets.ModelViewSet):
     serializer_class = PostSerializer
@@ -189,3 +210,12 @@ class CustomUserSerializerView(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
 
+class CommentsSerializerView(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
+
+
+class PostDetailSerializerView(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    lookup_field = 'id'

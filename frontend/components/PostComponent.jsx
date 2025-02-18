@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './css/PostComponent.css';
 import Like from '../components/LikeComponent.jsx';
-
+import CommentComponent from '../components/CommentComponent.jsx';
+import Comment from '../components/img_component/comment.jsx'
+import CommentsPage from '../components/CommentsPage.jsx'
+import ViewPostPage from '../components/ViewPostPage.jsx'
+import ButtonToPost from '../components/ButtonToPost.jsx'
 
 export default function Post() {
     const [posts, setPosts] = useState([]);
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/CreatePosts/')
+        axios.get('http://127.0.0.1:8000/api/postsList/')
             .then(response => {
                 setPosts(response.data);
             })
@@ -56,6 +60,9 @@ export default function Post() {
                         <p className='post_content_component'>{post.content}</p>
                         <div className='post_interactions'>
                             <Like postId={post.id} />
+                            <ButtonToPost postId={post.id} />
+
+
                         </div>
                     </li>
                 ))}

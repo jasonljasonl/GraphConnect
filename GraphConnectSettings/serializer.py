@@ -2,7 +2,7 @@ from django.views import View
 
 from rest_framework import viewsets, serializers
 
-from CreatePosts.models import Post
+from CreatePosts.models import Post, Comment
 from account.models import CustomUser
 
 
@@ -16,6 +16,14 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = '__all__'
 
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        read_only_fields = ['author', 'created_at']
+
 
 class PostsSerializerView(viewsets.ModelViewSet):
     serializer_class = PostSerializer
@@ -24,4 +32,8 @@ class PostsSerializerView(viewsets.ModelViewSet):
 class CustomUserSerializerView(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
+
+class CommentsSerializerView(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
 

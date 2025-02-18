@@ -39,7 +39,6 @@ const LikeComponent = ({ postId }) => {
                 return;
             }
 
-            // Toggle the like status locally before making the API call
             setIsLiked((prevIsLiked) => !prevIsLiked);
 
             const response = await axios.post(
