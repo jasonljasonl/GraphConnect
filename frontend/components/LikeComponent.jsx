@@ -2,28 +2,27 @@ import axios from 'axios';
 import HealthiconsHeart from "./img_component/heart.jsx";
 import React, { useState, useEffect } from 'react';
 
-const LikeComponent = ({ postId }) => {
+const LikeComponent = ({ postId, initialLikes }) => {
     const [isLiked, setIsLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(initialLikes);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        if (!token) {
-            return;
-            }
-
-        if (!postId) return;
+        if (!token || !postId) return;
 
         fetch(`http://localhost:8000/api/check-like/${postId}/`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
         })
             .then((res) => res.json())
-            .then((data) => setIsLiked(data.liked))
+            .then((data) => {
+                setIsLiked(data.liked);
+            })
             .catch((err) => console.error("Error:", err));
     }, [postId]);
 
@@ -31,16 +30,14 @@ const LikeComponent = ({ postId }) => {
         setLoading(true);
         setError(null);
 
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            setError('You need to be logged in.');
+            setLoading(false);
+            return;
+        }
+
         try {
-            const token = localStorage.getItem('access_token');
-            if (!token) {
-                setError('You need to be logged in.');
-                setLoading(false);
-                return;
-            }
-
-            setIsLiked((prevIsLiked) => !prevIsLiked);
-
             const response = await axios.post(
                 `http://127.0.0.1:8000/Home/${postId}/like/`,
                 {},
@@ -51,18 +48,26 @@ const LikeComponent = ({ postId }) => {
                 }
             );
 
+            if (response.status === 200 || response.status === 201) {
+                const newLikeState = !isLiked;
+                setIsLiked(newLikeState);
+                setLikeCount((prevCount) => newLikeState ? prevCount + 1 : prevCount - 1);
+            }
 
         } catch (error) {
-
-            setIsLiked((prevIsLiked) => !prevIsLiked);
+            console.error("Error liking the post:", error);
+            setError('Something went wrong, please try again later.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div onClick={handleLikeClick} disabled={loading} style={{ cursor: 'pointer' }}>
-            {isLiked ? <HealthiconsHeart color='red' /> : <HealthiconsHeart color='white' />}
+        <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <div onClick={handleLikeClick} disabled={loading}>
+                {isLiked ? <HealthiconsHeart color='red' /> : <HealthiconsHeart color='white' />}
+            </div>
+            <p>{likeCount}</p>
         </div>
     );
 };

@@ -1,10 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const CommentComponent = ({ postId }) => {
   const [content, setContent] = useState("");
   const [error, setError] = useState(null);
   const [image, setImage] = useState(null);
+  const [commentCount, setCommentCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCommentCount = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/posts/${postId}/comment_count/`);
+        setCommentCount(response.data.count);
+      } catch (error) {
+        console.error("Failed to fetch comment count:", error);
+      }
+    };
+
+    fetchCommentCount();
+  }, [postId]); // Re-fetch when postId changes
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,24 +49,31 @@ const CommentComponent = ({ postId }) => {
       console.log("Comment added:", response.data);
       setContent("");
       setImage(null);
+
+      // ✅ Update comment count without refreshing
+      setCommentCount((prevCount) => prevCount + 1);
     } catch (error) {
-      console.error("Error adding comment:", error.response.data);
+      console.error("Error adding comment:", error.response?.data);
       setError("Failed to add comment. Try again.");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="..."
-        required
-      />
-      <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-      <button type="submit">Post Comment</button>
-      {error && <p style={{ color: "red"}}>{error}</p>}
-    </form>
+    <div>
+      <p>Comments: {commentCount}</p>
+
+      <form onSubmit={handleSubmit} className="form_comment">
+        <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Post a comment..."
+          required
+        />
+        <button type="submit">Send</button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+      </form>
+    </div>
   );
 };
 

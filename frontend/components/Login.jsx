@@ -12,23 +12,21 @@ export const Login = () => {
 
     try {
       const { data } = await axios.post(
-        "http://127.0.0.1:8000/token/", // ✅ Correct API URL
+        "http://127.0.0.1:8000/token/",
         { username, password },
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true, // ✅ Correct placement
+          withCredentials: true,
         }
       );
 
-      // Store tokens in local storage
-      localStorage.clear();
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.access}`;
 
-      window.location.href = "/"; // Redirect to home
+      window.location.href = "/";
     } catch (e) {
-      setError("Invalid credentials, please try again."); // ✅ Show error message
+      setError("Invalid credentials, please try again.");
       console.error("Login error", e);
     }
   };
@@ -38,7 +36,7 @@ export const Login = () => {
       <form className="Auth-form" onSubmit={submit}>
         <div className="Auth-form-content">
           <h3 className="Auth-form-title">Sign In</h3>
-          {error && <p style={{ color: "red" }}>{error}</p>} {/* ✅ Show error */}
+          {error && <p style={{ color: "red" }}>{error}</p>}
           <div className="form-group mt-3">
             <label>Username</label>
             <input

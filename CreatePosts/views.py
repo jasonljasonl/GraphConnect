@@ -129,6 +129,14 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 
+def get_comment_count(request, post_id):
+    try:
+        post = Post.objects.get(id=post_id)
+        comment_count = post.comments.count()
+        return JsonResponse({"count": comment_count})
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found"}, status=404)
+
 
 
 @api_view(['POST'])
@@ -219,3 +227,4 @@ class PostDetailSerializerView(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = 'id'
+
