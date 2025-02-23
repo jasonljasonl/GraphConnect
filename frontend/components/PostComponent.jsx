@@ -4,6 +4,9 @@ import './css/PostComponent.css';
 import Like from '../components/LikeComponent.jsx';
 import Comment from '../components/img_component/comment.jsx';
 import ViewPost_CommentsButton from '../components/ViewPost_CommentsButton.jsx';
+import { formatDistanceToNow } from "date-fns";
+import { enUS } from "date-fns/locale";
+
 
 export default function Post() {
   const [posts, setPosts] = useState([]);
@@ -68,6 +71,7 @@ export default function Post() {
                 className="author_profile_picture_component"
               />
               <p className='post_author_component'>{getAuthorUsername(post.author)}</p>
+
             </div>
 
             {post.image_post && (
@@ -75,14 +79,18 @@ export default function Post() {
             )}
 
             <p className='post_content_component'>{post.content}</p>
+            <p className='post_upload_date'>{formatDistanceToNow(new Date(post.upload_date), { locale: enUS })} ago</p>
+
             <div className='post_interactions'>
               <Like postId={post.id} initialLikes={post.likes.length} />
               <ViewPost_CommentsButton postId={post.id} initialComments={commentCounts[post.id] || 0}
               />
             </div>
+
           </li>
         ))}
       </div>
     </ul>
+
   );
 }

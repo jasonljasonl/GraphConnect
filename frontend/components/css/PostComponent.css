@@ -4,11 +4,17 @@ ul {
 .home_post_component {
     width: 100%;
 }
+
+.post_list_component {
+    padding-bottom:16px;
+    border-bottom: 0.5px solid grey;
+}
+
 .post_list_component,.author_component {
     margin-bottom: 32px;
 }
 
-.post_content_component, .post_author_component, .author_component,.post_interactions  {
+.post_content_component, .post_author_component, .author_component,.post_interactions,.post_upload_date   {
     text-align: left;
     padding-left: 16px;
 }
@@ -26,4 +32,16 @@ ul {
     display:flex;
     justify-self:left;
     margin-top:16px;
+}
+.like_div {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-right: 16px;
+}
+
+.post_upload_date {
+    font-size:12px;
+    margin-top:8px;
+    color:grey;
 }

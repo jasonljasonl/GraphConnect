@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import IcSharpSend from "./img_component/send.jsx";
+
 
 const CommentComponent = ({ postId }) => {
   const [content, setContent] = useState("");
@@ -50,7 +52,6 @@ const CommentComponent = ({ postId }) => {
       setContent("");
       setImage(null);
 
-      // ✅ Update comment count without refreshing
       setCommentCount((prevCount) => prevCount + 1);
     } catch (error) {
       console.error("Error adding comment:", error.response?.data);
@@ -58,21 +59,29 @@ const CommentComponent = ({ postId }) => {
     }
   };
 
+
+
   return (
     <div>
-      <p>Comments: {commentCount}</p>
+        <div className='comment_div_form'>
+            <input type="file" onChange={(e) => setImage(e.target.files[0])}  src='/uploaded_images/uploaded_images/36324708-ai-genere-image-de-une-tigre-en-marchant-dans-le-foret-photo.jpg' className='comment_form_input_img' />
 
-      <form onSubmit={handleSubmit} className="form_comment">
-        <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Post a comment..."
-          required
-        />
-        <button type="submit">Send</button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-      </form>
+          <form onSubmit={handleSubmit} className="form_comment">
+
+
+
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Post a comment..."
+              required
+              className='comment_textarea'
+            />
+
+            <button type="submit" className='send_button'><IcSharpSend/></button>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+          </form>
+      </div>
     </div>
   );
 };

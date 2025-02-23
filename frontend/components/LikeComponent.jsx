@@ -63,7 +63,7 @@ const LikeComponent = ({ postId, initialLikes }) => {
     };
 
     return (
-        <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+        <div className='like_div'>
             <div onClick={handleLikeClick} disabled={loading}>
                 {isLiked ? <HealthiconsHeart color='red' /> : <HealthiconsHeart color='white' />}
             </div>

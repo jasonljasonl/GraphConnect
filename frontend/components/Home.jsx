@@ -7,20 +7,20 @@ export const Home = () => {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (!token) {
-      window.location.href = "/login"; // Redirect if not logged in
+      window.location.href = "/login";
     } else {
       (async () => {
         try {
           const { data } = await axios.get("http://127.0.0.1:8000/Home/", {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // ✅ Include token in request
+              Authorization: `Bearer ${token}`,
             },
           });
           setMessage(data.message);
         } catch (e) {
           console.log("Not authenticated", e);
-          window.location.href = "/login"; // Redirect if unauthorized
+          window.location.href = "/login";
         }
       })();
     }

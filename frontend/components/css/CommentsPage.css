@@ -16,8 +16,17 @@
 }
 
 .form_comment {
-    width:95%
+    width:100%;
+    display:flex;
 }
 .comment_span {
     color:white
+}
+.send_button {
+    background-color: #3E78B2
+}
+.comment_textarea {
+    width: 60%;
+    border-radius: 100px;
+    height: 30px;
 }
