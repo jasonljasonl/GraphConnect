@@ -5,6 +5,11 @@ import { Link } from "react-router-dom";
 import CommentComponent from '../components/CommentComponent.jsx';
 import CommentsPage from '../components/CommentsPage.jsx';
 import Like from '../components/LikeComponent.jsx';
+import Comment from '../components/img_component/comment.jsx';
+import ViewPost_CommentsButton from '../components/ViewPost_CommentsButton.jsx';
+import './css/PostComponent.css';
+import { formatDistanceToNow } from "date-fns";
+import { enUS } from "date-fns/locale";
 
 
 const PostDetail = () => {
@@ -59,6 +64,13 @@ const PostDetail = () => {
 
       <img src={post.image_post} alt='' width='100%' />
       <p className='view_post_post_description'>{post.content}</p>
+      <p className='post_upload_date'>{formatDistanceToNow(new Date(post.upload_date), { locale: enUS })} ago</p>
+
+            <div className='post_interactions'>
+              <Like postId={post.id} initialLikes={post.likes.length} />
+              <ViewPost_CommentsButton postId={post.id}
+              />
+            </div>
       <CommentComponent postId={post.id} />
       <CommentsPage postId={parseInt(postId)}/>
 

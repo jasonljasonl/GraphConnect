@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import IcSharpSend from "./img_component/send.jsx";
+import IcBaselineImage from "./img_component/image_file.jsx";
 
 
 const CommentComponent = ({ postId }) => {
@@ -8,7 +9,9 @@ const CommentComponent = ({ postId }) => {
   const [error, setError] = useState(null);
   const [image, setImage] = useState(null);
   const [commentCount, setCommentCount] = useState(0);
+  const [user, setUser] = useState(null);
 
+  // 🔹 Récupérer le nombre de commentaires
   useEffect(() => {
     const fetchCommentCount = async () => {
       try {
@@ -20,8 +23,31 @@ const CommentComponent = ({ postId }) => {
     };
 
     fetchCommentCount();
-  }, [postId]); // Re-fetch when postId changes
+  }, [postId]);
 
+  // 🔹 Récupérer l'utilisateur connecté
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) return;
+
+        const response = await axios.get("http://127.0.0.1:8000/api/connected-user/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setUser(response.data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération de l'utilisateur :", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  // 🔹 Soumettre un commentaire
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -51,7 +77,6 @@ const CommentComponent = ({ postId }) => {
       console.log("Comment added:", response.data);
       setContent("");
       setImage(null);
-
       setCommentCount((prevCount) => prevCount + 1);
     } catch (error) {
       console.error("Error adding comment:", error.response?.data);
@@ -59,29 +84,42 @@ const CommentComponent = ({ postId }) => {
     }
   };
 
-
-
   return (
-    <div>
-        <div className='comment_div_form'>
-            <input type="file" onChange={(e) => setImage(e.target.files[0])}  src='/uploaded_images/uploaded_images/36324708-ai-genere-image-de-une-tigre-en-marchant-dans-le-foret-photo.jpg' className='comment_form_input_img' />
-
-          <form onSubmit={handleSubmit} className="form_comment">
+    <div className='comment_div_form'>
 
 
 
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Post a comment..."
-              required
-              className='comment_textarea'
+      <form onSubmit={handleSubmit} className="form_comment">
+
+        {user && user.profile_picture ? (
+          <img src={`http://127.0.0.1:8000${user.profile_picture}`} alt="Profil" width="50" className='comment_author_profile_picture_component' />
+        ) : (
+          <p>Aucune photo de profil</p>
+        )}
+
+      <div className='textarea_div'>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="  Add a comment..."
+          required
+          className='comment_textarea'
+
+        />
+        <label htmlFor='file-input' className='comment_form_input_img'><IcBaselineImage/></label>
+            <input
+                type="file"
+                onChange={(e) => setImage(e.target.files[0])}
+                className='comment_form_input_img'
+                id='file-input'
             />
-
-            <button type="submit" className='send_button'><IcSharpSend/></button>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-          </form>
       </div>
+        <button type="submit" className='send_button'>
+          <IcSharpSend />
+        </button>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
+      </form>
     </div>
   );
 };

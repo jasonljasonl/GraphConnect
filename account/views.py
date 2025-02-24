@@ -6,12 +6,15 @@ from django.views import View
 from django.views.generic import ListView
 from channels.auth import login, logout
 from rest_framework import status, viewsets
+from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
+from tutorial.quickstart.serializers import UserSerializer
 
+from GraphConnectSettings.serializer import CustomUserSerializer
 from GraphConnectSettings.settings import AUTH_USER_MODEL
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from django.contrib.auth import login, authenticate, logout, user_logged_in
@@ -124,3 +127,10 @@ class UserSearchView(ListView):
         )
         return object_list
 
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_current_user_profile(request):
+    user = request.user
+    serializer = CustomUserSerializer(user)
+    return Response(serializer.data)
