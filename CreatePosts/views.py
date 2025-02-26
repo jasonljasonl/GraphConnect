@@ -1,4 +1,3 @@
-from OpenSSL.rand import status
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -97,14 +96,6 @@ class CommentsListView(ListView):
         return render(request, 'view_comment.html', {'selected_post': selected_post, 'comments':comment_list})
 
 
-class CommentLikeView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        comment = get_object_or_404(Comment, id=kwargs['pk'])
-        if request.user in comment.likes.all():
-            comment.likes.remove(request.user)
-        else:
-            comment.likes.add(request.user)
-        return redirect('post_list')
 
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -137,6 +128,30 @@ def get_comment_count(request, post_id):
     except Post.DoesNotExist:
         return JsonResponse({"error": "Post not found"}, status=404)
 
+class CommentLikeView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        comment = get_object_or_404(Comment, id=kwargs['pk'])
+        if request.user in comment.likes.all():
+            comment.likes.remove(request.user)
+        else:
+            comment.likes.add(request.user)
+        return redirect('post_list')
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Only authenticated users can like a post
+@authentication_classes([JWTAuthentication])  # Add JWT authentication
+def CommentLikeView(request,pk):
+    try:
+        comment = Comment.objects.get(id=pk)
+        if request.user in comment.likes.all():
+            comment.likes.remove(request.user)
+        else:
+            comment.likes.add(request.user)
+        comment.save()
+        return JsonResponse({'message': 'Comment liked successfully'})
+    except Comment.DoesNotExist:
+        return JsonResponse({'error': 'Comment not found'}, status=404)
 
 
 @api_view(['POST'])
@@ -177,6 +192,26 @@ def check_like_status(request, post_id):
         return Response({'error': str(e)}, status=500)
 
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+def check_comment_like_status(request, comment_id):
+    try:
+        print("Logged in user :", request.user)
+
+        comment = get_object_or_404(Comment, id=comment_id)
+        user = request.user
+
+        has_liked = comment.likes.filter(id=user.id).exists()
+
+        return Response({'liked': has_liked})
+
+    except Exception as e:
+        print("Error", str(e))
+        return Response({'error': str(e)}, status=500)
+
+
 class CommentCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -191,10 +226,30 @@ class CommentCreateAPIView(APIView):
 
 
 
+class PostCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+
 class CustomUserSerializer(serializers.ModelSerializer):
+    following = serializers.PrimaryKeyRelatedField(
+        many=True,
+        read_only=True,
+        source="user_follows"
+    )
+
     class Meta:
         model = CustomUser
-        fields = '__all__'
+        fields = ["id", "username", "email", "profile_picture", "following"]
+
+
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
@@ -213,6 +268,18 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostsSerializerView(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
+
+class FollowedPostsListView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+    authentication_classes = [JWTAuthentication]  # Use JWT authentication
+
+    def get_queryset(self):
+        # Get the current authenticated user
+        user = self.request.user
+        # Return posts from users that the current user follows
+        return Post.objects.filter(author__in=user.user_follows.all())
+
 
 class CustomUserSerializerView(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer

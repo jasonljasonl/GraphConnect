@@ -8,6 +8,7 @@ import { Logout } from "../components/Logout";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import '../components/axios';
 import ViewPostPage from '../components/ViewPostPage.jsx';
+import CreatePostComponent from '../components/CreatePostComponent.jsx';
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/posts/:postId" element={<ViewPostPage />} />
+                <Route path="/create_post" element={<CreatePostComponent />} />
             </Routes>
         </BrowserRouter>
     );

@@ -17,17 +17,17 @@ class Post(models.Model):
     def __str__(self):
         return self.content[:50]
 
-    def comment_count(self):  # ✅ Returns the number of comments on a post
+    def comment_count(self):
         return self.comment_set.count()
 
-    def like_count(self):  # ✅ Returns the number of likes on a post
+    def like_count(self):
         return self.likes.count()
 
 
 
 
 class Comment(models.Model):
-    objects = models.Manager()  # ✅ Corrected model manager
+    objects = models.Manager()
 
     image_comment = models.ImageField(upload_to='uploaded_images/', blank=True)
     content = models.TextField()

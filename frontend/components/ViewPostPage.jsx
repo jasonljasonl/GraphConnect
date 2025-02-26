@@ -62,7 +62,7 @@ const PostDetail = () => {
             <p className='post_author_component'>{getAuthorUsername(post.author)}</p>
         </div>
 
-      <img src={post.image_post} alt='' width='100%' />
+{post.image_post && <img src={post.image_post} alt='' width='100%' />}
       <p className='view_post_post_description'>{post.content}</p>
       <p className='post_upload_date'>{formatDistanceToNow(new Date(post.upload_date), { locale: enUS })} ago</p>
 

@@ -9,8 +9,10 @@ ul {
     padding-bottom:16px;
     border-bottom: 0.5px solid grey;
 }
-
-.post_list_component,.author_component {
+.post_list_div_component {
+    margin-bottom:50px;
+}
+.post_list_component {
     margin-bottom: 32px;
 }
 
@@ -37,11 +39,15 @@ ul {
     justify-self:left;
     margin-top:16px;
 }
-.like_div {
+.like_div, .comment_like_div {
     cursor: pointer;
     display: flex;
     align-items: center;
     margin-right: 16px;
+}
+.comment_like_div {
+    margin-left:16px;
+    margin-top: 8px;
 }
 
 .post_upload_date {
