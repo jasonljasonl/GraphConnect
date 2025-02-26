@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/PostComponent.css";
 import Like from "../components/LikeComponent.jsx";
-import ViewPost_CommentsButton from "../components/ViewPost_CommentsButton.jsx";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 
@@ -11,7 +10,6 @@ export default function Post() {
   const [users, setUsers] = useState([]);
   const [following, setFollowing] = useState(new Set());
   const [currentUser, setCurrentUser] = useState(null);
-  const [commentCounts, setCommentCounts] = useState({});
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -37,10 +35,25 @@ export default function Post() {
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem('access_token');
+
+    if (!token) {
+      console.error('No token found. Please login.');
+      return;
+    }
+
     axios
-      .get("http://127.0.0.1:8000/api/posts/followed-posts/")
-      .then((response) => setPosts(response.data))
-      .catch((error) => console.error("Failed to fetch posts:", error));
+      .get('http://127.0.0.1:8000/api/posts/followed-posts/', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        setPosts(response.data);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch posts:', error);
+      });
   }, []);
 
   useEffect(() => {
@@ -49,27 +62,6 @@ export default function Post() {
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Failed to fetch users:", error));
   }, []);
-
-  useEffect(() => {
-    const fetchCommentCounts = async () => {
-      const counts = {};
-      await Promise.all(
-        posts.map(async (post) => {
-          try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/posts/${post.id}/comment_count/`);
-            counts[post.id] = response.data.count;
-          } catch (error) {
-            console.error("Failed to fetch comment count:", error);
-          }
-        })
-      );
-      setCommentCounts(counts);
-    };
-
-    if (posts.length > 0) {
-      fetchCommentCounts();
-    }
-  }, [posts]);
 
   const getAuthorUsername = (authorId) => {
     const user = users.find((user) => user.id === authorId);
@@ -80,7 +72,6 @@ export default function Post() {
     const user = users.find((user) => user.id === authorId);
     return user ? user.profile_picture : "/default-profile.png";
   };
-
 
   return (
     <ul>
@@ -109,14 +100,9 @@ export default function Post() {
 
                 <div className="post_interactions">
                   <Like postId={post.id} initialLikes={post.likes.length} />
-                  <ViewPost_CommentsButton
-                    postId={post.id}
-                    initialComments={commentCounts[post.id] || 0}
-                  />
                 </div>
               </li>
             ))}
-
           </div>
         </ul>
       </div>

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -275,10 +276,8 @@ class FollowedPostsListView(generics.ListAPIView):
     authentication_classes = [JWTAuthentication]  # Use JWT authentication
 
     def get_queryset(self):
-        # Get the current authenticated user
         user = self.request.user
-        # Return posts from users that the current user follows
-        return Post.objects.filter(author__in=user.user_follows.all())
+        return Post.objects.filter(Q(author__in=user.user_follows.all()) | Q(author=user))
 
 
 class CustomUserSerializerView(viewsets.ModelViewSet):
