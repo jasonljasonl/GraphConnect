@@ -10,12 +10,9 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
-from tutorial.quickstart.serializers import UserSerializer
 
 from GraphConnectSettings.serializer import CustomUserSerializer
-from GraphConnectSettings.settings import AUTH_USER_MODEL
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from django.contrib.auth import login, authenticate, logout, user_logged_in
 
@@ -115,17 +112,15 @@ class UserFollowView(LoginRequiredMixin, View):
         return redirect('customuser_list')
 
 
-class UserSearchView(ListView):
-    model = CustomUser
-    template_name = 'customuser_list.html'
-    context_object_name = 'CustomUser'
+class UserSearchAPIView(APIView):
+    def get(self, request):
+        query = request.GET.get("q", "")
+        if query:
+            users = CustomUser.objects.filter(Q(name__icontains=query))
+            serializer = CustomUserSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"message": "No query provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_queryset(self):  # new
-        query = self.request.GET.get("q")
-        object_list = CustomUser.objects.filter(
-            Q(name__icontains=query)
-        )
-        return object_list
 
 
 @api_view(["GET"])

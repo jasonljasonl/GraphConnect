@@ -22,13 +22,15 @@ from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 from CreatePosts import views
 from CreatePosts.views import check_like_status, CommentCreateAPIView, PostDetailSerializerView, get_comment_count, \
-    check_comment_like_status, PostCreateAPIView, FollowedPostsListView
-from account.views import get_current_user_profile
+    check_comment_like_status, PostCreateAPIView, FollowedPostsListView, MessageViewSet, FollowedUserListView
+from account.views import get_current_user_profile, UserSearchAPIView
 
 router = routers.DefaultRouter()
 router.register(r'postsList', views.PostsSerializerView, 'postsList')
 router.register(r'account', views.CustomUserSerializerView, 'account')
 router.register(r'commentsList', views.CommentsSerializerView, 'commentsList')
+router.register(r'messagesList', views.MessageViewSet, 'messagesList')
+router.register(r'chat/messages', MessageViewSet, basename='chat_messages')
 
 
 urlpatterns = [
@@ -46,6 +48,10 @@ urlpatterns = [
     path('api/posts/<int:post_id>/comment_count/', get_comment_count, name='comment_count'),
     path('api/connected-user/', get_current_user_profile, name='current_user_profile'),
     path('api/posts/followed-posts/', FollowedPostsListView.as_view(), name='followed_posts'),
+    path('api/user/followed-users/', FollowedUserListView.as_view(), name='followed_users'),
+    path('api/chat/messages/<int:recipient_id>/', MessageViewSet.as_view({'get': 'list'}),name='messages-by-recipient'),
+    path('api/chat/messages/', MessageViewSet.as_view({'post': 'create'}), name='messages-create'),
+    path('api/search/', UserSearchAPIView.as_view(), name='user-search'),
 
     path('token/',jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/',jwt_views.TokenRefreshView.as_view(),name='token_refresh')

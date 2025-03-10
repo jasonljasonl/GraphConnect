@@ -18,10 +18,10 @@ export function NavBar() {
      return (
       <div>
         <Navbar bg="dark" variant="dark" className='app_navbar'>
-          <Nav className="me-auto">{isAuth ? <Nav.Link href="/"> <IcRoundHome color='white'/> </Nav.Link> : null}</Nav>
+          <Nav className="me-auto"><Nav.Link href="/"> <IcRoundHome color='white'/> </Nav.Link></Nav>
           <Nav><Nav.Link href="/search"> <IcOutlineSearch color='white'/> </Nav.Link></Nav>
           <Nav><Nav.Link href="/create_post"> <IcBaselinePlus color='white'/> </Nav.Link></Nav>
-          <Nav><Nav.Link href="/message"> <IcRoundMailOutline color='white'/> </Nav.Link></Nav>
+          <Nav><Nav.Link href="/messages"> <IcRoundMailOutline color='white'/> </Nav.Link></Nav>
           <Nav>{isAuth ? <Nav.Link href="/logout">Logout</Nav.Link> : <Nav.Link href="/login">Login</Nav.Link>}</Nav>
         </Navbar>
        </div>

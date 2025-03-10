@@ -9,19 +9,16 @@ from django.db.models import Q
 CustomUser = get_user_model()
 
 
-# 📌 Récupérer un utilisateur par son ID (asynchrone)
 @database_sync_to_async
 def get_user(user_id):
     return CustomUser.objects.filter(id=user_id).first()
 
 
-# 📌 Récupérer un destinataire par son ID (asynchrone)
 @database_sync_to_async
 def get_recipient(recipient_id):
     return CustomUser.objects.filter(id=recipient_id).first()
 
 
-# 📌 Sauvegarder un message (asynchrone)
 @database_sync_to_async
 def create_chat(sender_id, recipient_id, message):
     sender = CustomUser.objects.get(id=sender_id)
@@ -29,7 +26,6 @@ def create_chat(sender_id, recipient_id, message):
     return Message.objects.create(content=message, message_sender=sender, message_recipient=recipient)
 
 
-# 📌 Récupérer les messages entre deux utilisateurs (asynchrone)
 @database_sync_to_async
 def get_chat_messages(sender_id, recipient_id):
     return list(
@@ -45,16 +41,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f'chat_{self.room_name}'
-        self.user = self.scope['user']  # L'utilisateur connecté
+        self.user = self.scope['user']
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
-        # 🔥 Charger les anciens messages au moment de la connexion
         recipient_id = int(self.room_name)  # ID de l'autre utilisateur
         messages = await get_chat_messages(self.user.id, recipient_id)
 
-        # 🔄 Envoyer les anciens messages au client
         for msg in messages:
             await self.send(text_data=json.dumps({
                 'sender': msg["message_sender_id"],
@@ -100,10 +94,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event['message']
         recipient = event['recipient']
 
-        # 🔥 Sauvegarder le message (asynchrone)
         await create_chat(sender, recipient, message)
 
-        # 🔄 Envoyer le message au client WebSocket
         await self.send(text_data=json.dumps({
             'sender': sender,
             'recipient': recipient,

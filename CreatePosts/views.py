@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, get_list_or_404
@@ -11,10 +13,11 @@ from rest_framework.reverse import reverse_lazy
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from chat_system.models import Message
 from .models import Post, Comment
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
-from rest_framework import viewsets, serializers, generics
+from rest_framework import viewsets, serializers, generics, permissions, status
 
 from CreatePosts.models import Post
 from account.models import CustomUser
@@ -50,8 +53,6 @@ class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     def test_func(self, **kwargs):
         post = self.get_object()
         return self.request.user == post.author
-
-
 
 
 
@@ -272,12 +273,26 @@ class PostsSerializerView(viewsets.ModelViewSet):
 
 class FollowedPostsListView(generics.ListAPIView):
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
-    authentication_classes = [JWTAuthentication]  # Use JWT authentication
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get_queryset(self):
         user = self.request.user
         return Post.objects.filter(Q(author__in=user.user_follows.all()) | Q(author=user))
+
+
+
+class FollowedUserListView(generics.ListAPIView):
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def get_queryset(self):
+        user = self.request.user
+        followed_users_ids = user.user_follows.values_list("id", flat=True)
+        return CustomUser.objects.filter(Q(id__in=followed_users_ids) | Q(id=user.id))
+
+
 
 
 class CustomUserSerializerView(viewsets.ModelViewSet):
@@ -294,3 +309,57 @@ class PostDetailSerializerView(generics.RetrieveAPIView):
     serializer_class = PostSerializer
     lookup_field = 'id'
 
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['id', 'message_sender', 'message_recipient', 'content', 'send_date']
+
+
+
+
+class MessageViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, recipient_id=None):
+        user = request.user
+
+        if recipient_id is not None:
+            queryset = Message.objects.filter(
+                (Q(message_sender=user) & Q(message_recipient_id=recipient_id)) |
+                (Q(message_sender_id=recipient_id) & Q(message_recipient=user))
+            )
+        else:
+            queryset = Message.objects.filter(
+                Q(message_sender=user) | Q(message_recipient=user)
+            )
+
+        if queryset.exists():
+            serializer = MessageSerializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            return Response([], status=status.HTTP_200_OK)
+
+
+    def create(self, request):
+        user = request.user
+
+        recipient_id = request.data.get('recipient_id')
+        content = request.data.get('content')
+
+        if not recipient_id or not content:
+            return Response(
+                {'error': 'recipient_id and content are required fields'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        message = Message(
+            message_sender=user,
+            message_recipient_id=recipient_id,
+            content=content,
+            send_date=datetime.now(),
+        )
+
+        message.save()
+
+        serializer = MessageSerializer(message)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

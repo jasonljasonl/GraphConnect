@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/PostComponent.css";
 import Like from "../components/LikeComponent.jsx";
+import ViewPost_CommentsButton from "../components/ViewPost_CommentsButton.jsx";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 
 export default function Post() {
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
+  const [commentCounts, setCommentCounts] = useState({});
   const [following, setFollowing] = useState(new Set());
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -57,6 +59,25 @@ export default function Post() {
   }, []);
 
   useEffect(() => {
+    const fetchCommentCounts = async () => {
+      const counts = {};
+      for (const post of posts) {
+        try {
+          const response = await axios.get(`http://127.0.0.1:8000/api/posts/${post.id}/comment_count/`);
+          counts[post.id] = response.data.count;
+        } catch (error) {
+          console.error("Failed to fetch comment count for post:", post.id, error);
+        }
+      }
+      setCommentCounts(counts);
+    };
+
+    if (posts.length > 0) {
+      fetchCommentCounts();
+    }
+  }, [posts]);
+
+  useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/api/account/")
       .then((response) => setUsers(response.data))
@@ -100,6 +121,10 @@ export default function Post() {
 
                 <div className="post_interactions">
                   <Like postId={post.id} initialLikes={post.likes.length} />
+                  <ViewPost_CommentsButton
+                    postId={post.id}
+                    initialComments={commentCounts[post.id] || 0}
+                  />
                 </div>
               </li>
             ))}

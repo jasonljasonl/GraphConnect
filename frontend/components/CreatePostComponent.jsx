@@ -3,6 +3,7 @@ import axios from "axios";
 import IcSharpSend from "./img_component/send.jsx";
 import IcBaselineImage from "./img_component/image_file.jsx";
 import './css/CreatePostPage.css';
+import { useNavigate } from "react-router-dom";
 
 
 const CreatePostComponent = () => {
@@ -10,6 +11,8 @@ const CreatePostComponent = () => {
   const [error, setError] = useState(null);
   const [image, setImage] = useState(null);
   const [user, setUser] = useState(null);
+
+    const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -63,6 +66,7 @@ const CreatePostComponent = () => {
       console.log("Post added:", response.data);
       setContent("");
       setImage(null);
+      navigate(`/`);
     } catch (error) {
       console.error("Error creating post:", error.response?.data);
       setError("Failed to create post. Try again.");
@@ -102,7 +106,6 @@ const CreatePostComponent = () => {
         <button type="submit" className='send_button'>
           Post
         </button>
-
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
     </div>

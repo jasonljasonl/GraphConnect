@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-from .views import users_list, UserFollowView, UserSearchView
+from .views import users_list, UserFollowView
 
 urlpatterns = [
     path("register/", views.register, name="register"),
@@ -10,7 +10,6 @@ urlpatterns = [
 
     path("success/", views.success, name="success"),
     path("customusers_list/", users_list.as_view(), name="customuser_list"),
-    path("search/", UserSearchView.as_view(), name="search"),
     path('<int:pk>/follows/', UserFollowView.as_view(), name='customuser_follows'),
 
 ]

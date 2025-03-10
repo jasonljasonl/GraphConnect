@@ -2,10 +2,11 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 
+from CreatePosts.views import MessageSerializer
 from account import models
-from chat_system.models import Message
 from account.models import CustomUser
-
+from rest_framework import serializers, generics, permissions, viewsets
+from chat_system.models import Message
 
 # Create your views here.
 def index(request):
@@ -28,6 +29,8 @@ class UserChattingView(LoginRequiredMixin, View):
         return render(request, 'chat/room.html', {
             'room_name': user.id,
             'recipient': recipient,
-            'messages': messages,  # On envoie les messages au template
+            'messages': messages,
         })
+
+
 
