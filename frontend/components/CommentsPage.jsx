@@ -5,11 +5,14 @@ import './css/CommentsPage.css';
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 import CommentLikeComponent from '../components/CommentLikeComponent.jsx';
+import { useNavigate } from "react-router-dom";
 
 
 export default function CommentsList({ postId }) {
     const [comments, setComments] = useState([]);
     const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/commentsList/')
@@ -52,7 +55,7 @@ export default function CommentsList({ postId }) {
                                 <div className='author_component'>
                                     <img src={getAuthorProfilePicture(comment.author)} alt="" className="author_profile_picture_component" />
 
-                                    <p className='post_author_component'>{getAuthorUsername(comment.author)}</p>
+                                    <p onClick={() => navigate(`/profile/${getAuthorUsername(comment.author)}`)} className='post_author_component'>{getAuthorUsername(comment.author)}</p>
                                     <p className='comment_upload_date'>- {formatDistanceToNow(new Date(comment.upload_date), { locale: enUS })} ago</p>
 
                                 </div>

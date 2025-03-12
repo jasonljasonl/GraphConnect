@@ -5,6 +5,8 @@ import Like from "../components/LikeComponent.jsx";
 import ViewPost_CommentsButton from "../components/ViewPost_CommentsButton.jsx";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Post() {
   const [posts, setPosts] = useState([]);
@@ -12,6 +14,7 @@ export default function Post() {
   const [commentCounts, setCommentCounts] = useState({});
   const [following, setFollowing] = useState(new Set());
   const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -107,7 +110,8 @@ export default function Post() {
                     alt=""
                     className="author_profile_picture_component"
                   />
-                  <p className="post_author_component">{getAuthorUsername(post.author)}</p>
+
+                  <p onClick={() => navigate(`/profile/${getAuthorUsername(post.author)}`)} className="post_author_component">{getAuthorUsername(post.author)}</p>
                 </div>
 
                 {post.image_post && (

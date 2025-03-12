@@ -1,9 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const navigate = useNavigate();
 
   const handleSearch = async (e) => {
     const value = e.target.value;
@@ -31,7 +34,7 @@ const SearchBar = () => {
       />
       <ul>
         {results.map((user) => (
-          <li key={user.id}>{user.name}</li>
+          <li key={user.id} onClick={() => navigate(`/profile/${user.username}`)} >{user.username}</li>
         ))}
       </ul>
     </div>

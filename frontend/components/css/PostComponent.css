@@ -6,15 +6,14 @@ ul {
 }
 
 .post_list_component {
+    margin-bottom: 16px;
     padding-bottom:16px;
     border-bottom: 0.5px solid grey;
 }
 .post_list_div_component {
     margin-bottom:50px;
 }
-.post_list_component {
-    margin-bottom: 32px;
-}
+
 
 .post_content_component, .post_author_component, .author_component,.post_interactions,.post_upload_date   {
     text-align: left;
