@@ -1,0 +1,7 @@
+<h1>Confirmer la suppression</h1>
+<p>Voulez-vous vraiment supprimer ce post: "{{ object.content }}" ?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Oui, supprimer</button>
+</form>
+<a href="{% url 'post_list' %}">Annuler</a>

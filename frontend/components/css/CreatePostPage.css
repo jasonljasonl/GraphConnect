@@ -1,0 +1,15 @@
+.create_post_textarea {
+    width: 100%;
+    height: 20vh;
+    border: 0;
+    border-bottom: 1px solid grey;
+    background-color : #242424;
+    outline: none;
+}
+
+.create_post_form_input_img {
+    display:none;
+}
+.post_author_profile_picture_component {
+    width: 20%;
+}
