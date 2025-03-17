@@ -4,6 +4,7 @@
     display:flex;
     border-bottom: 1px solid grey;
     margin-bottom: 16px;
+    padding: 8px 0 8px 0;
 }
 .profile-picture {
     width: 80px;
@@ -35,4 +36,22 @@
 }
 .user_interactions_buttons {
     display:flex;
+}
+.update_profile_button {
+    width: 60%;
+    text-align: center;
+    border-radius: 16px;
+    background-color: #3E78B2;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.post-menu {
+    display: inline-block;
+    margin-left: auto;
+    padding-right:16px;
+}
+.post-menu-dropdown {
+    position: absolute;
+    right: 0;
 }

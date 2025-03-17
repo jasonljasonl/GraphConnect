@@ -22,8 +22,9 @@ from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 from CreatePosts import views
 from CreatePosts.views import check_like_status, CommentCreateAPIView, PostDetailSerializerView, get_comment_count, \
-    check_comment_like_status, PostCreateAPIView, FollowedPostsListView, MessageViewSet, FollowedUserListView
-from account.views import get_current_user_profile, UserSearchAPIView
+    check_comment_like_status, PostCreateAPIView, FollowedPostsListView, MessageViewSet, FollowedUserListView, \
+    user_posts_api, delete_post_api
+from account.views import get_current_user_profile, UserSearchAPIView, update_user_profile
 
 router = routers.DefaultRouter()
 router.register(r'postsList', views.PostsSerializerView, 'postsList')
@@ -52,6 +53,10 @@ urlpatterns = [
     path('api/chat/messages/<int:recipient_id>/', MessageViewSet.as_view({'get': 'list'}),name='messages-by-recipient'),
     path('api/chat/messages/', MessageViewSet.as_view({'post': 'create'}), name='messages-create'),
     path('api/search/', UserSearchAPIView.as_view(), name='user-search'),
+    path('api/profile/<str:username>/', user_posts_api, name='user-posts-api'),
+    path('api/posts/<int:pk>/delete/', delete_post_api, name='post_delete'),
+    path('account/update', update_user_profile, name='update_user_profile'),
+
 
     path('token/',jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/',jwt_views.TokenRefreshView.as_view(),name='token_refresh')

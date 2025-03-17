@@ -15,6 +15,8 @@ export default function Post() {
   const [following, setFollowing] = useState(new Set());
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(null);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -97,6 +99,36 @@ export default function Post() {
     return user ? user.profile_picture : "/default-profile.png";
   };
 
+
+    const handleDeletePost = async (postId) => {
+        if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+        try {
+            const token = localStorage.getItem("access_token");
+            if (!token) {
+                alert("You need to be logged in to delete a post.");
+                return;
+            }
+
+            await axios.delete(`http://127.0.0.1:8000/api/posts/${postId}/delete/`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+
+
+            alert("Post deleted successfully!");
+        } catch (error) {
+            console.error("Error deleting post:", error.response?.data || error.message);
+            alert("Something went wrong while deleting the post.");
+        }
+    };
+
+
+    const toggleDropdown = (postId) => {
+        setDropdownOpen(dropdownOpen === postId ? null : postId);
+    };
+
+
   return (
     <ul>
       <div className="post_list_div_component">
@@ -112,6 +144,22 @@ export default function Post() {
                   />
 
                   <p onClick={() => navigate(`/profile/${getAuthorUsername(post.author)}`)} className="post_author_component">{getAuthorUsername(post.author)}</p>
+
+
+                    {currentUser && currentUser.id === post.author && (
+                        <div className="post-menu">
+                            <button className="post-menu-button" onClick={() => toggleDropdown(post.id)}>
+                                ...
+                            </button>
+                            {dropdownOpen === post.id && (
+                                <div className="post-menu-dropdown">
+                                    <button onClick={() => handleDeletePost(post.id)} className="delete-post-button">
+                                        Delete
+                                    </button>
+                                </div>
+                            )}
+                    </div>
+                )}
                 </div>
 
                 {post.image_post && (
@@ -130,6 +178,7 @@ export default function Post() {
                     initialComments={commentCounts[post.id] || 0}
                   />
                 </div>
+
               </li>
             ))}
           </div>

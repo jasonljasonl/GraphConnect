@@ -14,7 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from GraphConnectSettings.serializer import CustomUserSerializer
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
-from django.contrib.auth import login, authenticate, logout, user_logged_in
+from django.contrib.auth import login, authenticate, logout
 
 from .models import CustomUser
 
@@ -112,6 +112,7 @@ class UserFollowView(LoginRequiredMixin, View):
         return redirect('customuser_list')
 
 
+
 class UserSearchAPIView(APIView):
     def get(self, request):
         query = request.GET.get("q", "")
@@ -129,3 +130,19 @@ def get_current_user_profile(request):
     user = request.user
     serializer = CustomUserSerializer(user)
     return Response(serializer.data)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_user_profile(request):
+    user = request.user
+    serializer = CustomUserSerializer(user, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        if 'profile_picture' in request.FILES:
+            user.profile_picture = request.FILES['profile_picture']
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

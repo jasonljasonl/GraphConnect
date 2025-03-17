@@ -14,7 +14,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from chat_system.models import Message
-from .models import Post, Comment
+from .models import Comment
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from rest_framework import viewsets, serializers, generics, permissions, status
@@ -45,14 +45,17 @@ class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
             return self.request.user == post.author
 
 
-class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
-    model = Post
-    template_name = 'post_confirm_delete.html'
-    success_url = reverse_lazy('post_list')
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+def delete_post_api(request, pk):
+    post = get_object_or_404(Post, pk=pk)
 
-    def test_func(self, **kwargs):
-        post = self.get_object()
-        return self.request.user == post.author
+    if request.user != post.author:
+        return Response({'error': 'You do not have permission to delete this post'}, status=status.HTTP_403_FORBIDDEN)
+
+    post.delete()
+    return Response({'message': 'Post deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
 
@@ -175,6 +178,24 @@ def PostLikeView(request, pk):  # Use 'pk' here
         return JsonResponse({'error': 'Post not found'}, status=404)
 
 
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Only authenticated users can like a post
+@authentication_classes([JWTAuthentication])  # Add JWT authentication
+def FollowUserView(request, username):  # Use 'pk' here
+    try:
+        user = get_object_or_404(CustomUser, username=username)
+
+        if request.user in user.user_follows.all():
+            user.user_follows.remove(request.user)
+        else:
+            user.user_follows.add(request.user)
+        return JsonResponse({'message': 'User followed'})
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
@@ -278,7 +299,7 @@ class FollowedPostsListView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Post.objects.filter(Q(author__in=user.user_follows.all()) | Q(author=user))
+        return Post.objects.filter(Q(author__in=user.follows.all()) | Q(author=user))
 
 
 
@@ -289,7 +310,7 @@ class FollowedUserListView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        followed_users_ids = user.user_follows.values_list("id", flat=True)
+        followed_users_ids = user.follows.values_list("id", flat=True)
         return CustomUser.objects.filter(Q(id__in=followed_users_ids) | Q(id=user.id))
 
 
@@ -363,3 +384,21 @@ class MessageViewSet(viewsets.ViewSet):
 
         serializer = MessageSerializer(message)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+def user_posts_api(request, username):
+    user = get_object_or_404(CustomUser, username=username)
+    posts = Post.objects.filter(author=user).values(
+        'id', 'content', 'image_post', 'upload_date')
+    following = list(user.user_follows.values('id', 'username'))
+    followers = list(user.follows.values('id', 'username'))
+    data = {
+        'id': user.id,
+        'username': user.username,
+        'profile_picture': user.profile_picture.url if user.profile_picture else None,
+        'posts': list(posts),
+        'followers': followers,
+        'following': following
+    }
+    return JsonResponse(data)

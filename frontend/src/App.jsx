@@ -13,7 +13,7 @@ import MessagePage from '../components/MessagePage.jsx';
 import UserMessage from '../components/UserMessage.jsx';
 import SearchBar from '../components/SearchBar.jsx'
 import ProfilePage from '../components/ProfilePage.jsx'
-
+import UserProfileUpdate from '../components/UserProfileUpdate.jsx'
 
 function App() {
     return (
@@ -28,7 +28,9 @@ function App() {
                 <Route path="/messages" element={<MessagePage />} />
                 <Route path="/messages/:recipientId" element={<UserMessage />} />
                 <Route path="/search" element={<SearchBar />} />
+                <Route path="/account/update/" element={<UserProfileUpdate />} />
                 <Route path="/profile/:username" element={<ProfilePage />} />
+
             </Routes>
         </BrowserRouter>
     );
