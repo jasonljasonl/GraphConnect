@@ -29,7 +29,7 @@ const CreatePostComponent = () => {
 
         setUser(response.data);
       } catch (error) {
-        console.error("Erreur lors de la récupération de l'utilisateur :", error);
+        console.error("Error :", error);
       }
     };
 
@@ -51,10 +51,18 @@ const CreatePostComponent = () => {
     formData.append("author", user.id);
     if (image) formData.append("image_post", image);
 
-    try {
-      const response = await axios.post(
-        `http://127.0.0.1:8000/api/posts/create_post/`,
-        formData,
+
+
+
+try {
+    let imageUrl = null;
+    if (image) {
+      const imageFormData = new FormData();
+      imageFormData.append("file", image);
+
+      const imageResponse = await axios.post(
+        `http://127.0.0.1:8000/api/storage_uploads/`,
+        imageFormData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -63,16 +71,32 @@ const CreatePostComponent = () => {
         }
       );
 
-      console.log("Post added:", response.data);
-      setContent("");
-      setImage(null);
-      navigate(`/`);
-    } catch (error) {
-      console.error("Error creating post:", error.response?.data);
-      setError("Failed to create post. Try again.");
+      console.log("Image uploaded:", imageResponse.data);
+      imageUrl = imageResponse.data.file_url;
     }
-  };
 
+    if (imageUrl) formData.append("image_post", imageUrl);
+
+    const response = await axios.post(
+      `http://127.0.0.1:8000/api/posts/create_post/`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    console.log("Post added:", response.data);
+    setContent("");
+    setImage(null);
+    navigate(`/`);
+  } catch (error) {
+    console.error("Error creating post:", error.response?.data);
+    setError("Failed to create post. Try again.");
+  }
+};
   return (
     <div className='post_div_form'>
 

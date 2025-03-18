@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse_lazy
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from google.cloud import storage
 
 from chat_system.models import Message
 from .models import Comment
@@ -402,3 +403,20 @@ def user_posts_api(request, username):
         'following': following
     }
     return JsonResponse(data)
+
+
+
+@api_view(['POST'])
+def upload_file_to_storage(request):
+    if 'file' not in request.FILES:
+        return Response({'error': 'no files sended'}, status=status.HTTP_400_BAD_REQUEST)
+
+    uploaded_file = request.FILES['file']
+
+    client = storage.Client()
+    bucket = client.bucket('graph-connect_bucket')
+
+    blob = bucket.blob(uploaded_file.name)
+    blob.upload_from_file(uploaded_file)
+
+    return Response({'message': 'file successfully sended'}, status=status.HTTP_200_OK)
