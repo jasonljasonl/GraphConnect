@@ -5,15 +5,14 @@ import IcBaselineImage from "./img_component/image_file.jsx";
 import './css/CreatePostPage.css';
 import { useNavigate } from "react-router-dom";
 
-
 const CreatePostComponent = () => {
   const [content, setContent] = useState("");
   const [error, setError] = useState(null);
   const [image, setImage] = useState(null);
   const [user, setUser] = useState(null);
+  const [labels, setLabels] = useState([]);
 
-    const navigate = useNavigate();
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -29,7 +28,7 @@ const CreatePostComponent = () => {
 
         setUser(response.data);
       } catch (error) {
-        console.error("Error :", error);
+        console.error("Error:", error);
       }
     };
 
@@ -51,18 +50,52 @@ const CreatePostComponent = () => {
     formData.append("author", user.id);
     if (image) formData.append("image_post", image);
 
+    try {
+      let imageUrl = null;
 
+      if (image) {
+        const imageFormData = new FormData();
+        imageFormData.append("file", image);
 
+        const imageResponse = await axios.post(
+          `http://127.0.0.1:8000/api/storage_uploads/`,
+          imageFormData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
-try {
-    let imageUrl = null;
-    if (image) {
-      const imageFormData = new FormData();
-      imageFormData.append("file", image);
+        console.log("Image uploaded:", imageResponse.data);
+        imageUrl = imageResponse.data.file_url;
+        console.log(imageUrl);
+      }
 
-      const imageResponse = await axios.post(
-        `http://127.0.0.1:8000/api/storage_uploads/`,
-        imageFormData,
+      const visionResponse = await fetch('http://localhost:8000/api/image_vision/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ file_url: imageUrl }),
+      });
+
+      const data = await visionResponse.json();
+
+      if (visionResponse.ok) {
+        setLabels(data.labels);
+          console.log("Detected Labels:", data.labels);
+        setError('');
+      } else {
+        setError(data.error || 'Something went wrong');
+      }
+
+      if (imageUrl) formData.append("image_post", imageUrl);
+
+      const postResponse = await axios.post(
+        `http://127.0.0.1:8000/api/posts/create_post/`,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -71,63 +104,50 @@ try {
         }
       );
 
-      console.log("Image uploaded:", imageResponse.data);
-      imageUrl = imageResponse.data.file_url;
+      console.log("Post added:", postResponse.data);
+
+      setContent("");
+      setImage(null);
+      navigate(`/`);
+    } catch (error) {
+      console.error("Error creating post:", error.response?.data);
+      setError("Failed to create post. Try again.");
     }
+  };
 
-    if (imageUrl) formData.append("image_post", imageUrl);
-
-    const response = await axios.post(
-      `http://127.0.0.1:8000/api/posts/create_post/`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-
-    console.log("Post added:", response.data);
-    setContent("");
-    setImage(null);
-    navigate(`/`);
-  } catch (error) {
-    console.error("Error creating post:", error.response?.data);
-    setError("Failed to create post. Try again.");
-  }
-};
   return (
-    <div className='post_div_form'>
-
-
-
+    <div className="post_div_form">
       <form onSubmit={handleSubmit} className="form_post">
-
         {user && user.profile_picture ? (
-          <img src={`http://127.0.0.1:8000${user.profile_picture}`} alt="Profil" width="50" className='post_author_profile_picture_component' />
+          <img
+            src={`http://127.0.0.1:8000${user.profile_picture}`}
+            alt="Profil"
+            width="50"
+            className="post_author_profile_picture_component"
+          />
         ) : (
           <p>Aucune photo de profil</p>
         )}
 
-      <div className='create_post_textarea_div'>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="  Add a post..."
-          required
-          className='create_post_textarea'
-
-        />
-        <label htmlFor='file-input' className='post_form_input_img'><IcBaselineImage/></label>
-            <input
-                type="file"
-                onChange={(e) => setImage(e.target.files[0])}
-                className='create_post_form_input_img'
-                id='file-input'
-            />
-      </div>
-        <button type="submit" className='send_button'>
+        <div className="create_post_textarea_div">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Add a post..."
+            required
+            className="create_post_textarea"
+          />
+          <label htmlFor="file-input" className="post_form_input_img">
+            <IcBaselineImage />
+          </label>
+          <input
+            type="file"
+            onChange={(e) => setImage(e.target.files[0])}
+            className="create_post_form_input_img"
+            id="file-input"
+          />
+        </div>
+        <button type="submit" className="send_button">
           Post
         </button>
         {error && <p style={{ color: "red" }}>{error}</p>}

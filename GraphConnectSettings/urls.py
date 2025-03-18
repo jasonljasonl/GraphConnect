@@ -57,6 +57,7 @@ urlpatterns = [
     path('api/posts/<int:pk>/delete/', delete_post_api, name='post_delete'),
     path('account/update', update_user_profile, name='update_user_profile'),
     path('api/storage_uploads/', views.upload_file_to_storage, name='storage_uploads'),
+    path('api/image_vision/', views.file_used_for_vision, name='file_for_vision'),
 
 
     path('token/',jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),

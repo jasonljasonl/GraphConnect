@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse_lazy
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from google.cloud import storage
+from google.cloud import storage, vision
 
 from chat_system.models import Message
 from .models import Comment
@@ -405,18 +405,52 @@ def user_posts_api(request, username):
     return JsonResponse(data)
 
 
-
 @api_view(['POST'])
 def upload_file_to_storage(request):
-    if 'file' not in request.FILES:
-        return Response({'error': 'no files sended'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        if 'file' not in request.FILES:
+            return Response({'error': 'No files sent'}, status=status.HTTP_400_BAD_REQUEST)
 
-    uploaded_file = request.FILES['file']
+        uploaded_file = request.FILES['file']
 
-    client = storage.Client()
-    bucket = client.bucket('graph-connect_bucket')
+        client = storage.Client()
+        bucket = client.bucket('graph-connect_bucket')
 
-    blob = bucket.blob(uploaded_file.name)
-    blob.upload_from_file(uploaded_file)
+        blob = bucket.blob(uploaded_file.name)
+        blob.upload_from_file(uploaded_file)
 
-    return Response({'message': 'file successfully sended'}, status=status.HTTP_200_OK)
+        file_url = f"https://storage.googleapis.com/{bucket.name}/{blob.name}"
+
+        return Response({'message': 'File successfully uploaded', 'file_url': file_url}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+def file_used_for_vision(request):
+    """Provides a quick start example for Cloud Vision."""
+
+    client = vision.ImageAnnotatorClient()
+
+    file_url = request.data.get('file_url')
+
+    if not file_url:
+        return Response({"error": "No file URL provided."}, status=400)
+
+    image = vision.Image()
+    image.source.image_uri = file_url
+
+    try:
+        response = client.label_detection(image=image)
+
+        if response.error.message:
+            raise Exception(f"Vision API Error: {response.error.message}")
+
+        labels = response.label_annotations
+        label_descriptions = [label.description for label in labels] if labels else []
+
+        return Response({"labels": label_descriptions}, status=200)
+
+    except Exception as e:
+        return Response({"error": f"Vision processing failed: {str(e)}"}, status=500)

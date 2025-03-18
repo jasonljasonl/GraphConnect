@@ -1,22 +1,27 @@
 from google.cloud import vision
 
 def run_quickstart():
+    """Provides a quick start example for Cloud Vision."""
 
+    # Instantiates a client
     client = vision.ImageAnnotatorClient()
 
-    image_path = "../../uploaded_images/uploaded_images/img.jpg"
-    with open(image_path, "rb") as image_file:
-        content = image_file.read()
+    # The URI of the image file to annotate
+    file_uri = "gs://graph-connect_bucket/Screenshot 2025-03-10 at 12.09.27.png"
 
-    image = vision.Image(content=content)
+    image = vision.Image()
+    image.source.image_uri = file_uri
 
+    # Performs label detection on the image file
     response = client.label_detection(image=image)
 
+    # Check for errors
     if response.error.message:
         print(f"API Error: {response.error.message}")
         return
 
     labels = response.label_annotations
+
     if not labels:
         print("No labels detected.")
         return
