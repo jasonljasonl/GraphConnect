@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.conf import settings
 from django.db.models import CASCADE, ForeignKey
@@ -6,13 +7,14 @@ from django.http import JsonResponse
 
 # Create your models here.
 class Post(models.Model):
-    objects = models.Manager()  # ✅ Corrected model manager
+    objects = models.Manager()
 
     image_post = models.ImageField(upload_to='uploaded_images/', blank=True)
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     upload_date = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_posts", blank=True)
+    labels = ArrayField(models.CharField(max_length=255), default=list)
 
     def __str__(self):
         return self.content[:50]

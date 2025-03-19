@@ -391,7 +391,7 @@ class MessageViewSet(viewsets.ViewSet):
 def user_posts_api(request, username):
     user = get_object_or_404(CustomUser, username=username)
     posts = Post.objects.filter(author=user).values(
-        'id', 'content', 'image_post', 'upload_date')
+        'id', 'content', 'image_post', 'upload_date','labels')
     following = list(user.user_follows.values('id', 'username'))
     followers = list(user.follows.values('id', 'username'))
     data = {

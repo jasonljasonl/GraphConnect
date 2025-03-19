@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "graphconnect",
+  "private_key_id": "17d14f66b83bec70ccb9a4a4ae2c444507cbcbda",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC0Q7Mo9B3Ksf7D\nmpgw2EueNaQNDWpmcRKWNIfcKgMy57Z0rD/Ufvma7PmP5v8ym5g96pPOxJNVBrxC\n5ELXS7wm4Rdl2OBS/pfCG5w2IuO4L/3BGvid3NEcSG7AE8yjlbSCfvsNdaxQ93Ly\nlL6pHa8mQ1PbRscohmeUNV++jVt1BpO6Cje6dSAjh960kKP7VQNGUXYmwY6rGDgs\ni0lGTUl7d93aGCOX5f2/6KD9AR/GXjsj70kSnqGYWGT2n0niI5YsZ9CjtmfaghTG\n8w5ZrvkWhmfMAhU/m5N/+PSDxCJfrocJCTgKpKVPx5FFFyFaupg7inq5LZwMfQio\nwJozbJdRAgMBAAECggEAAVg9cIVkqP/LqZggQUIFy2H1TbMfS3EVvUjaSBhIopMz\nq1pjFgHV+RPCN1J27iDWwYR70oepHTHiCuIyxPIfzs7wSp5T6w6S4Xvs/gLj3bp+\n6zc5Kk1MwoggSl7DcKdz26LYmtS5Qrfb08csBm0uIqwPJrQ4FVtuT57Xzl810tFE\n5fxghY+L/vHQ6wj48Uz0hvXMXzq2PJIV+ize43kWhNyyWGY0GL2mV8hLf4wWyDqR\nSIVn41CRYdTTQz1cUHdl5ZUqpEoI5179HArJZ02N2Nar8Vhofv9njF5NMOySW5DY\n/D/fOQFhGAtyr+JgjoM/jmWS5AY/rSHOnoEiVhzpWQKBgQDsAvT3Kdx3MJOzH9oj\n7C14g7qI9j/jVpEdPCmOi17FVGHU58KbSiFKRHnKz2q2K91AN4QG57q3/id+osGE\njq2wXWEN7fym69XcFCctuLnqiDkVMqZjj/BUc/vWiZYGNML6GYiIeFf95b/zqsXR\nrCuXzjHYrR3rpqU53/GEhI3P+QKBgQDDiBJvAYnFjtan5SaSxIWxbHmPHTfq79Ff\niA71hsZ2Ck2hNqUhLHPzE2qAHr+sh6poYrsIMEfkayZxY3Ih1084GPV+VMH3LfW9\nO0MJXHJTzKwWTgfL6wZFpV3D20cpxqoRPNDibgx0ZeJQpgAtHPRsSe6CLxKpEEzX\n2cKqd4+IGQKBgQCNATtADDeW0mP8KfSXb7y++tzQhWcoOQkcEVy2uFfXx5FntUvU\noZaAG6c0X3Xe/xgCDOkJgxtQYD1ScITz4Jau/ytEOkKvq8kq4rOBopMZJ2gLXSaB\n53ZrzpvQ0oTakl1HNUgYWOYhYEmtmAL2QUoOOXgYf12X9AlVKZHPXa6oaQKBgHEf\nnGqUnTyq8w2XycVH5YFMnNdrtBo8PQnkEaODIfbQ5zDKCKc0rLCJHyiYoZQTuUdD\nN6n5JN7GDyuyuSlTBAYUipNYPg/fizi7vIEB9zL8SuNsqZ4Uj0Bj9+eESZul0GbA\npKkbuiDtgQ3fvGJdShwMeezfhxBA2fRXjARLv8KhAoGBANKcknG5dCZn1blpCAqO\nQ/qK74vJJEM2JbLtd8fLKNZjxE1VIQjdZnWPiwOf9ckSqz2azGtdOthCPfioofMc\nlRv5Jc1XTRkPzUEnKHoTHk0yQa2VwRtlvyqj3Q2XxmDBjtdBvpF+ZphfBD3+L2P+\nyE6CIYGS7LaWWbt7xWV2LsGJ\n-----END PRIVATE KEY-----\n",
+  "client_email": "django-storage-service-account@graphconnect.iam.gserviceaccount.com",
+  "client_id": "116996188948786092377",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/django-storage-service-account%40graphconnect.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

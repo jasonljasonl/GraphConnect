@@ -91,6 +91,13 @@ const CreatePostComponent = () => {
         setError(data.error || 'Something went wrong');
       }
 
+
+    for (const label of data.labels)  {
+         formData.append('labels', label)
+        }
+
+
+
       if (imageUrl) formData.append("image_post", imageUrl);
 
       const postResponse = await axios.post(
