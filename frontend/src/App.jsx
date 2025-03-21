@@ -14,6 +14,8 @@ import UserMessage from '../components/UserMessage.jsx';
 import SearchBar from '../components/SearchBar.jsx'
 import ProfilePage from '../components/ProfilePage.jsx'
 import UserProfileUpdate from '../components/UserProfileUpdate.jsx'
+import RecommendedPosts from '../components/RecommendedPosts.jsx'
+
 
 function App() {
     return (
@@ -30,6 +32,7 @@ function App() {
                 <Route path="/search" element={<SearchBar />} />
                 <Route path="/account/update/" element={<UserProfileUpdate />} />
                 <Route path="/profile/:username" element={<ProfilePage />} />
+                <Route path="/discover" element={<RecommendedPosts />} />
 
             </Routes>
         </BrowserRouter>

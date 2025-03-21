@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, get_list_or_404
@@ -15,6 +16,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from google.cloud import storage, vision
 
 from chat_system.models import Message
+from meta_services.faiss.faiss_recommandations_system import queryset
 from .models import Comment
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
@@ -454,3 +456,82 @@ def file_used_for_vision(request):
 
     except Exception as e:
         return Response({"error": f"Vision processing failed: {str(e)}"}, status=500)
+
+
+
+import numpy as np
+import faiss
+
+def labels_set(posts):
+    all_labels = set()
+    for post in posts:
+        all_labels.update(post.labels)
+    return list(all_labels)
+
+def vectorize_labels(post_labels, label_set):
+    vector = np.zeros(len(label_set), dtype=np.float32)
+    for label in post_labels:
+        if label in label_set:
+            index = label_set.index(label)
+            vector[index] = 1
+    return vector
+
+def normalize_vectors(vectors):
+    norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+    return vectors / (norms + 1e-10)
+
+class PostRecommendationView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'No user connected'}, status=401)
+
+        all_posts = list(Post.objects.all())
+
+        liked_posts = list(user.liked_posts.all())
+
+        if not liked_posts:
+            return JsonResponse({'error': 'empty'}, status=400)
+
+
+        label_list = labels_set(all_posts)
+        print(f'All labels: {label_list}')
+
+        liked_post_ids = [post.id for post in liked_posts]
+
+        liked_vectors = np.array([vectorize_labels(post.labels, label_list) for post in liked_posts],
+                                 dtype=np.float32)
+        liked_vectors = normalize_vectors(liked_vectors)
+        print(f'Liked vectors: {liked_vectors}')
+
+        query_vector = np.mean(liked_vectors, axis=0, keepdims=True)
+        query_vector = normalize_vectors(query_vector)
+        print(f'Query vector: {query_vector}')
+
+
+        post_vectors = np.array([vectorize_labels(post.labels, label_list) for post in all_posts], dtype=np.float32)
+        post_vectors = normalize_vectors(post_vectors)
+        print(f'All post vectors: {post_vectors}')
+
+        index = faiss.IndexFlatIP(post_vectors.shape[1])
+        index.add(post_vectors)
+        print(f'Index: {index}')
+
+        k = 5
+        distances, indices = index.search(query_vector, k)
+
+        recommended_posts = []
+        for i in indices[0]:
+            post = all_posts[i]
+            if post.id not in liked_post_ids:
+                recommended_posts.append(post)
+
+        return JsonResponse({
+            "recommended_posts": [
+                {"id": post.id, "title": post.content[:50], "labels": post.labels}
+                for post in recommended_posts
+            ]
+        })

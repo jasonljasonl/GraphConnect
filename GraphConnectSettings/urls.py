@@ -23,8 +23,9 @@ from rest_framework_simplejwt import views as jwt_views
 from CreatePosts import views
 from CreatePosts.views import check_like_status, CommentCreateAPIView, PostDetailSerializerView, get_comment_count, \
     check_comment_like_status, PostCreateAPIView, FollowedPostsListView, MessageViewSet, FollowedUserListView, \
-    user_posts_api, delete_post_api
+    user_posts_api, delete_post_api, PostRecommendationView
 from account.views import get_current_user_profile, UserSearchAPIView, update_user_profile
+
 
 router = routers.DefaultRouter()
 router.register(r'postsList', views.PostsSerializerView, 'postsList')
@@ -58,7 +59,7 @@ urlpatterns = [
     path('account/update', update_user_profile, name='update_user_profile'),
     path('api/storage_uploads/', views.upload_file_to_storage, name='storage_uploads'),
     path('api/image_vision/', views.file_used_for_vision, name='file_for_vision'),
-
+    path('api/recommendations/', PostRecommendationView.as_view(), name='post-recommendations'),
 
     path('token/',jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/',jwt_views.TokenRefreshView.as_view(),name='token_refresh')
