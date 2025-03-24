@@ -529,9 +529,6 @@ class PostRecommendationView(APIView):
             if post.id not in liked_post_ids:
                 recommended_posts.append(post)
 
-        return JsonResponse({
-            "recommended_posts": [
-                {"id": post.id, "title": post.content[:50], "labels": post.labels}
-                for post in recommended_posts
-            ]
+        return Response({
+            "recommended_posts": PostSerializer(recommended_posts, many=True).data
         })

@@ -34,7 +34,12 @@ const SearchBar = () => {
       />
       <ul>
         {results.map((user) => (
-          <li key={user.id} onClick={() => navigate(`/profile/${user.username}`)} >{user.username}</li>
+          <li key={user.id} onClick={() => navigate(`/profile/${user.username}`)} >
+              <div className='author_component'>
+                <img src={`http://127.0.0.1:8000${user.profile_picture}`} className='author_profile_picture_component' />
+                <p className='post_author_component'>{user.username}</p>
+              </div>
+          </li>
         ))}
       </ul>
     </div>
