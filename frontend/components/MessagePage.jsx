@@ -8,21 +8,23 @@ export default function MessagePage() {
   const navigate = useNavigate();
 
 
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
+useEffect(() => {
+  const token = localStorage.getItem("access_token");
 
-    if (!token) {
-      console.error("No token found. Please login.");
-      return;
-    }
+  if (!token) {
+    console.error("No token found. Please login.");
+    return;
+  }
 
-    axios
-      .get("http://127.0.0.1:8000/api/user/followed-users/", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => setUsers(response.data))
-      .catch((error) => console.error("Failed to fetch users:", error));
-  }, []);
+  axios
+    .get("http://127.0.0.1:8000/api/chat/users/", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => setUsers(response.data))
+    .catch((error) => console.error("Failed to fetch chat users:", error));
+}, []);
+
+
 
   return (
     <div>
