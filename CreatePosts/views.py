@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, get_list_or_404
@@ -24,6 +25,7 @@ from rest_framework import viewsets, serializers, generics, permissions, status
 
 from CreatePosts.models import Post
 from account.models import CustomUser
+from cryptography.fernet import Fernet
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -199,6 +201,7 @@ def FollowUserView(request, username):  # Use 'pk' here
         return JsonResponse({'error': 'User not found'}, status=404)
 
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
@@ -271,10 +274,18 @@ class CustomUserSerializer(serializers.ModelSerializer):
         source="user_follows"
     )
 
+
     class Meta:
         model = CustomUser
-        fields = ["id", "username", "email", "profile_picture", "following"]
+        fields = ['id', 'username', 'email', 'password', 'name', 'profile_picture', 'following']
+        extra_kwargs = {'password': {'write_only': True}}
 
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = CustomUser(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -294,6 +305,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostsSerializerView(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
+
 
 class FollowedPostsListView(generics.ListAPIView):
     serializer_class = PostSerializer
@@ -340,6 +352,11 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 
+
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 class MessageViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
@@ -390,12 +407,17 @@ class MessageViewSet(viewsets.ViewSet):
 
 
 
+
 def user_posts_api(request, username):
     user = get_object_or_404(CustomUser, username=username)
     posts = Post.objects.filter(author=user).values(
-        'id', 'content', 'image_post', 'upload_date','labels')
+        'id', 'content', 'image_post', 'upload_date', 'labels'
+    )
+
     following = list(user.user_follows.values('id', 'username'))
-    followers = list(user.follows.values('id', 'username'))
+
+    followers = list(user.user_follows.all().filter(user_follows=user).values('id', 'username'))  # Relation inverse
+
     data = {
         'id': user.id,
         'username': user.username,
@@ -405,7 +427,6 @@ def user_posts_api(request, username):
         'following': following
     }
     return JsonResponse(data)
-
 
 @api_view(['POST'])
 def upload_file_to_storage(request):

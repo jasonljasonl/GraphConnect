@@ -8,7 +8,6 @@ import Like from "../components/LikeComponent.jsx";
 import ViewPost_CommentsButton from "../components/ViewPost_CommentsButton.jsx";
 import { useNavigate } from "react-router-dom";
 
-
 const RecommendedPosts = () => {
   const [recommendedPosts, setRecommendedPosts] = useState([]);
   const [error, setError] = useState(null);
@@ -18,7 +17,6 @@ const RecommendedPosts = () => {
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [commentCounts, setCommentCounts] = useState({});
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -41,7 +39,6 @@ const RecommendedPosts = () => {
     fetchUserData();
   }, [token]);
 
-
   useEffect(() => {
     const fetchRecommendedPosts = async () => {
       if (!token) {
@@ -49,29 +46,24 @@ const RecommendedPosts = () => {
         return;
       }
 
-    try {
-      const response = await axios.get("http://127.0.0.1:8000/api/recommendations/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/recommendations/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      console.log("API Response:", response.data);
-
-      setRecommendedPosts(Array.isArray(response.data.recommended_posts) ? response.data.recommended_posts : []);
-    } catch (err) {
-      setError(err.response ? err.response.data.error : "Erreur inconnue");
-    }
+        console.log("API Response:", response.data);
+        setRecommendedPosts(Array.isArray(response.data.recommended_posts) ? response.data.recommended_posts : []);
+      } catch (err) {
+        setError(err.response ? err.response.data.error : "Erreur inconnue");
+      }
     };
+
     if (currentUser) {
       fetchRecommendedPosts();
     }
   }, [token, currentUser]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
 
   useEffect(() => {
     axios
@@ -79,7 +71,6 @@ const RecommendedPosts = () => {
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Failed to fetch users:", error));
   }, []);
-
 
   const getAuthorUsername = (authorId) => {
     const user = users.find((user) => user.id === authorId);
@@ -91,80 +82,94 @@ const RecommendedPosts = () => {
     return user ? user.profile_picture : "/default-profile.png";
   };
 
+  const handleDeletePost = async (postId) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
 
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        alert("You need to be logged in to delete a post.");
+        return;
+      }
 
-    const handleDeletePost = async (postId) => {
-        if (!window.confirm("Are you sure you want to delete this post?")) return;
+      await axios.delete(`http://127.0.0.1:8000/api/posts/${postId}/delete/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        try {
-            const token = localStorage.getItem("access_token");
-            if (!token) {
-                alert("You need to be logged in to delete a post.");
-                return;
-            }
+      alert("Post deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting post:", error.response?.data || error.message);
+      alert("Something went wrong while deleting the post.");
+    }
+  };
 
-            await axios.delete(`http://127.0.0.1:8000/api/posts/${postId}/delete/`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-
-
-            alert("Post deleted successfully!");
-        } catch (error) {
-            console.error("Error deleting post:", error.response?.data || error.message);
-            alert("Something went wrong while deleting the post.");
-        }
-    };
-
-
-    const toggleDropdown = (postId) => {
-        setDropdownOpen(dropdownOpen === postId ? null : postId);
-    };
-
-
-
+  const toggleDropdown = (postId) => {
+    setDropdownOpen(dropdownOpen === postId ? null : postId);
+  };
 
   return (
     <div>
-        <SearchBar />
-      <h2>For you</h2>
-      <div className="post_list_div_component">
-        {recommendedPosts.length === 0 ? (
-          <p>No recommendations available.</p>
-        ) : (
-          recommendedPosts.map((post) => (
-            <li key={post.id} className="post_list_component">
+      {/* Afficher la barre de recherche tout le temps */}
+      <SearchBar />
+
+      {/* Afficher le message si aucun post n'est disponible */}
+      {recommendedPosts.length === 0 ? (
+        <p>No recommendations available.</p>
+      ) : (
+        <>
+          <h2>For you</h2>
+          <div className="post_list_div_component">
+            {recommendedPosts.map((post) => (
+              <li key={post.id} className="post_list_component">
                 <div className="author_component">
                   <img
                     src={getAuthorProfilePicture(post.author)}
                     alt=""
                     className="author_profile_picture_component"
                   />
+                  <p
+                    onClick={() =>
+                      navigate(`/profile/${getAuthorUsername(post.author)}`)
+                    }
+                    className="post_author_component"
+                  >
+                    {getAuthorUsername(post.author)}
+                  </p>
 
-                  <p onClick={() => navigate(`/profile/${getAuthorUsername(post.author)}`)} className="post_author_component">{getAuthorUsername(post.author)}</p>
-
-
-                    {currentUser && currentUser.id === post.author && (
-                        <div className="post-menu">
-                            <button className="post-menu-button" onClick={() => toggleDropdown(post.id)}>
-                                ...
-                            </button>
-                            {dropdownOpen === post.id && (
-                                <div className="post-menu-dropdown">
-                                    <button onClick={() => handleDeletePost(post.id)} className="delete-post-button">
-                                        Delete
-                                    </button>
-                                </div>
-                            )}
+                  {currentUser && currentUser.id === post.author && (
+                    <div className="post-menu">
+                      <button
+                        className="post-menu-button"
+                        onClick={() => toggleDropdown(post.id)}
+                      >
+                        ...
+                      </button>
+                      {dropdownOpen === post.id && (
+                        <div className="post-menu-dropdown">
+                          <button
+                            onClick={() => handleDeletePost(post.id)}
+                            className="delete-post-button"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
                     </div>
-                )}
+                  )}
                 </div>
 
-
-                <img src={`http://127.0.0.1:8000${post.image_post}`} alt="image" className="home_post_component" />
-                <p className='post_content_component'>{post.content}</p>
-                <p className="post_upload_date">{formatDistanceToNow(new Date(post.upload_date), { locale: enUS })} ago</p>
-              {/* <p>Labels: {post.labels.join(", ")}</p> */}
+                <img
+                  src={`http://127.0.0.1:8000${post.image_post}`}
+                  alt="image"
+                  className="home_post_component"
+                />
+                <p className="post_content_component">{post.content}</p>
+                <p className="post_upload_date">
+                  {formatDistanceToNow(new Date(post.upload_date), {
+                    locale: enUS,
+                  })}{" "}
+                  ago
+                </p>
                 <div className="post_interactions">
                   <Like postId={post.id} initialLikes={post.likes.length} />
                   <ViewPost_CommentsButton
@@ -172,10 +177,11 @@ const RecommendedPosts = () => {
                     initialComments={commentCounts[post.id] || 0}
                   />
                 </div>
-            </li>
-          ))
-        )}
-      </div>
+              </li>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import RegisterForm from '../components/RegisterForm.jsx'
 
 export const Login = () => {
   const [username, setUsername] = useState("");
@@ -11,6 +12,7 @@ export const Login = () => {
     setError(null);
 
     try {
+
       const { data } = await axios.post(
         "http://127.0.0.1:8000/token/",
         { username, password },
@@ -68,6 +70,7 @@ export const Login = () => {
           </div>
         </div>
       </form>
+      <RegisterForm />
     </div>
   );
 };

@@ -5,7 +5,6 @@ from . import views
 from .views import users_list, update_user_profile
 
 urlpatterns = [
-    path("register/", views.register, name="register"),
     path("login/", views.user_login, name="login"),
     path('logout/', views.LogoutView.as_view(), name='logout'),
 

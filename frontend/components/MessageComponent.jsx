@@ -9,20 +9,22 @@ const MessageComponent = ({ recipientId }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const token = localStorage.getItem("access_token");
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/chat/messages/${recipientId}/`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setMessages(response.data);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
+const fetchMessages = async () => {
+  try {
+    const token = localStorage.getItem("access_token");
+    const response = await axios.get(
+      `http://127.0.0.1:8000/api/chat/messages/${recipientId}/`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
       }
-    };
+    );
+    console.log("Messages fetched:", response.data);  // Ajoutez un log pour vérifier la réponse
+    setMessages(response.data);
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+  }
+};
+
 
     fetchMessages();
   }, [recipientId]);
@@ -100,41 +102,25 @@ const MessageComponent = ({ recipientId }) => {
 
     <div className="chat-box">
       <div className="chat-messages">
-        {messages.map((msg) => {
-          const isCurrentUser = msg.message_sender === currentUser?.id;
-          return (
-    <div
-      key={msg.id}
-      className={isCurrentUser ? "current_user_private_message_div" : "user_private_message_div"}
-    >
-      {isCurrentUser ? (
-        <>
-          <p className="user_private_message_content">{msg.content}</p>
-          {/*
-          <img
-            src={getAuthorProfilePicture(msg.message_sender)}
-            alt=""
-            className="author_profile_picture_component"
-            id="user_private_message_profile_picture"
-          />
-          */}
-        </>
-      ) : (
-        <>
-        {/*
-          <img
-            src={getAuthorProfilePicture(msg.message_sender)}
-            alt=""
-            className="author_profile_picture_component"
-            id="user_private_message_profile_picture"
-          />
-          */}
-          <p className="user_private_message_content">{msg.content}</p>
-        </>
-      )}
-    </div>
-          );
-        })}
+            {messages.map((msg) => {
+              const isCurrentUser = msg.message_sender === currentUser?.id;
+              return (
+                <div
+                  key={msg.id}
+                  className={isCurrentUser ? "current_user_private_message_div" : "user_private_message_div"}
+                >
+                  {isCurrentUser ? (
+                    <>
+                      <p className="user_private_message_content">{msg.content}</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="user_private_message_content">{msg.content}</p>
+                    </>
+                  )}
+                </div>
+              );
+            })}
       </div>
       <div className='textarea_button_div'>
           <input

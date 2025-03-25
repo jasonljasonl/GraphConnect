@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.conf import settings
+from cryptography.fernet import Fernet
+
 
 # Create your models here.
 class CustomUserManager(BaseUserManager):
@@ -21,21 +23,31 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user( username,password,**extra_fields)
 
-class CustomUser(AbstractBaseUser,PermissionsMixin):
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    encryption_key = models.CharField(max_length=128, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='uploaded_images/', blank=True)
-    username = models.CharField(unique=True,max_length=50)
+    username = models.CharField(unique=True, max_length=50)
     name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
+
     user_follows = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="follows", blank=True)
 
 
     is_active = models.BooleanField(default=True)
-    is_staff= models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['email']
 
     def __str__(self):
         return self.username
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            self.set_password(self.password)
+        if not self.encryption_key:
+            self.encryption_key = Fernet.generate_key().decode()
+        super().save(*args, **kwargs)

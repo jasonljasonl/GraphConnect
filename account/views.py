@@ -20,38 +20,39 @@ from .models import CustomUser
 
 
 # Create your views here.
-def register(request):
-    if request.user.is_authenticated:
-        return redirect('success')
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST, request.FILES or None)
-        if form.is_valid():
-            user = form.save()
+class RegisterAPIView(APIView):
+    def post(self, request):
+        serializer = CustomUserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
             login(request, user)
-            return redirect('success')
-
-    else:
-        form = CustomUserCreationForm()
-        return render(request, 'account/register.html', {'form':form})
-
+            return Response(
+                {
+                    "message": "Compte créé avec succès",
+                    "user": serializer.data
+                },
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def user_login(request):
     if request.user.is_authenticated:
-        return redirect('success')
-    if request.method == 'POST':
-        form = CustomAuthenticationForm(request, request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                refresh = RefreshToken.for_user(user)  # Create JWT refresh token for the user
-                return redirect('success', {'access_token': str(refresh.access_token), 'refresh_token': str(refresh)})
-    else:
-        form = CustomAuthenticationForm()
-    return render(request, 'account/login.html', {'form': form})
+        return redirect("success")
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)  # ✅ Vérifie avec Django
+
+        if user is not None:
+            login(request, user)
+            return redirect("success")
+        else:
+            return Response({"error": "Invalid credentials"}, status=400)
+
+    return Response({"error": "Invalid request"}, status=400)
 
 
 

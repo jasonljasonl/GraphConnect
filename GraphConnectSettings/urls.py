@@ -24,7 +24,7 @@ from CreatePosts import views
 from CreatePosts.views import check_like_status, CommentCreateAPIView, PostDetailSerializerView, get_comment_count, \
     check_comment_like_status, PostCreateAPIView, FollowedPostsListView, MessageViewSet, FollowedUserListView, \
     user_posts_api, delete_post_api, PostRecommendationView
-from account.views import get_current_user_profile, UserSearchAPIView, update_user_profile
+from account.views import get_current_user_profile, UserSearchAPIView, update_user_profile, RegisterAPIView
 from chat_system.views import get_chat_users
 
 router = routers.DefaultRouter()
@@ -61,6 +61,7 @@ urlpatterns = [
     path('api/image_vision/', views.file_used_for_vision, name='file_for_vision'),
     path('api/recommendations/', PostRecommendationView.as_view(), name='post-recommendations'),
     path("api/chat/users/", get_chat_users, name="chat-users"),
+    path("api/register/", RegisterAPIView.as_view(), name="register"),
 
 
     path('token/',jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
