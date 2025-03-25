@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./css/MessagesPage.css";
+import "../css/MessagesPage.css";
 
 export default function MessagePage() {
   const [users, setUsers] = useState([]);

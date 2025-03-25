@@ -1,28 +1,26 @@
 from google.cloud import storage
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
-def upload_blob(bucket_name, source_file_name, destination_blob_name):
-    """Uploads a file to the bucket."""
+@api_view(['POST'])
+def upload_file_to_storage(request):
+    try:
+        if 'file' not in request.FILES:
+            return Response({'error': 'No files sent'}, status=status.HTTP_400_BAD_REQUEST)
 
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(destination_blob_name)
+        uploaded_file = request.FILES['file']
 
-    # Optional: set a generation-match precondition to avoid potential race conditions
-    # and data corruptions. The request to upload is aborted if the object's
-    # generation number does not match your precondition. For a destination
-    # object that does not yet exist, set the if_generation_match precondition to 0.
-    # If the destination object already exists in your bucket, set instead a
-    # generation-match precondition using its generation number.
-    generation_match_precondition = 0
+        client = storage.Client()
+        bucket = client.bucket('graph-connect_bucket')
 
-    blob.upload_from_filename(source_file_name, if_generation_match=generation_match_precondition)
+        blob = bucket.blob(uploaded_file.name)
+        blob.upload_from_file(uploaded_file)
 
-    print(
-        f"File {source_file_name} uploaded to {destination_blob_name}."
-    )
+        file_url = f"https://storage.googleapis.com/{bucket.name}/{blob.name}"
 
-bucket_name = "graph-connect_bucket"
-source_file_name = "../../uploaded_images/uploaded_images/img.jpg"
-destination_blob_name = "tesEt.jpg"
-upload_blob(bucket_name, source_file_name, destination_blob_name)
+        return Response({'message': 'File successfully uploaded', 'file_url': file_url}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

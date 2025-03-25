@@ -1,7 +1,3 @@
-from datetime import datetime
-
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, get_list_or_404
@@ -14,19 +10,19 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse_lazy
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from google.cloud import storage, vision
-
-from chat_system.models import Message
-from meta_services.faiss.faiss_recommandations_system import queryset
+from GraphConnectSettings.serializer import PostSerializer, CommentSerializer
 from .models import Comment
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-
-from rest_framework import viewsets, serializers, generics, permissions, status
-
+from rest_framework import viewsets, generics, status
 from CreatePosts.models import Post
 from account.models import CustomUser
-from cryptography.fernet import Fernet
+import numpy as np
+import faiss
 
+
+class PostsSerializerView(viewsets.ModelViewSet):
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
@@ -37,7 +33,6 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
-
 
 class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         model = Post
@@ -61,9 +56,6 @@ def delete_post_api(request, pk):
 
     post.delete()
     return Response({'message': 'Post deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
-
-
-
 
 class PostListView(ListView):
     model = Post
@@ -185,22 +177,6 @@ def PostLikeView(request, pk):  # Use 'pk' here
 
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])  # Only authenticated users can like a post
-@authentication_classes([JWTAuthentication])  # Add JWT authentication
-def FollowUserView(request, username):  # Use 'pk' here
-    try:
-        user = get_object_or_404(CustomUser, username=username)
-
-        if request.user in user.user_follows.all():
-            user.user_follows.remove(request.user)
-        else:
-            user.user_follows.add(request.user)
-        return JsonResponse({'message': 'User followed'})
-    except CustomUser.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
-
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -267,44 +243,10 @@ class PostCreateAPIView(APIView):
 
 
 
-class CustomUserSerializer(serializers.ModelSerializer):
-    following = serializers.PrimaryKeyRelatedField(
-        many=True,
-        read_only=True,
-        source="user_follows"
-    )
 
 
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'name', 'profile_picture', 'following']
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = CustomUser(**validated_data)
-        user.set_password(password)
-        user.save()
-        return user
 
 
-class PostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = '__all__'
-
-class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.id')
-
-    class Meta:
-        model = Comment
-        fields = '__all__'
-        read_only_fields = ['author', 'created_at']
-
-
-class PostsSerializerView(viewsets.ModelViewSet):
-    serializer_class = PostSerializer
-    queryset = Post.objects.all()
 
 
 class FollowedPostsListView(generics.ListAPIView):
@@ -318,22 +260,7 @@ class FollowedPostsListView(generics.ListAPIView):
 
 
 
-class FollowedUserListView(generics.ListAPIView):
-    serializer_class = CustomUserSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
 
-    def get_queryset(self):
-        user = self.request.user
-        followed_users_ids = user.follows.values_list("id", flat=True)
-        return CustomUser.objects.filter(Q(id__in=followed_users_ids) | Q(id=user.id))
-
-
-
-
-class CustomUserSerializerView(viewsets.ModelViewSet):
-    serializer_class = CustomUserSerializer
-    queryset = CustomUser.objects.all()
 
 class CommentsSerializerView(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
@@ -345,65 +272,7 @@ class PostDetailSerializerView(generics.RetrieveAPIView):
     serializer_class = PostSerializer
     lookup_field = 'id'
 
-class MessageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Message
-        fields = ['id', 'message_sender', 'message_recipient', 'content', 'send_date']
 
-
-
-
-
-import logging
-
-logger = logging.getLogger(__name__)
-
-class MessageViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
-
-    def list(self, request, recipient_id=None):
-        user = request.user
-
-        if recipient_id is not None:
-            queryset = Message.objects.filter(
-                (Q(message_sender=user) & Q(message_recipient_id=recipient_id)) |
-                (Q(message_sender_id=recipient_id) & Q(message_recipient=user))
-            )
-        else:
-            queryset = Message.objects.filter(
-                Q(message_sender=user) | Q(message_recipient=user)
-            )
-
-        if queryset.exists():
-            serializer = MessageSerializer(queryset, many=True)
-            return Response(serializer.data)
-        else:
-            return Response([], status=status.HTTP_200_OK)
-
-
-    def create(self, request):
-        user = request.user
-
-        recipient_id = request.data.get('recipient_id')
-        content = request.data.get('content')
-
-        if not recipient_id or not content:
-            return Response(
-                {'error': 'recipient_id and content are required fields'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        message = Message(
-            message_sender=user,
-            message_recipient_id=recipient_id,
-            content=content,
-            send_date=datetime.now(),
-        )
-
-        message.save()
-
-        serializer = MessageSerializer(message)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
@@ -428,60 +297,9 @@ def user_posts_api(request, username):
     }
     return JsonResponse(data)
 
-@api_view(['POST'])
-def upload_file_to_storage(request):
-    try:
-        if 'file' not in request.FILES:
-            return Response({'error': 'No files sent'}, status=status.HTTP_400_BAD_REQUEST)
-
-        uploaded_file = request.FILES['file']
-
-        client = storage.Client()
-        bucket = client.bucket('graph-connect_bucket')
-
-        blob = bucket.blob(uploaded_file.name)
-        blob.upload_from_file(uploaded_file)
-
-        file_url = f"https://storage.googleapis.com/{bucket.name}/{blob.name}"
-
-        return Response({'message': 'File successfully uploaded', 'file_url': file_url}, status=status.HTTP_200_OK)
-
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(['POST'])
-def file_used_for_vision(request):
-    """Provides a quick start example for Cloud Vision."""
-
-    client = vision.ImageAnnotatorClient()
-
-    file_url = request.data.get('file_url')
-
-    if not file_url:
-        return Response({"error": "No file URL provided."}, status=400)
-
-    image = vision.Image()
-    image.source.image_uri = file_url
-
-    try:
-        response = client.label_detection(image=image)
-
-        if response.error.message:
-            raise Exception(f"Vision API Error: {response.error.message}")
-
-        labels = response.label_annotations
-        label_descriptions = [label.description for label in labels] if labels else []
-
-        return Response({"labels": label_descriptions}, status=200)
-
-    except Exception as e:
-        return Response({"error": f"Vision processing failed: {str(e)}"}, status=500)
 
 
 
-import numpy as np
-import faiss
 
 def labels_set(posts):
     all_labels = set()
@@ -553,3 +371,4 @@ class PostRecommendationView(APIView):
         return Response({
             "recommended_posts": PostSerializer(recommended_posts, many=True).data
         })
+

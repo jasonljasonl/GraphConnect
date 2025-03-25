@@ -1,20 +1,20 @@
 import React from 'react';
 import './App.css';
-import Post from '../components/PostComponent.jsx';
-import GetUsers from '../components/getUsersComponent.jsx';
+import Post from '../components/Posts/PostComponent.jsx';
+import GetUsers from '../components/Accounts/getUsersComponent.jsx';
 import { NavBar } from '../components/NavBar.jsx';
-import { Login } from "../components/Login";
-import { Logout } from "../components/Logout";
+import { Login } from "../components/Login/Login";
+import { Logout } from "../components/Login/Logout";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import '../components/axios';
-import ViewPostPage from '../components/ViewPostPage.jsx';
-import CreatePostComponent from '../components/CreatePostComponent.jsx';
-import MessagePage from '../components/MessagePage.jsx';
-import UserMessage from '../components/UserMessage.jsx';
-import SearchBar from '../components/SearchBar.jsx'
-import ProfilePage from '../components/ProfilePage.jsx'
-import UserProfileUpdate from '../components/UserProfileUpdate.jsx'
-import RecommendedPosts from '../components/RecommendedPosts.jsx'
+import ViewPostPage from '../components/Posts/ViewPostPage.jsx';
+import CreatePostComponent from '../components/Posts/CreatePostComponent.jsx';
+import MessagePage from '../components/Chatting/MessagePage.jsx';
+import UserMessage from '../components/Chatting/UserMessage.jsx';
+import SearchBar from '../components/Accounts/SearchBar.jsx'
+import ProfilePage from '../components/Accounts/ProfilePage.jsx'
+import UserProfileUpdate from '../components/Accounts/UserProfileUpdate.jsx'
+import RecommendedPosts from '../components/Posts/RecommendedPosts.jsx'
 
 
 function App() {

@@ -1,33 +1,32 @@
 from google.cloud import vision
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-def run_quickstart():
+
+@api_view(['POST'])
+def file_used_for_vision(request):
     """Provides a quick start example for Cloud Vision."""
 
-    # Instantiates a client
     client = vision.ImageAnnotatorClient()
 
-    # The URI of the image file to annotate
-    file_uri = "gs://graph-connect_bucket/Screenshot 2025-03-10 at 12.09.27.png"
+    file_url = request.data.get('file_url')
+
+    if not file_url:
+        return Response({"error": "No file URL provided."}, status=400)
 
     image = vision.Image()
-    image.source.image_uri = file_uri
+    image.source.image_uri = file_url
 
-    # Performs label detection on the image file
-    response = client.label_detection(image=image)
+    try:
+        response = client.label_detection(image=image)
 
-    # Check for errors
-    if response.error.message:
-        print(f"API Error: {response.error.message}")
-        return
+        if response.error.message:
+            raise Exception(f"Vision API Error: {response.error.message}")
 
-    labels = response.label_annotations
+        labels = response.label_annotations
+        label_descriptions = [label.description for label in labels] if labels else []
 
-    if not labels:
-        print("No labels detected.")
-        return
+        return Response({"labels": label_descriptions}, status=200)
 
-    print("Labels:")
-    for label in labels:
-        print(label.description)
-
-run_quickstart()
+    except Exception as e:
+        return Response({"error": f"Vision processing failed: {str(e)}"}, status=500)

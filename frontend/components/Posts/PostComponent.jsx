@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./css/PostComponent.css";
-import Like from "../components/LikeComponent.jsx";
-import ViewPost_CommentsButton from "../components/ViewPost_CommentsButton.jsx";
+import "../css/PostComponent.css";
+import Like from "./LikeComponent.jsx";
+import ViewPost_CommentsButton from "./ViewPost_CommentsButton.jsx";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";

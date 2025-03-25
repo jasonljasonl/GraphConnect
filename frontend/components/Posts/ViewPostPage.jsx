@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import CommentComponent from '../components/CommentComponent.jsx';
-import CommentsPage from '../components/CommentsPage.jsx';
-import Like from '../components/LikeComponent.jsx';
-import Comment from '../components/img_component/comment.jsx';
-import ViewPost_CommentsButton from '../components/ViewPost_CommentsButton.jsx';
-import './css/PostComponent.css';
+import CommentComponent from './CommentComponent.jsx';
+import CommentsPage from './CommentsPage.jsx';
+import Like from './LikeComponent.jsx';
+import Comment from '../img_component/comment.jsx';
+import ViewPost_CommentsButton from './ViewPost_CommentsButton.jsx';
+import '../css/PostComponent.css';
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 

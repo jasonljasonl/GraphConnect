@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import IcSharpSend from "./img_component/send.jsx";
-import IcBaselineImage from "./img_component/image_file.jsx";
+import IcSharpSend from "../img_component/send.jsx";
+import IcBaselineImage from "../img_component/image_file.jsx";
 
 
 const CommentComponent = ({ postId }) => {

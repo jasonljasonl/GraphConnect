@@ -1,37 +1,28 @@
-"""
-URL configuration for GraphConnectSettings project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import include,path
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
+
+import account
+import chat_system
 from CreatePosts import views
 from CreatePosts.views import check_like_status, CommentCreateAPIView, PostDetailSerializerView, get_comment_count, \
-    check_comment_like_status, PostCreateAPIView, FollowedPostsListView, MessageViewSet, FollowedUserListView, \
+    check_comment_like_status, PostCreateAPIView, FollowedPostsListView, \
     user_posts_api, delete_post_api, PostRecommendationView
-from account.views import get_current_user_profile, UserSearchAPIView, update_user_profile, RegisterAPIView
-from chat_system.views import get_chat_users
+from account.views import get_current_user_profile, UserSearchAPIView, update_user_profile, RegisterAPIView, \
+    FollowedUserListView
+from chat_system.views import get_chat_users, MessageViewSet
+from google_services.google_cloud_storage.google_cloud_storage import upload_file_to_storage
+from google_services.google_vision.google_vision import file_used_for_vision
+
 
 router = routers.DefaultRouter()
 router.register(r'postsList', views.PostsSerializerView, 'postsList')
-router.register(r'account', views.CustomUserSerializerView, 'account')
+router.register(r'account', account.views.CustomUserSerializerView, 'account')
 router.register(r'commentsList', views.CommentsSerializerView, 'commentsList')
-router.register(r'messagesList', views.MessageViewSet, 'messagesList')
+router.register(r'messagesList', chat_system.views.MessageViewSet, 'messagesList')
 router.register(r'chat/messages', MessageViewSet, basename='chat_messages')
 
 
@@ -57,12 +48,11 @@ urlpatterns = [
     path('api/profile/<str:username>/', user_posts_api, name='user-posts-api'),
     path('api/posts/<int:pk>/delete/', delete_post_api, name='post_delete'),
     path('account/update', update_user_profile, name='update_user_profile'),
-    path('api/storage_uploads/', views.upload_file_to_storage, name='storage_uploads'),
-    path('api/image_vision/', views.file_used_for_vision, name='file_for_vision'),
+    path('api/storage_uploads/', upload_file_to_storage, name='storage_uploads'),
+    path('api/image_vision/', file_used_for_vision, name='file_for_vision'),
     path('api/recommendations/', PostRecommendationView.as_view(), name='post-recommendations'),
     path("api/chat/users/", get_chat_users, name="chat-users"),
     path("api/register/", RegisterAPIView.as_view(), name="register"),
-
 
     path('token/',jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/',jwt_views.TokenRefreshView.as_view(),name='token_refresh')

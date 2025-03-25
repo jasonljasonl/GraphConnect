@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import IcSharpSend from "./img_component/send.jsx";
-import IcBaselineImage from "./img_component/image_file.jsx";
-import './css/CreatePostPage.css';
+import IcSharpSend from "../img_component/send.jsx";
+import IcBaselineImage from "../img_component/image_file.jsx";
+import '../css/CreatePostPage.css';
 import { useNavigate } from "react-router-dom";
 
 const CreatePostComponent = () => {

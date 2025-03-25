@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './css/ProfilePage.css';
+import '../css/ProfilePage.css';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import IcBaselinePersonAddAlt from './img_component/follow.jsx';
-import IcRoundMailOutline from './img_component/message.jsx';
+import IcBaselinePersonAddAlt from '../img_component/follow.jsx';
+import IcRoundMailOutline from '../img_component/message.jsx';
 
 const ProfilePage = () => {
     const { username } = useParams();

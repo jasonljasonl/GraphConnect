@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './css/PostComponent.css';
-import './css/CommentsPage.css';
+import '../css/PostComponent.css';
+import '../css/CommentsPage.css';
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
-import CommentLikeComponent from '../components/CommentLikeComponent.jsx';
 import { useNavigate } from "react-router-dom";
 
 
@@ -61,7 +60,6 @@ export default function CommentsList({ postId }) {
                                 </div>
                                 <div className='content-like_div'>
                                     <p className='post_content_component'>{comment.content}</p>
-                                    <CommentLikeComponent commentId={comment.id} initialLikes={comment.likes.length} />
                                 </div>
                                 {comment.image_comment && (
                                     <img src={comment.image_comment} alt="" className="comment_page_post_component" />

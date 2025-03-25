@@ -81,7 +81,6 @@ export function NavBar() {
 
 
 
-          {/* <Nav>{isAuth ? <Nav.Link href="/logout">Logout</Nav.Link> : <Nav.Link href="/login">Login</Nav.Link>}</Nav> */}
         </Navbar>
        </div>
      );

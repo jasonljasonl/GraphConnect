@@ -1,5 +1,5 @@
 import axios from 'axios';
-import HealthiconsHeart from "./img_component/heart.jsx";
+import HealthiconsHeart from "../img_component/heart.jsx";
 import React, { useState, useEffect } from 'react';
 
 const LikeComponent = ({ postId, initialLikes }) => {

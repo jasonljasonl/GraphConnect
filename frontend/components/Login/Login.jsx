@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import RegisterForm from '../components/RegisterForm.jsx'
+import RegisterForm from './RegisterForm.jsx'
 
 export const Login = () => {
   const [username, setUsername] = useState("");

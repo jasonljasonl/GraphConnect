@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import IcSharpSend from "./img_component/send.jsx";
+import IcSharpSend from "../img_component/send.jsx";
 
 const MessageComponent = ({ recipientId }) => {
   const [messages, setMessages] = useState([]);

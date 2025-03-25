@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import MessageComponent from "../components/MessageComponent";
+import MessageComponent from "./MessageComponent";
 import axios from "axios";
 
 

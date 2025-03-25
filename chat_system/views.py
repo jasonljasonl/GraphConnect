@@ -1,25 +1,19 @@
+from datetime import datetime
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
+from rest_framework import viewsets, status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from GraphConnectSettings.serializer import MessageSerializer
 from account import models
 from account.models import CustomUser
 from chat_system.models import Message
 
 # Create your views here.
-def index(request):
-    return render(request, 'chat/index.html')
-
-def room(request, room_name):
-    return render(request, 'chat/room.html', {'room_name':room_name})
-
 class UserChattingView(LoginRequiredMixin, View):
     def post(self, request, **kwargs):
         user = get_object_or_404(CustomUser, id=kwargs['pk'])
@@ -74,3 +68,50 @@ def get_chat_users(request):
         return Response({"error": str(e)}, status=500)
 
 
+
+class MessageViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, recipient_id=None):
+        user = request.user
+
+        if recipient_id is not None:
+            queryset = Message.objects.filter(
+                (Q(message_sender=user) & Q(message_recipient_id=recipient_id)) |
+                (Q(message_sender_id=recipient_id) & Q(message_recipient=user))
+            )
+        else:
+            queryset = Message.objects.filter(
+                Q(message_sender=user) | Q(message_recipient=user)
+            )
+
+        if queryset.exists():
+            serializer = MessageSerializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            return Response([], status=status.HTTP_200_OK)
+
+
+    def create(self, request):
+        user = request.user
+
+        recipient_id = request.data.get('recipient_id')
+        content = request.data.get('content')
+
+        if not recipient_id or not content:
+            return Response(
+                {'error': 'recipient_id and content are required fields'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        message = Message(
+            message_sender=user,
+            message_recipient_id=recipient_id,
+            content=content,
+            send_date=datetime.now(),
+        )
+
+        message.save()
+
+        serializer = MessageSerializer(message)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

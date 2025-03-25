@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import SearchBar from '../components/SearchBar.jsx';
-import './css/RecommendedPostPage.css';
+import SearchBar from '../Accounts/SearchBar.jsx'
+import '../css/RecommendedPostPage.css';
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
-import Like from "../components/LikeComponent.jsx";
-import ViewPost_CommentsButton from "../components/ViewPost_CommentsButton.jsx";
+import Like from "../Posts/LikeComponent.jsx";
+import ViewPost_CommentsButton from "../Posts/ViewPost_CommentsButton.jsx";
 import { useNavigate } from "react-router-dom";
 
 const RecommendedPosts = () => {
