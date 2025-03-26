@@ -51,3 +51,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if not self.encryption_key:
             self.encryption_key = Fernet.generate_key().decode()
         super().save(*args, **kwargs)
+
+
+
+    def following(self):
+        return self.user_follows.all()
+
+    # Property to get users following the current user (reverse relationship)
+    @property
+    def followers(self):
+        return CustomUser.objects.filter(user_follows=self)

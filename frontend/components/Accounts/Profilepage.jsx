@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../css/ProfilePage.css';
-import { formatDistanceToNow } from 'date-fns';
-import { enUS } from 'date-fns/locale';
-import IcBaselinePersonAddAlt from '../img_component/follow.jsx';
-import IcRoundMailOutline from '../img_component/message.jsx';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getConnectedUser, getUserProfile, followUser, deletePost } from "../services/api";
+import "../css/ProfilePage.css";
+import { formatDistanceToNow } from "date-fns";
+import { enUS } from "date-fns/locale";
+import IcBaselinePersonAddAlt from "../img_component/follow.jsx";
+import IcRoundMailOutline from "../img_component/message.jsx";
 
 const ProfilePage = () => {
     const { username } = useParams();
@@ -19,13 +19,7 @@ const ProfilePage = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const token = localStorage.getItem("access_token");
-                if (!token) return;
-
-                const response = await axios.get("http://127.0.0.1:8000/api/connected-user/", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
+                const response = await getConnectedUser();
                 setUser(response.data);
             } catch (error) {
                 console.error("Error fetching user:", error);
@@ -38,7 +32,7 @@ const ProfilePage = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/profile/${username}/`);
+                const response = await getUserProfile(username);
                 setProfile(response.data);
             } catch (error) {
                 console.error("Error fetching profile:", error);
@@ -54,22 +48,11 @@ const ProfilePage = () => {
         setLoading(true);
         setError(null);
 
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-            setError('You need to be logged in.');
-            setLoading(false);
-            return;
-        }
-
         try {
-            await axios.post(
-                `http://127.0.0.1:8000/account/${username}/follow/`,
-                {},
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await followUser(username);
         } catch (error) {
             console.error("Error:", error);
-            setError('Something went wrong, please try again later.');
+            setError("Something went wrong, please try again later.");
         } finally {
             setLoading(false);
         }
@@ -79,21 +62,11 @@ const ProfilePage = () => {
         if (!window.confirm("Are you sure you want to delete this post?")) return;
 
         try {
-            const token = localStorage.getItem("access_token");
-            if (!token) {
-                alert("You need to be logged in to delete a post.");
-                return;
-            }
-
-            await axios.delete(`http://127.0.0.1:8000/api/posts/${postId}/delete/`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            setProfile(prevProfile => ({
+            await deletePost(postId);
+            setProfile((prevProfile) => ({
                 ...prevProfile,
-                posts: prevProfile.posts.filter(post => post.id !== postId),
+                posts: prevProfile.posts.filter((post) => post.id !== postId),
             }));
-
             alert("Post deleted successfully!");
         } catch (error) {
             console.error("Error deleting post:", error.response?.data || error.message);
@@ -111,30 +84,30 @@ const ProfilePage = () => {
 
     return (
         <div className="profile-container">
-            <div className='user_informations'>
+            <div className="user_informations">
                 {profile.profile_picture && (
                     <img src={`http://127.0.0.1:8000${profile.profile_picture}`} alt="Profile" className="profile-picture" />
                 )}
                 <div>
                     <p>{profile.username}</p>
-                    <div className='followers-number'>
+                    <div className="followers-number">
                         <p className="follows_component">{profile.following.length} Followers</p>
                         <p className="follows_component">{profile.followers.length} Following</p>
                     </div>
 
                     {user && user.username !== profile.username && (
-                        <div className='user_interactions_buttons'>
-                            <div onClick={handleFollowClick} className='user_follow_button'>
+                        <div className="user_interactions_buttons">
+                            <div onClick={handleFollowClick} className="user_follow_button">
                                 <IcBaselinePersonAddAlt />
                             </div>
-                            <div onClick={() => navigate(`/messages/${profile.id}`)} className='user_send_message_button'>
+                            <div onClick={() => navigate(`/messages/${profile.id}`)} className="user_send_message_button">
                                 <IcRoundMailOutline />
                             </div>
                         </div>
                     )}
 
                     {user && user.username === profile.username && (
-                        <div onClick={() => navigate(`/account/update`)} className='update_profile_button'>
+                        <div onClick={() => navigate(`/account/update`)} className="update_profile_button">
                             <p>Update Profile</p>
                         </div>
                     )}
@@ -143,7 +116,7 @@ const ProfilePage = () => {
 
             <div className="post_list_div_component">
                 {profile.posts.length > 0 ? (
-                    profile.posts.map(post => (
+                    profile.posts.map((post) => (
                         <div key={post.id} className="post_list_component profile_post_list_component">
                             <div className="author_component">
                                 <img

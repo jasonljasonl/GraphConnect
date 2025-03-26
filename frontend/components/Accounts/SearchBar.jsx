@@ -1,11 +1,12 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { searchUsers } from "../services/api";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleSearch = async (e) => {
@@ -13,11 +14,17 @@ const SearchBar = () => {
     setQuery(value);
 
     if (value.length > 1) {
+      setLoading(true);
+      setError(null);
+
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/search/?q=${value}`);
+        const response = await searchUsers(value);
         setResults(response.data);
       } catch (error) {
-        console.error("Error", error);
+        console.error("Error fetching users:", error);
+        setError("Error fetching search results.");
+      } finally {
+        setLoading(false);
       }
     } else {
       setResults([]);
@@ -32,13 +39,32 @@ const SearchBar = () => {
         onChange={handleSearch}
         placeholder="Search a user..."
       />
+
+      {loading && <p>Loading...</p>}
+      {error && <p className="error-message">{error}</p>}
+
       <ul>
         {results.map((user) => (
-          <li key={user.id} onClick={() => navigate(`/profile/${user.username}`)} >
-              <div className='author_component'>
-                <img src={`http://127.0.0.1:8000${user.profile_picture}`} className='author_profile_picture_component' />
-                <p className='post_author_component'>{user.username}</p>
-              </div>
+          <li
+            key={user.id}
+            onClick={() => {
+              navigate(`/profile/${user.username}`);
+              setQuery("");
+              setResults([]);
+            }}
+          >
+            <div className="author_component">
+              {user.profile_picture ? (
+                <img
+                  src={`http://127.0.0.1:8000${user.profile_picture}`}
+                  className="author_profile_picture_component"
+                  alt={`${user.username}'s profile`}
+                />
+              ) : (
+                <div className="default-avatar"></div>
+              )}
+              <p className="post_author_component">{user.username}</p>
+            </div>
           </li>
         ))}
       </ul>

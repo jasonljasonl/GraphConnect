@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getUsers } from '../services/api';
 
 export default function GetUsers() {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/account/')
-            .then(response => {
+        const fetchUsers = async () => {
+            try {
+                const response = await getUsers();
                 setUsers(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+            } catch (error) {
+                console.error('Error:', error)
+            }
+        };
+
+        fetchUsers();
     }, []);
 
     return (

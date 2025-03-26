@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';  // Import useEffect and useState from React
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { logoutUser } from '../services/api';
 
 export const Logout = () => {
   const [loading, setLoading] = useState(true);  // Track the loading state
@@ -8,11 +9,11 @@ export const Logout = () => {
   useEffect(() => {
     (async () => {
       try {
-        // Get the access token from localStorage
+        // Get the access token and refresh token from localStorage
         const accessToken = localStorage.getItem('access_token');
         const refreshToken = localStorage.getItem('refresh_token');
 
-        // Make sure the token exists before sending the request
+        // Ensure both tokens exist before proceeding
         if (!accessToken || !refreshToken) {
           console.error('No access or refresh token found');
           setError('No tokens found. Please log in again.');
@@ -20,25 +21,15 @@ export const Logout = () => {
           return;
         }
 
-        // Send POST request to logout
-        const response = await axios.post(
-          'http://127.0.0.1:8000/account/logout/',
-          { refresh_token: refreshToken },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-            withCredentials: true, // Ensure credentials are sent
-          }
-        );
+        // Call the logout API
+        const status = await logoutUser(refreshToken, accessToken);
 
-        if (response.status === 205) {
+        if (status === 205) {
           // Clear localStorage and axios headers after successful logout
           localStorage.clear();
           axios.defaults.headers.common['Authorization'] = null;
 
-          // Redirect after logout
+          // Redirect to login page
           window.location.href = '/login';
         } else {
           setError('Failed to log out, please try again.');

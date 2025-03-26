@@ -12,7 +12,7 @@ from CreatePosts.views import check_like_status, CommentCreateAPIView, PostDetai
     check_comment_like_status, PostCreateAPIView, FollowedPostsListView, \
     user_posts_api, delete_post_api, PostRecommendationView
 from account.views import get_current_user_profile, UserSearchAPIView, update_user_profile, RegisterAPIView, \
-    FollowedUserListView
+    FollowedUserListView, FollowUserView
 from chat_system.views import get_chat_users, MessageViewSet
 from google_services.google_cloud_storage.google_cloud_storage import upload_file_to_storage
 from google_services.google_vision.google_vision import file_used_for_vision
@@ -28,7 +28,7 @@ router.register(r'chat/messages', MessageViewSet, basename='chat_messages')
 
 urlpatterns = [
     path("Home/", include("CreatePosts.urls")),
-    path("account/", include("account.urls")),
+    path("api/account/", include("account.urls")),
     path('admin/', admin.site.urls),
     path('chat_system/', include('chat_system.urls')),
 
@@ -42,12 +42,13 @@ urlpatterns = [
     path('api/connected-user/', get_current_user_profile, name='current_user_profile'),
     path('api/posts/followed-posts/', FollowedPostsListView.as_view(), name='followed_posts'),
     path('api/user/followed-users/', FollowedUserListView.as_view(), name='followed_users'),
+    path('api/<str:username>/follow/', FollowUserView, name='followed_users'),
     path('api/chat/messages/<int:recipient_id>/', MessageViewSet.as_view({'get': 'list'}),name='messages-by-recipient'),
     path('api/chat/messages/', MessageViewSet.as_view({'post': 'create'}), name='messages-create'),
     path('api/search/', UserSearchAPIView.as_view(), name='user-search'),
     path('api/profile/<str:username>/', user_posts_api, name='user-posts-api'),
     path('api/posts/<int:pk>/delete/', delete_post_api, name='post_delete'),
-    path('account/update', update_user_profile, name='update_user_profile'),
+    path('api/account/update/', update_user_profile, name='update_user_profile'),
     path('api/storage_uploads/', upload_file_to_storage, name='storage_uploads'),
     path('api/image_vision/', file_used_for_vision, name='file_for_vision'),
     path('api/recommendations/', PostRecommendationView.as_view(), name='post-recommendations'),

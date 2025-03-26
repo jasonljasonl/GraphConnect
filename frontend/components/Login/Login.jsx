@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios from 'axios';
 import { useState } from "react";
-import RegisterForm from './RegisterForm.jsx'
+import { loginUser } from '../services/api';
+import RegisterForm from './RegisterForm.jsx';
 
 export const Login = () => {
   const [username, setUsername] = useState("");
@@ -12,23 +13,16 @@ export const Login = () => {
     setError(null);
 
     try {
-
-      const { data } = await axios.post(
-        "http://127.0.0.1:8000/token/",
-        { username, password },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const data = await loginUser(username, password);
 
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
+
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.access}`;
 
       window.location.href = "/";
     } catch (e) {
-      setError("Invalid credentials, please try again.");
+      setError(e.message);
       console.error("Login error", e);
     }
   };

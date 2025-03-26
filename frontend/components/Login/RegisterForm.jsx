@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { registerUser } from "../services/api";
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
@@ -18,34 +19,21 @@ const RegisterForm = () => {
         });
     };
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage(null);
-    setError(null);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setMessage(null);
+        setError(null);
 
-    try {
-        const response = await fetch("http://127.0.0.1:8000/api/register/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-        });
+        try {
+            const data = await registerUser(formData);
+            console.log("Réponse API :", data);
 
-        const data = await response.json();
-        console.log("Réponse API :", data);
-
-        if (response.ok) {
             setMessage("Inscription réussie !");
             setFormData({ username: "", name: "", email: "", password: "" });
-        } else {
-            setError(data.error || "Erreur d'inscription.");
+        } catch (err) {
+            setError(err.message || "Erreur d'inscription.");
         }
-    } catch (err) {
-        setError("Erreur de connexion au serveur.");
-    }
-};
-
+    };
 
     return (
         <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
@@ -63,6 +51,9 @@ const handleSubmit = async (e) => {
                         className="w-full px-3 py-2 border rounded-lg"
                         required
                     />
+                </div>
+                <div>
+                    <label className="block font-medium">Nom</label>
                     <input
                         type="text"
                         name="name"
@@ -98,7 +89,7 @@ const handleSubmit = async (e) => {
                     type="submit"
                     className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
                 >
-                    S'inscrire
+                    Register
                 </button>
             </form>
         </div>

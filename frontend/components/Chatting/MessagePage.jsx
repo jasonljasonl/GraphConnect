@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../css/MessagesPage.css";
+import { getChatUsers } from "../services/api";
 
 export default function MessagePage() {
   const [users, setUsers] = useState([]);
@@ -17,24 +17,24 @@ export default function MessagePage() {
       return;
     }
 
-    axios
-      .get("http://127.0.0.1:8000/api/chat/users/", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        // Vérifie si la réponse est un tableau
+    const fetchChatUsers = async () => {
+      try {
+        const response = await getChatUsers();
         if (Array.isArray(response.data)) {
           setUsers(response.data);
         } else {
-          console.error("La réponse n'est pas un tableau:", response.data);
+          console.error("error:", response.data);
           setError("Failed to load users.");
         }
         setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Failed to fetch chat users:", error);
         setError("Failed to load users.");
-      });
+        setLoading(false);
+      }
+    };
+
+    fetchChatUsers();
   }, []);
 
   if (loading) {
