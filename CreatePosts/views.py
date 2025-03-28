@@ -359,7 +359,7 @@ class PostRecommendationView(APIView):
         index.add(post_vectors)
         print(f'Index: {index}')
 
-        k = 5
+        k = 10000
         distances, indices = index.search(query_vector, k)
 
         recommended_posts = []
