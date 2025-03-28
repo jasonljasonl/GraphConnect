@@ -12,9 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os.path
 from datetime import timedelta
 from pathlib import Path
-import dj_database_url
 
-from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

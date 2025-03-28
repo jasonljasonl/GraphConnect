@@ -6,7 +6,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY . .
-ENV DJANGO_SETTINGS_MODULE=GraphConnect.settings
+ENV DJANGO_SETTINGS_MODULE=GraphConnectSettings.settings
 ENV PYTHONUNBUFFERED=1
 ENV PORT 8080
 
