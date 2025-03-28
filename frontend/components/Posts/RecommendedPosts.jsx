@@ -42,7 +42,7 @@ const RecommendedPosts = () => {
   useEffect(() => {
     const fetchRecommendedPosts = async () => {
       if (!token) {
-        setError("Vous devez être connecté pour voir les recommandations.");
+        setError("You must log-in.");
         return;
       }
 
@@ -109,10 +109,8 @@ const RecommendedPosts = () => {
 
   return (
     <div>
-      {/* Afficher la barre de recherche tout le temps */}
       <SearchBar />
 
-      {/* Afficher le message si aucun post n'est disponible */}
       {recommendedPosts.length === 0 ? (
         <p>No recommendations available.</p>
       ) : (
