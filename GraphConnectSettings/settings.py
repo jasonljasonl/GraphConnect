@@ -27,7 +27,7 @@ SECRET_KEY = 'hSNU65CyUdhkPYOjHOOlP-oayH9z3It_x7_4WuZ5kx92g5Hz02G_2e0K6NB73tIpEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['graphconnect-695590394372.europe-west1.run.app']
 
 # Application definition
 
