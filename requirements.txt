@@ -59,3 +59,4 @@ txaio==23.1.1
 typing_extensions==4.13.0
 urllib3==2.3.0
 zope.interface==7.2
+dj-database-url==2.3.0

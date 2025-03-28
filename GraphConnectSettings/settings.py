@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os.path
 from datetime import timedelta
 from pathlib import Path
+import dj_database_url
+
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -109,14 +111,9 @@ WSGI_APPLICATION = 'GraphConnectSettings.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "GraphConnect_db",
-        'USER': 'postgres',
-        'PASSWORD': 'jasonlnmdsocialapp2025*',
-        'HOST':'localhost',
-        'PORT':'5432'
-    }
+    'default': dj_database_url.config(
+        default=f'postgres://{os.environ.get("DATABASE_USER")}:{os.environ.get("DATABASE_PASSWORD")}@{os.environ.get("DATABASE_HOST")}:{os.environ.get("DATABASE_PORT")}/{os.environ.get("DATABASE_NAME")}'
+    )
 }
 
 
