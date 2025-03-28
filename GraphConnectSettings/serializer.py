@@ -1,5 +1,3 @@
-from django.views import View
-
 from rest_framework import viewsets, serializers
 
 from CreatePosts.models import Post, Comment
@@ -8,24 +6,16 @@ from chat_system.models import Message
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    following = serializers.PrimaryKeyRelatedField(
-        many=True,
-        read_only=True,
-        source="user_follows"
-    )
-
-
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'name', 'profile_picture', 'following']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id','username', 'email', 'password', 'name', 'profile_picture']
 
     def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = CustomUser(**validated_data)
-        user.set_password(password)
-        user.save()
+        user = CustomUser.objects.create_user(**validated_data)
         return user
+
+
+
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:

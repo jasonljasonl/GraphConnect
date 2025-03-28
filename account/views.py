@@ -1,10 +1,13 @@
+
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
+from django.views import View
 from channels.auth import login, logout
 from rest_framework import status, viewsets, generics
 from rest_framework.decorators import permission_classes, api_view, authentication_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -20,6 +23,7 @@ from .models import CustomUser
 class CustomUserSerializerView(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
+
 
 class RegisterAPIView(APIView):
     def post(self, request):
@@ -93,7 +97,15 @@ class LogoutView(APIView):
 
 
 
-
+class UserFollowView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        user = get_object_or_404(CustomUser, id=kwargs['pk'])
+        if request.user != user:
+            if request.user in user.user_follows.all():
+                user.user_follows.remove(request.user)
+            else:
+                user.user_follows.add(request.user)
+        return redirect('customuser_list')
 
 
 
@@ -130,8 +142,6 @@ def update_user_profile(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 @api_view(['POST'])

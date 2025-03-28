@@ -6,33 +6,37 @@ from cryptography.fernet import Fernet
 
 # Create your models here.
 class CustomUserManager(BaseUserManager):
-    def create_user(self,username, email, password=None, **extra_fields):
+    def create_user(self, username, email, password=None, **extra_fields):
         if not email:
             raise ValueError('Not a valid email address.')
         email = self.normalize_email(email)
         user = self.model(username=username, email=email, **extra_fields)
-        user.set_password(password)
+
+        if password:
+            user.set_password(password)
 
         user.save(using=self._db)
-
         return user
 
     def create_superuser(self, username, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff',True)
-        extra_fields.setdefault('is_superuser',True)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
-        return self.create_user( username,password,**extra_fields)
+        return self.create_user(username, password, **extra_fields)
 
 
+
+
+
+# models.py
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    # Champs personnalisés
     encryption_key = models.CharField(max_length=128, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='uploaded_images/', blank=True)
     username = models.CharField(unique=True, max_length=50)
     name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
-
     user_follows = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="follows", blank=True)
-
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -46,11 +50,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     def save(self, *args, **kwargs):
-        if self.pk is None:
-            self.set_password(self.password)
+        if self.pk is None and self.password:  # Si l'utilisateur est nouveau et qu'il a un mot de passe
+            pass  # On laisse le mot de passe tel quel (en clair)
         if not self.encryption_key:
-            self.encryption_key = Fernet.generate_key().decode()
+            self.encryption_key = Fernet.generate_key().decode()  # Génère une clé de chiffrement si elle n'existe pas
         super().save(*args, **kwargs)
+
 
 
 
