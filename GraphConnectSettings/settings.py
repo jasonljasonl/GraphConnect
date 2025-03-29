@@ -80,7 +80,7 @@ CORS_ORIGIN_WHITELIST = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Your frontend URL
+    "https://graphconnect-frontend-695590394372.europe-west1.run.app",  # Your frontend URL
 ]
 
 
