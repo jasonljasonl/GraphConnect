@@ -12,7 +12,7 @@ from CreatePosts.views import check_like_status, CommentCreateAPIView, PostDetai
     check_comment_like_status, PostCreateAPIView, FollowedPostsListView, \
     user_posts_api, delete_post_api, PostRecommendationView
 from account.views import get_current_user_profile, UserSearchAPIView, update_user_profile, RegisterAPIView, \
-    FollowedUserListView, FollowUserView
+    FollowedUserListView, FollowUserView, GetMyIPView
 from chat_system.views import get_chat_users, MessageViewSet
 from google_services.google_cloud_storage.google_cloud_storage import upload_file_to_storage
 from google_services.google_vision.google_vision import file_used_for_vision
@@ -54,6 +54,8 @@ urlpatterns = [
     path('api/recommendations/', PostRecommendationView.as_view(), name='post-recommendations'),
     path("api/chat/users/", get_chat_users, name="chat-users"),
     path("api/register/", RegisterAPIView.as_view(), name="register"),
+    path("api/get-my-ip/", GetMyIPView.as_view(), name="get-my-ip"),
+
 
     path('token/',jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/',jwt_views.TokenRefreshView.as_view(),name='token_refresh')

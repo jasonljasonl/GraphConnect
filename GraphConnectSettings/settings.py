@@ -121,6 +121,7 @@ DATABASES = {
 
 
 
+
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [

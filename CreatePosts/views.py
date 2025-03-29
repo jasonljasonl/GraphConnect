@@ -372,3 +372,4 @@ class PostRecommendationView(APIView):
             "recommended_posts": PostSerializer(recommended_posts, many=True).data
         })
 
+
