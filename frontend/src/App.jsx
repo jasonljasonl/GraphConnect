@@ -6,7 +6,7 @@ import { NavBar } from '../components/NavBar.jsx';
 import { Login } from "../components/Login/Login";
 import { Logout } from "../components/Login/Logout";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import '../components/axios';
+import '../components/Axios';
 import ViewPostPage from '../components/Posts/ViewPostPage.jsx';
 import CreatePostComponent from '../components/Posts/CreatePostComponent.jsx';
 import MessagePage from '../components/Chatting/MessagePage.jsx';
