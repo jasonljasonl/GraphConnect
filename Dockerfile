@@ -12,7 +12,4 @@ ENV PORT 8080
 
 EXPOSE 8080
 
-CMD ["gunicorn", "GraphConnectSettings.wsgi:application", "--bind", "0.0.0.0:8080"]
-
-
-#CMD echo $PORT && python manage.py runserver 0.0.0.0:$PORT
+CMD ["/app/start.sh"]

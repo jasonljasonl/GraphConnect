@@ -8,7 +8,7 @@ from chat_system.models import Message
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id','username', 'email', 'password', 'name', 'profile_picture']
+        fields = ['id','username', 'email', 'password', 'name']
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(**validated_data)
