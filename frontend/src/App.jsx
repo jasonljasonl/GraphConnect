@@ -12,7 +12,7 @@ import CreatePostComponent from '../components/Posts/CreatePostComponent.jsx';
 import MessagePage from '../components/Chatting/MessagePage.jsx';
 import UserMessage from '../components/Chatting/UserMessage.jsx';
 import SearchBar from '../components/Accounts/SearchBar.jsx'
-import ProfilePage from '../components/Accounts/ProfilePage.jsx'
+import ProfilePage from '../components/Accounts/Profilepage.jsx'
 import UserProfileUpdate from '../components/Accounts/UserProfileUpdate.jsx'
 import RecommendedPosts from '../components/Posts/RecommendedPosts.jsx'
 
