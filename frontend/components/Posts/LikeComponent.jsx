@@ -7,12 +7,13 @@ const LikeComponent = ({ postId, initialLikes }) => {
     const [likeCount, setLikeCount] = useState(initialLikes);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        if (!token || !postId) return;
+        if (!token || !postId || !API_BASE_URL) return;
 
-        fetch(`http://localhost:8000/api/check-like/${postId}/`, {
+        fetch(`${API_BASE_URL}/check-like/${postId}/`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -24,14 +25,14 @@ const LikeComponent = ({ postId, initialLikes }) => {
                 setIsLiked(data.liked);
             })
             .catch((err) => console.error("Error:", err));
-    }, [postId]);
+    }, [postId, API_BASE_URL]);
 
     const handleLikeClick = async () => {
         setLoading(true);
         setError(null);
 
         const token = localStorage.getItem('access_token');
-        if (!token) {
+        if (!token || !API_BASE_URL) {
             setError('You need to be logged in.');
             setLoading(false);
             return;
@@ -39,7 +40,7 @@ const LikeComponent = ({ postId, initialLikes }) => {
 
         try {
             const response = await axios.post(
-                `http://127.0.0.1:8000/Home/${postId}/like/`,
+                `${API_BASE_URL}/Home/${postId}/like/`,
                 {},
                 {
                     headers: {

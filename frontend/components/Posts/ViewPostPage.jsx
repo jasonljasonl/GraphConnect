@@ -17,11 +17,13 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
   const [users, setUsers] = useState([]);
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
     const fetchPost = async () => {
+      if (!API_BASE_URL) return;
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/posts/${postId}/`);
+        const response = await axios.get(`${API_BASE_URL}/posts/${postId}/`);
         setPost(response.data);
       } catch (err) {
         setError("Failed to load post");
@@ -29,17 +31,18 @@ const PostDetail = () => {
     };
 
     fetchPost();
-  }, [postId]);
+  }, [postId, API_BASE_URL]);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/account/')
+        if (!API_BASE_URL) return;
+        axios.get(`${API_BASE_URL}/account/`)
             .then(response => {
                 setUsers(response.data);
             })
             .catch(error => {
                 console.error(error);
             });
-    }, []);
+    }, [API_BASE_URL]);
 
     const getAuthorUsername = (authorId) => {
     const user = users.find(user => user.id === authorId);
@@ -48,7 +51,7 @@ const PostDetail = () => {
 
     const getAuthorProfilePicture = (authorId) => {
         const user = users.find(user => user.id === authorId);
-        return user ? user.profile_picture : 'Unknown';
+        return user ? `${API_BASE_URL}${user.profile_picture}` : 'Unknown'; // Utilisez l'URL de base
     };
 
 
@@ -62,7 +65,7 @@ const PostDetail = () => {
             <p className='post_author_component'>{getAuthorUsername(post.author)}</p>
         </div>
 
-{post.image_post && <img src={post.image_post} alt='' width='100%' />}
+{post.image_post && <img src={`${API_BASE_URL}${post.image_post}`} alt='' width='100%' />}
       <p className='view_post_post_description'>{post.content}</p>
       <p className='post_upload_date'>{formatDistanceToNow(new Date(post.upload_date), { locale: enUS })} ago</p>
 

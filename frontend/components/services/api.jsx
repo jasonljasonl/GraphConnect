@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -115,7 +115,7 @@ export const getChatUsers = async () => {
 export const loginUser = async (username, password) => {
   try {
     const { data } = await axios.post(
-      "http://127.0.0.1:8000/token/",
+      `${process.env.REACT_APP_API_BASE_URL}/token/`, // Utilisez la variable d'environnement ici aussi
       { username, password },
       {
         headers: { "Content-Type": "application/json" },
@@ -132,7 +132,7 @@ export const loginUser = async (username, password) => {
 export const logoutUser = async (refreshToken, accessToken) => {
   try {
     const response = await axios.post(
-      'http://127.0.0.1:8000/account/logout/',
+      `${process.env.REACT_APP_API_BASE_URL}/account/logout/`, // Et ici
       { refresh_token: refreshToken },
       {
         headers: {
@@ -151,7 +151,7 @@ export const logoutUser = async (refreshToken, accessToken) => {
 
 export const registerUser = async (formData) => {
   try {
-    const response = await axios.post("http://127.0.0.1:8000/api/register/", formData, {
+    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/register/`, formData, { // Ici aussi
       headers: {
         "Content-Type": "application/json",
       },

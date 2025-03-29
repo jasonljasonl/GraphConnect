@@ -1,6 +1,7 @@
 import axios from "axios";
 
 let refreshInProgress = false; // Variable to prevent multiple refresh requests
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 axios.interceptors.response.use(
   (response) => response, // Pass valid responses unchanged
@@ -13,7 +14,7 @@ axios.interceptors.response.use(
 
         // Request a new access token using the refresh token
         const response = await axios.post(
-          "http://127.0.0.1:8000/token/refresh/",
+          `${API_BASE_URL}/token/refresh/`,
           {
             refresh: localStorage.getItem("refresh_token"),
           },
@@ -44,3 +45,5 @@ axios.interceptors.response.use(
     return Promise.reject(error); // Handle the original error
   }
 );
+
+export default axios;

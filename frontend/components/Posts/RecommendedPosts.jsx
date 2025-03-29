@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import SearchBar from '../Accounts/SearchBar.jsx'
+import SearchBar from '../Accounts/SearchBar.jsx';
 import '../css/RecommendedPostPage.css';
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
@@ -17,13 +17,14 @@ const RecommendedPosts = () => {
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [commentCounts, setCommentCounts] = useState({});
   const navigate = useNavigate();
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Récupérez l'URL de base
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        if (!token) return;
+        if (!token || !API_BASE_URL) return;
 
-        const response = await axios.get("http://127.0.0.1:8000/api/connected-user/", {
+        const response = await axios.get(`${API_BASE_URL}/account/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -37,17 +38,17 @@ const RecommendedPosts = () => {
     };
 
     fetchUserData();
-  }, [token]);
+  }, [token, API_BASE_URL]); // Ajoutez API_BASE_URL comme dépendance
 
   useEffect(() => {
     const fetchRecommendedPosts = async () => {
-      if (!token) {
-        setError("You must log-in.");
+      if (!token || !API_BASE_URL) {
+        setError("You must log-in and the API URL must be set.");
         return;
       }
 
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/recommendations/", {
+        const response = await axios.get(`${API_BASE_URL}/recommendations/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -60,17 +61,39 @@ const RecommendedPosts = () => {
       }
     };
 
-    if (currentUser) {
+    if (currentUser && API_BASE_URL) {
       fetchRecommendedPosts();
     }
-  }, [token, currentUser]);
+  }, [token, currentUser, API_BASE_URL]); // Ajoutez API_BASE_URL comme dépendance
 
   useEffect(() => {
+    if (!API_BASE_URL) return;
+
     axios
-      .get("http://127.0.0.1:8000/api/account/")
+      .get(`${API_BASE_URL}/account/`)
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Failed to fetch users:", error));
-  }, []);
+  }, [API_BASE_URL]); // Ajoutez API_BASE_URL comme dépendance
+
+  useEffect(() => {
+    const fetchCommentCounts = async () => {
+      if (!API_BASE_URL) return;
+      const counts = {};
+      for (const post of recommendedPosts) {
+        try {
+          const response = await axios.get(`${API_BASE_URL}/posts/${post.id}/comment_count/`);
+          counts[post.id] = response.data.count;
+        } catch (error) {
+          console.error("Failed to fetch comment count for post:", post.id, error);
+        }
+      }
+      setCommentCounts(counts);
+    };
+
+    if (recommendedPosts.length > 0 && API_BASE_URL) {
+      fetchCommentCounts();
+    }
+  }, [recommendedPosts, API_BASE_URL]); // Ajoutez API_BASE_URL comme dépendance
 
   const getAuthorUsername = (authorId) => {
     const user = users.find((user) => user.id === authorId);
@@ -79,7 +102,7 @@ const RecommendedPosts = () => {
 
   const getAuthorProfilePicture = (authorId) => {
     const user = users.find((user) => user.id === authorId);
-    return user ? user.profile_picture : "/default-profile.png";
+    return user ? `${API_BASE_URL}${user.profile_picture}` : "/default-profile.png"; // Utilisez l'URL de base
   };
 
   const handleDeletePost = async (postId) => {
@@ -87,12 +110,12 @@ const RecommendedPosts = () => {
 
     try {
       const token = localStorage.getItem("access_token");
-      if (!token) {
-        alert("You need to be logged in to delete a post.");
+      if (!token || !API_BASE_URL) {
+        alert("You need to be logged in and the API URL must be set to delete a post.");
         return;
       }
 
-      await axios.delete(`http://127.0.0.1:8000/api/posts/${postId}/delete/`, {
+      await axios.delete(`${API_BASE_URL}/posts/${postId}/delete/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -157,7 +180,7 @@ const RecommendedPosts = () => {
                 </div>
 
                 <img
-                  src={`http://127.0.0.1:8000${post.image_post}`}
+                  src={`${API_BASE_URL}${post.image_post}`}
                   alt="image"
                   className="home_post_component"
                 />

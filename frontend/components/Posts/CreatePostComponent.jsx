@@ -20,7 +20,9 @@ const CreatePostComponent = () => {
         const token = localStorage.getItem("access_token");
         if (!token) return;
 
-        const response = await axios.get("http://127.0.0.1:8000/api/connected-user/", {
+        // Utilisez la variable d'environnement pour l'URL de base de l'API
+        const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+        const response = await axios.get(`${API_BASE_URL}/account/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -52,13 +54,14 @@ const CreatePostComponent = () => {
 
     try {
       let imageUrl = null;
+      const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
       if (image) {
         const imageFormData = new FormData();
         imageFormData.append("file", image);
 
         const imageResponse = await axios.post(
-          `http://127.0.0.1:8000/api/storage_uploads/`,
+          `${API_BASE_URL}/storage_uploads/`,
           imageFormData,
           {
             headers: {
@@ -73,7 +76,7 @@ const CreatePostComponent = () => {
         console.log(imageUrl);
       }
 
-      const visionResponse = await fetch('http://localhost:8000/api/image_vision/', {
+      const visionResponse = await fetch(`${API_BASE_URL}/image_vision/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +104,7 @@ const CreatePostComponent = () => {
       if (imageUrl) formData.append("image_post", imageUrl);
 
       const postResponse = await axios.post(
-        `http://127.0.0.1:8000/api/posts/create_post/`,
+        `${API_BASE_URL}/posts/create_post/`,
         formData,
         {
           headers: {
@@ -127,7 +130,7 @@ const CreatePostComponent = () => {
       <form onSubmit={handleSubmit} className="form_post">
         {user && user.profile_picture ? (
           <img
-            src={`http://127.0.0.1:8000${user.profile_picture}`}
+            src={`${process.env.REACT_APP_API_BASE_URL}${user.profile_picture}`}
             alt="Profil"
             width="50"
             className="post_author_profile_picture_component"

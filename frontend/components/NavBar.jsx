@@ -14,6 +14,7 @@ export function NavBar() {
    const [currentUser, setCurrentUser] = useState(null);
    const [users, setUsers] = useState([]);
    const token = localStorage.getItem("access_token");
+   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 
    useEffect(() => {
@@ -23,14 +24,12 @@ export function NavBar() {
     }, [isAuth]);
 
 
-
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        if (!token) return;
+        if (!token || !API_BASE_URL) return;
 
-        const response = await axios.get("http://127.0.0.1:8000/api/connected-user/", {
+        const response = await axios.get(`${API_BASE_URL}/account/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -44,17 +43,16 @@ export function NavBar() {
     };
 
     fetchUserData();
-  }, [token]);
-
+  }, [token, API_BASE_URL]);
 
 
   useEffect(() => {
+    if (!API_BASE_URL) return;
     axios
-      .get("http://127.0.0.1:8000/api/account/")
+      .get(`${API_BASE_URL}/account/`)
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Failed to fetch users:", error));
-  }, []);
-
+  }, [API_BASE_URL]);
 
 
      return (
@@ -68,7 +66,7 @@ export function NavBar() {
               {isAuth && currentUser ? (
                 <Nav.Link href={`/profile/${currentUser.username}`}>
                   <img
-                    src={`http://127.0.0.1:8000${currentUser.profile_picture}`}
+                    src={`${API_BASE_URL}${currentUser.profile_picture}`}
                     alt="profile"
                     className="author_profile_picture_component"
                   />
@@ -77,10 +75,6 @@ export function NavBar() {
                 <Nav.Link href="/login">Login</Nav.Link>
               )}
             </Nav>
-
-
-
-
         </Navbar>
        </div>
      );
