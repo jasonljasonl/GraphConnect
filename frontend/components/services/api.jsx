@@ -115,7 +115,7 @@ export const getChatUsers = async () => {
 export const loginUser = async (username, password) => {
   try {
     const { data } = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/token/`, // Utilisez la variable d'environnement ici aussi
+      `https://graphconnect-695590394372.europe-west1.run.app/token/`,
       { username, password },
       {
         headers: { "Content-Type": "application/json" },
@@ -132,7 +132,7 @@ export const loginUser = async (username, password) => {
 export const logoutUser = async (refreshToken, accessToken) => {
   try {
     const response = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/account/logout/`, // Et ici
+      `${process.env.REACT_APP_API_BASE_URL}/account/logout/`,
       { refresh_token: refreshToken },
       {
         headers: {
@@ -151,7 +151,7 @@ export const logoutUser = async (refreshToken, accessToken) => {
 
 export const registerUser = async (formData) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/register/`, formData, { // Ici aussi
+    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/register/`, formData, {
       headers: {
         "Content-Type": "application/json",
       },
