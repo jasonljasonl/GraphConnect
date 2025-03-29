@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Post from '../components/Posts/PostComponent.jsx';
-import GetUsers from '../components/Accounts/getUsersComponent.jsx';
+import GetUsers from '../components/Accounts/GetUsersComponent.jsx';
 import { NavBar } from '../components/NavBar.jsx';
 import { Login } from "../components/Login/Login";
 import { Logout } from "../components/Login/Logout";
