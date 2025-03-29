@@ -151,7 +151,7 @@ export const logoutUser = async (refreshToken, accessToken) => {
 
 export const registerUser = async (formData) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/register/`, formData, {
+    const response = await axios.post(`https://graphconnect-695590394372.europe-west1.run.app/api/register/`, formData, {
       headers: {
         "Content-Type": "application/json",
       },
