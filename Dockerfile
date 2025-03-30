@@ -2,14 +2,32 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y netcat-openbsd
+# Install curl and gnupg to handle package installation
+RUN apt-get update && apt-get install -y curl gnupg lsb-release
 
+# Add Google Cloud SDK repository and install the SDK
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN apt-get update && apt-get install -y google-cloud-sdk
 
+# Install python dependencies
+RUN apt-get update && apt-get install -y python3-dev libpq-dev
+
+# Install netcat (for waiting on the database)
+RUN apt-get install -y netcat-openbsd
+
+# Download Cloud SQL proxy
+RUN curl -o /cloud_sql_proxy https://storage.googleapis.com/cloudsql-proxy/v1.33.4/cloud_sql_proxy.linux.amd64 && \
+    chmod +x /cloud_sql_proxy
+
+# Copy requirements and install them
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
+# Copy the application files
 COPY . .
 
+# Define environment variables for DB connection
 ARG DATABASE_NAME
 ARG DATABASE_USER
 ARG DATABASE_PASSWORD
@@ -19,16 +37,20 @@ ARG DATABASE_PORT
 ENV DATABASE_NAME=${DATABASE_NAME}
 ENV DATABASE_USER=${DATABASE_USER}
 ENV DATABASE_PASSWORD=${DATABASE_PASSWORD}
-ENV DATABASE_HOST=${DATABASE_HOST}
-ENV DATABASE_PORT=${DATABASE_PORT}
+ENV DATABASE_HOST=/cloudsql/graphconnect:europe-west1:graphconnect-db
+ENV DATABASE_PORT=5432
 
+# Django and Gunicorn settings
 ENV DJANGO_SETTINGS_MODULE=GraphConnectSettings.settings
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8080
 
+# Expose the port
 EXPOSE 8080
 
+# Copy entrypoint script and make it executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+# Set the entrypoint for the container
 ENTRYPOINT ["/entrypoint.sh"]

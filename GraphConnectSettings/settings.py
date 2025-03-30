@@ -115,7 +115,7 @@ WSGI_APPLICATION = 'GraphConnectSettings.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME'),
+        'NAME': 'postgres',
         'USER': os.environ.get('DATABASE_USER'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
         'HOST': '/cloudsql/graphconnect:europe-west1:graphconnect-db',
