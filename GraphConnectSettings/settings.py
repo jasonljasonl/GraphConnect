@@ -141,9 +141,6 @@ DATABASES = {
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'jasonlndmsocialapp2025'),
         'HOST': '127.0.0.1',
         'PORT': '5432',
-        'OPTIONS': {
-            'connection_factory': getconn,
-        },
     }
 }
 
