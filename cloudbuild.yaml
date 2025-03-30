@@ -11,7 +11,7 @@ steps:
       - '--build-arg'
       - 'DATABASE_PASSWORD=jasonlndmsocialapp'
       - '--build-arg'
-      - 'DATABASE_HOST=34.79.74.37'
+      - 'DATABASE_HOST=/cloudsql/graphconnect:europe-west1:graphconnect-db'
       - '--build-arg'
       - 'DATABASE_PORT=5432'
       - '.'
