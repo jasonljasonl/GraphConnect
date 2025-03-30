@@ -13,9 +13,17 @@ import os.path
 from datetime import timedelta
 from pathlib import Path
 import django.core.management.commands.runserver as runserver
+from google.cloud.sql.connector import Connector, IPTypes
+import pg8000
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 PORT = int(os.environ.get("PORT", 8080))
+runserver.DEFAULT_PORT = PORT
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -61,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 
 ]
 
@@ -112,17 +121,31 @@ WSGI_APPLICATION = 'GraphConnectSettings.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+connector = Connector()
+
+def getconn():
+    return connector.connect(
+        "graphconnect:europe-west1:graphconnect-db",
+        "pg8000",
+        user=os.environ.get("DATABASE_USER", "postgres"),
+        password=os.environ.get("DATABASE_PASSWORD", "jasonlndmsocialapp2025"),
+        db=os.environ.get("DATABASE_NAME", "postgres"),
+        ip_type=IPTypes.PUBLIC,
+    )
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': os.environ.get('DATABASE_USER'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'HOST': '/cloudsql/graphconnect:europe-west1:graphconnect-db',
-        'PORT': os.environ.get('DATABASE_PORT'),
+        'NAME': os.environ.get('DATABASE_NAME', 'postgres'),
+        'USER': os.environ.get('DATABASE_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'jasonlndmsocialapp2025'),
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+        'OPTIONS': {
+            'connection_factory': getconn,
+        },
     }
 }
-
 
 
 
