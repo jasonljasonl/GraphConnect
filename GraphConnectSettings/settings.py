@@ -12,7 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os.path
 from datetime import timedelta
 from pathlib import Path
+import django.core.management.commands.runserver as runserver
 
+
+PORT = int(os.environ.get("PORT", 8080))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,11 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'hSNU65CyUdhkPYOjHOOlP-oayH9z3It_x7_4WuZ5kx92g5Hz02G_2e0K6NB73tIpEYc'
+runserver.DEFAULT_PORT = str(PORT)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['graphconnect-695590394372.europe-west1.run.app']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
