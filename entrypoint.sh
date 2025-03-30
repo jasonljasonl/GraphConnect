@@ -1,8 +1,15 @@
 #!/bin/sh
 
-# Start the Cloud SQL proxy
-echo "Starting Cloud SQL proxy..."
-/cloud_sql_proxy -dir=/cloudsql -instances=graphconnect:europe-west1:graphconnect-db &
+# Start Cloud SQL Proxy in the background
+./cloud_sql_proxy -dir=/cloudsql -instances=graphconnect:europe-west1:graphconnect-db &
+PROXY_PID=$!
+
+# Wait for Cloud SQL Proxy to be ready
+echo "Waiting for Cloud SQL Proxy to start..."
+sleep 5  # Gives the proxy time to establish the connection
+
+# Start Django application
+exec python manage.py runserver 0.0.0.0:8000
 
 # Wait for the database to be ready
 echo "Waiting for the database..."
