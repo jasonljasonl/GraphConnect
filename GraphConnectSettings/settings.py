@@ -139,7 +139,7 @@ DATABASES = {
         'NAME': os.environ.get('DATABASE_NAME', 'postgres'),
         'USER': os.environ.get('DATABASE_USER', 'postgres'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'jasonlndmsocialapp2025'),
-        'HOST': '/cloudsql/graphconnect:europe-west1:graphconnect-db',
+        'HOST': '/Users/jasonlandim/cloudsql/graphconnect:europe-west1:graphconnect-db/.s.PGSQL.5432',
         'PORT': '5432',
     }
 }

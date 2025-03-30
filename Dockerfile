@@ -5,7 +5,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Install necessary dependencies
-RUN apt-get update && apt-get install -y curl gnupg ca-certificates lsb-release
+RUN apt-get update && apt-get install -y curl gnupg ca-certificates lsb-release postgresql-client
 
 # Add Google Cloud SDK public key
 RUN curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
@@ -33,7 +33,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Set environment variables
-ENV DATABASE_HOST=/cloudsql/graphconnect:europe-west1:graphconnect-db
+ENV DATABASE_HOST=/cloudsql/graphconnect:europe-west1:graphconnect-db/.s.PGSQL.5432
 ENV DATABASE_PORT=5432
 ENV DJANGO_SETTINGS_MODULE=GraphConnectSettings.settings
 ENV PYTHONUNBUFFERED=1
