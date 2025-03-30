@@ -7,10 +7,10 @@ done
 echo "Base de données prête."
 
 echo "Application des migrations..."
-python manage.py migrate --noinput
+#python manage.py migrate --noinput
 
 echo "Collecte des fichiers statiques..."
-python manage.py collectstatic --noinput
+#python manage.py collectstatic --noinput
 
 echo "Démarrage de Gunicorn..."
 exec gunicorn GraphConnectSettings.wsgi:application --bind 0.0.0.0:8080
