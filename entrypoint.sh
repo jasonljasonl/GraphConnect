@@ -8,9 +8,6 @@ PROXY_PID=$!
 echo "Waiting for Cloud SQL Proxy to start..."
 sleep 5  # Gives the proxy time to establish the connection
 
-# Start Django application
-exec python manage.py runserver 0.0.0.0:8000
-
 # Wait for the database to be ready
 echo "Waiting for the database..."
 while ! nc -z /cloudsql/graphconnect:europe-west1:graphconnect-db 5432; do
@@ -26,6 +23,6 @@ python manage.py migrate --noinput
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
-# Start Gunicorn
+# Start Gunicorn (not Django's runserver) since it is for production
 echo "Starting Gunicorn..."
 exec gunicorn GraphConnectSettings.wsgi:application --bind 0.0.0.0:8080
