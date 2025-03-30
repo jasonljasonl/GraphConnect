@@ -3,10 +3,11 @@ FROM python:3.12-slim
 WORKDIR /app
 RUN mkdir -p /cloudsql
 
-RUN apt-get update && apt-get install -y curl gnupg && \
-    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+RUN apt-get update && apt-get install -y curl gnupg ca-certificates && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list && \
     apt-get update && apt-get install -y google-cloud-sdk
+
 
 RUN apt-get update && apt-get install -y python3-dev libpq-dev
 
