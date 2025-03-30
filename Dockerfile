@@ -3,11 +3,12 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install necessary dependencies including curl, gnupg, ca-certificates
+# Install necessary dependencies
 RUN apt-get update && apt-get install -y curl gnupg ca-certificates lsb-release
 
-# Manually download and add Google Cloud SDK GPG key
-RUN curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.gpg > /dev/null
+# Add Google Cloud SDK repository key properly
+RUN curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+    tee /usr/share/keyrings/cloud.google.gpg > /dev/null
 
 # Add Google Cloud SDK repository
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" \
