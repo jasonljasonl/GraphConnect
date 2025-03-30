@@ -7,14 +7,25 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN python manage.py makemigrations
-RUN python manage.py migrate --noinput
+ARG DATABASE_NAME
+ARG DATABASE_USER
+ARG DATABASE_PASSWORD
+ARG DATABASE_HOST
+ARG DATABASE_PORT
+
+ENV DATABASE_NAME=${DATABASE_NAME}
+ENV DATABASE_USER=${DATABASE_USER}
+ENV DATABASE_PASSWORD=${DATABASE_PASSWORD}
+ENV DATABASE_HOST=${DATABASE_HOST}
+ENV DATABASE_PORT=${DATABASE_PORT}
 
 ENV DJANGO_SETTINGS_MODULE=GraphConnectSettings.settings
 ENV PYTHONUNBUFFERED=1
-ENV PORT 8080
+ENV PORT=8080
 
 EXPOSE 8080
 
-CMD ["gunicorn", "GraphConnectSettings.wsgi:application", "--bind", "0.0.0.0:8080"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
+ENTRYPOINT ["/entrypoint.sh"]
