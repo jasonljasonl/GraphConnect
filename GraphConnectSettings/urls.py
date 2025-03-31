@@ -33,6 +33,8 @@ urlpatterns = [
     path('chat_system/', include('chat_system.urls')),
 
     path('api/', include(router.urls)),
+    path('api/login/', LoginAPIView.as_view(), name='login'),
+
     path('api/check-like/<int:post_id>/', check_like_status, name='check_list'),
     path('api/check-comment_like/<int:comment_id>/', check_comment_like_status, name='comment_check_list'),
     path('api/posts/<int:post_id>/posting_comment/', CommentCreateAPIView.as_view(), name='create_comment'),
@@ -54,7 +56,6 @@ urlpatterns = [
     path('api/recommendations/', PostRecommendationView.as_view(), name='post-recommendations'),
     path("api/chat/users/", get_chat_users, name="chat-users"),
     path("api/register/", RegisterAPIView.as_view(), name="register"),
-    path('api/login/', LoginAPIView.as_view(), name='login'),
 
 
 
