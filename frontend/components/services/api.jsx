@@ -151,11 +151,11 @@ export const loginUser = async (username, password) => {
 export const logoutUser = async (refreshToken, accessToken) => {
   try {
     const response = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/account/logout/`,
+      `${API_BASE_URL}/account/logout/`,
       { refresh_token: refreshToken },
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
         withCredentials: true,
@@ -171,15 +171,18 @@ export const logoutUser = async (refreshToken, accessToken) => {
 export const registerUser = async (formData) => {
   try {
     const response = await axios.post(`https://graphconnect-695590394372.europe-west1.run.app/api/register/`, formData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
     });
 
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.error || "Registration failed.");
-  }
+    } catch (error) {
+      console.error(" Erreur complète :", error.response || error);
+      throw new Error(error.response?.data?.error || "Registration failed.");
+    }
+
 };
 
 export default api;
