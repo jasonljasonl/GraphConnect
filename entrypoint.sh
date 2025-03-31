@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Start Cloud SQL Proxy in the background
-/cloud_sql_proxy -dir=/cloudsql &
+# Start Cloud SQL Proxy with the IP address of Cloud SQL
+./cloud_sql_proxy -dir=/cloudsql -ip_address=34.79.74.37 &
 
 # Get the PID of Cloud SQL Proxy to manage it later
 PROXY_PID=$!
@@ -10,9 +10,9 @@ PROXY_PID=$!
 echo "Waiting for Cloud SQL Proxy to start..."
 sleep 5  # Gives the proxy time to establish the connection
 
-# Wait for the database to be ready through the Unix socket using psql
+# Wait for the database to be ready via TCP
 echo "Waiting for the database..."
-while ! psql -h /cloudsql/graphconnect:europe-west1:graphconnect-db -U postgres -c '\q' 2>/dev/null; do
+while ! nc -z /cloudsql/graphconnect:europe-west1:graphconnect-db 5432; do
   sleep 1
 done
 echo "Database is ready."

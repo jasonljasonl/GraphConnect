@@ -33,7 +33,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Set environment variables
-ENV DATABASE_HOST=/cloudsql/graphconnect:europe-west1:graphconnect-db/.s.PGSQL.5432
+ENV DATABASE_HOST=/cloudsql/graphconnect:europe-west1:graphconnect-db
 ENV DATABASE_PORT=5432
 ENV DJANGO_SETTINGS_MODULE=GraphConnectSettings.settings
 ENV PYTHONUNBUFFERED=1
