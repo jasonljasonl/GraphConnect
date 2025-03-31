@@ -16,7 +16,7 @@ export default function Post() {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(null);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Récupérez l'URL de base
+  const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
 
 
   useEffect(() => {
