@@ -33,7 +33,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Set environment variables
-ENV DATABASE_HOST=/cloudsql/graphconnect:europe-west1:graphconnect-db
+ENV DATABASE_HOST=34.79.74.37
 ENV DATABASE_USER=postgres
 ENV DATABASE_PASSWORD=jasonlndmsocialapp2025
 ENV DATABASE_PORT=5432
