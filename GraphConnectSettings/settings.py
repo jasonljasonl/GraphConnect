@@ -44,6 +44,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,7 +56,6 @@ INSTALLED_APPS = [
     'account',
     'CreatePosts',
     'chat_system',
-    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist'
 ]
@@ -90,6 +90,7 @@ SIMPLE_JWT = {
 }
 
 
+CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOW_CREDENTIALS = True
 
