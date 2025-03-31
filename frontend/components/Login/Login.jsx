@@ -21,6 +21,7 @@ export const Login = () => {
       if (response.access_token) {
         localStorage.setItem('access_token', response.access_token);
         setMessage('Connexion réussie!');
+        window.location.href = '/';
       }
     } catch (err) {
       setError('Erreur lors de la connexion. Veuillez réessayer.');
