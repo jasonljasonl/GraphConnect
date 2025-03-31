@@ -17,19 +17,29 @@ const SearchBar = () => {
       setLoading(true);
       setError(null);
 
-      try {
-        const response = await searchUsers(value);
+    try {
+      const response = await searchUsers(value);
+      console.log("Réponse API :", response);
+
+
+      if (Array.isArray(response.data)) {
         setResults(response.data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        setError("Error fetching search results.");
-      } finally {
-        setLoading(false);
+      } else if (Array.isArray(response.data.users)) {
+        setResults(response.data.users);
+      } else {
+        setResults([]);
       }
-    } else {
-      setResults([]);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setError("Error fetching search results.");
+    } finally {
+      setLoading(false);
     }
-  };
+  } else {
+    setResults([]);
+  }
+};
+
 
   return (
     <div className="search-container">
