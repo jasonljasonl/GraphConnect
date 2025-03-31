@@ -26,21 +26,28 @@ class CustomUserSerializerView(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
 
 
+
 class RegisterAPIView(APIView):
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             login(request, user)
+
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
             return Response(
                 {
                     "message": "Account successfully created",
-                    "user": serializer.data
+                    "user": serializer.data,
+                    "access_token": access_token,  # Le token JWT d'accès
+                    "refresh_token": str(refresh)  # Le token de rafraîchissement
                 },
                 status=status.HTTP_201_CREATED
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def user_login(request):
     if request.user.is_authenticated:
