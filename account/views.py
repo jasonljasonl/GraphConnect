@@ -26,13 +26,11 @@ class CustomUserSerializerView(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
 
 
-
 class RegisterAPIView(APIView):
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            login(request, user)
 
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
@@ -41,13 +39,14 @@ class RegisterAPIView(APIView):
                 {
                     "message": "Account successfully created",
                     "user": serializer.data,
-                    "access_token": access_token,  # Le token JWT d'accès
-                    "refresh_token": str(refresh)  # Le token de rafraîchissement
+                    "access_token": access_token,
+                    "refresh_token": str(refresh)
                 },
                 status=status.HTTP_201_CREATED
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LoginAPIView(APIView):
     def post(self, request):
@@ -56,6 +55,9 @@ class LoginAPIView(APIView):
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            if not user.is_active:
+                return Response({"error": "Ce compte est désactivé"}, status=status.HTTP_403_FORBIDDEN)
+
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
@@ -63,6 +65,7 @@ class LoginAPIView(APIView):
                 {
                     "message": "Connexion réussie",
                     "access_token": access_token,
+                    "refresh_token": str(refresh)
                 },
                 status=status.HTTP_200_OK,
             )
@@ -71,6 +74,7 @@ class LoginAPIView(APIView):
                 {"error": "Identifiants invalides"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
 
 
 
@@ -162,16 +166,17 @@ def update_user_profile(request):
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
 def FollowUserView(request, username):
-    try:
-        user = get_object_or_404(CustomUser, username=username)
+    user = get_object_or_404(CustomUser, username=username)
 
-        if request.user in user.user_follows.all():
-            user.user_follows.remove(request.user)
-        else:
-            user.user_follows.add(request.user)
-        return JsonResponse({'message': 'User followed'})
-    except CustomUser.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
+    if request.user in user.user_follows.all():
+        user.user_follows.remove(request.user)
+        message = "User unfollowed"
+    else:
+        user.user_follows.add(request.user)
+        message = "User followed"
+
+    return Response({'message': message}, status=status.HTTP_200_OK)
+
 
 
 

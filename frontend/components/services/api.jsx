@@ -139,7 +139,7 @@ export const loginUser = async (username, password) => {
 
     return data;
   } catch (error) {
-    console.error("❌ Erreur lors de la connexion' :", error.response?.data || error);
+    console.error("Erreur lors de la connexion' :", error.response?.data || error);
     throw error;
   }
 };
