@@ -21,9 +21,9 @@ RUN apt-get update && apt-get install -y google-cloud-sdk
 # Install additional dependencies for Python development and PostgreSQL
 RUN apt-get install -y python3-dev libpq-dev netcat-openbsd
 
-# Download and install Cloud SQL Proxy
-RUN curl -o /cloud_sql_proxy https://storage.googleapis.com/cloudsql-proxy/v1.33.4/cloud_sql_proxy.linux.amd64 && \
-    chmod +x /cloud_sql_proxy
+# Install Cloud SQL Proxy v2 (version 2.x is the latest version as per the migration guide)
+RUN curl -fsSL https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -o /usr/local/bin/cloud_sql_proxy && \
+    chmod +x /usr/local/bin/cloud_sql_proxy
 
 # Copy and install Python dependencies
 COPY requirements.txt .
@@ -33,7 +33,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Set environment variables
-ENV DATABASE_HOST=34.79.74.37
+ENV DATABASE_HOST=127.0.0.1
 ENV DATABASE_USER=postgres
 ENV DATABASE_PASSWORD=jasonlndmsocialapp2025
 ENV DATABASE_PORT=5432

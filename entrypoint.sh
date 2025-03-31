@@ -1,25 +1,17 @@
 #!/bin/sh
 
-# Vérification si Cloud SQL Proxy est déjà présent
-if [ ! -f "/usr/local/bin/cloud_sql_proxy" ]; then
-  echo "Le fichier cloud_sql_proxy n'existe pas. Téléchargement..."
-  curl -o /cloud_sql_proxy https://storage.googleapis.com/cloudsql-proxy/v1.33.4/cloud_sql_proxy.linux.amd64
-  chmod +x /cloud_sql_proxy
-  mv /cloud_sql_proxy /usr/local/bin/cloud_sql_proxy
+# Démarrer Cloud SQL Proxy v2 en arrière-plan
+echo "Starting Cloud SQL Proxy v2..."
+/usr/local/bin/cloud_sql_proxy -dir=/cloudsql -credential_file=$GOOGLE_APPLICATION_CREDENTIALS graphconnect:europe-west1:graphconnect-db &
+
+# Attendre quelques secondes pour s'assurer que le Cloud SQL Proxy est bien démarré
+sleep 5
+
+# Vérifier si le socket est accessible
+if [ ! -S /cloudsql/graphconnect:europe-west1:graphconnect-db/.s.PGSQL.5432 ]; then
+  echo "Cloud SQL Proxy is not running. Exiting."
+  exit 1
 fi
-
-# Vérifier si le fichier est bien exécutable
-ls -lah /usr/local/bin/cloud_sql_proxy
-
-# Lancer le proxy Cloud SQL
-cloud_sql_proxy -dir=/cloudsql -ip_address=34.79.74.37 &
-
-# Attendre que la base de données soit prête
-echo "Waiting for the database..."
-while ! nc -z 34.79.74.37 5432; do
-  sleep 1
-done
-echo "Database is ready."
 
 # Appliquer les migrations
 echo "Applying migrations..."
