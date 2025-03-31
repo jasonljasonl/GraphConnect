@@ -11,15 +11,14 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem("access_token");
-
-    if (!token) {
-        console.error("no token found");
+    console.log('token:',token);
+if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
     } else {
-        config.headers.Authorization = `Bearer ${token}`;
+      console.warn("⚠️ Aucun token trouvé après redirection !");
     }
     return config;
-}, (error) => {
-    return Promise.reject(error);
+
 });
 
 
@@ -124,26 +123,20 @@ export const getChatUsers = async () => {
 export const loginUser = async (username, password) => {
   try {
     const { data } = await axios.post(
-      `https://graphconnect-695590394372.europe-west1.run.app/api/login/`,
+      `${process.env.REACT_APP_API_BASE_URL}/api/login/`,
       { username, password },
       { headers: { "Content-Type": "application/json" }, withCredentials: true }
     );
 
-    if (data.access_token) {
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("refresh_token", data.refresh_token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${data.access_token}`;
-      console.log("Token stocké :", data.access_token);
-    } else {
-      console.error("Aucun token reçu !");
-    }
+    console.log("🔍 Token reçu :", data);
 
-    return data;
+    return data; // Renvoie la réponse complète pour qu'on puisse tester les clés
   } catch (error) {
-    console.error("Erreur lors de la connexion :", error);
+    console.error("❌ Erreur lors de la connexion :", error.response?.data || error);
     throw error;
   }
 };
+
 
 
 

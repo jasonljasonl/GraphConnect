@@ -1,13 +1,14 @@
-import axios from 'axios';
 import { useState } from "react";
-import { loginUser } from '../services/api';
-import RegisterForm from './RegisterForm.jsx';
+import { useNavigate } from "react-router-dom"; // Ajout pour la redirection
+import { loginUser } from "../services/api";
+import RegisterForm from "./RegisterForm.jsx";
 
 export const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
+  const navigate = useNavigate(); // Hook pour naviguer sans recharger la page
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,15 +17,20 @@ export const Login = () => {
 
     try {
       const response = await loginUser(username, password);
-      console.log('Réponse API:', response);
+      console.log("Réponse API:", response);
 
-      if (response.access_token) {
-        localStorage.setItem('access_token', response.access_token);
-        setMessage('Connexion réussie!');
-        window.location.href = '/';
+      const accessToken = response.access || response.access_token;
+
+      if (accessToken) {
+        localStorage.setItem("access_token", accessToken);
+        setMessage("Connexion réussie!");
+        navigate("/");
+      } else {
+        throw new Error("Token non reçu");
       }
     } catch (err) {
-      setError('Erreur lors de la connexion. Veuillez réessayer.');
+      console.error("Erreur lors de la connexion :", err);
+      setError("Erreur lors de la connexion. Veuillez réessayer.");
     }
   };
 
