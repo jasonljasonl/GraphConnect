@@ -9,17 +9,24 @@ const api = axios.create({
     },
 });
 
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("access_token");
-    console.log('token:',token);
-if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
-    } else {
-      console.warn("⚠️ Aucun token trouvé après redirection !");
+const accessToken = localStorage.getItem('access_token');
+
+if (accessToken) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+}
+
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
-
-});
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 
 
