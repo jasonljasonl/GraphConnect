@@ -137,8 +137,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DATABASE_NAME', 'postgres'),
-        'USER': os.environ.get('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'jasonlndmsocialapp2025'),
+        'USER': os.getenv('DATABASE_USER', 'default_user'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'default_password'),
         'HOST': '/cloudsql/graphconnect:europe-west1:graphconnect-db',
         'PORT': '5432',
     }

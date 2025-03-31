@@ -34,6 +34,8 @@ COPY . .
 
 # Set environment variables
 ENV DATABASE_HOST=/cloudsql/graphconnect:europe-west1:graphconnect-db
+ENV DATABASE_USER=postgres
+ENV DATABASE_PASSWORD=jasonlndmsocialapp2025
 ENV DATABASE_PORT=5432
 ENV DJANGO_SETTINGS_MODULE=GraphConnectSettings.settings
 ENV PYTHONUNBUFFERED=1
