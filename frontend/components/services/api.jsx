@@ -124,7 +124,7 @@ export const getChatUsers = async () => {
 export const loginUser = async (username, password) => {
   try {
     const { data } = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/api/login/`,
+      `https://graphconnect-695590394372.europe-west1.run.app/api/login/`,
       { username, password },
       { headers: { "Content-Type": "application/json" }, withCredentials: true }
     );
