@@ -115,19 +115,23 @@ export const getChatUsers = async () => {
 export const loginUser = async (username, password) => {
   try {
     const { data } = await axios.post(
-      `https://graphconnect-695590394372.europe-west1.run.app/token/`,
-      { username, password },
+      'https://graphconnect-695590394372.europe-west1.run.app/api/login/',
+      {
+        username: username,
+        password: password,
+      },
       {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
-      }
     );
 
     return data;
   } catch (error) {
-    throw new Error("Invalid credentials, please try again.");
+    console.error("Erreur lors de la connexion :", error);
+    throw error;
   }
 };
+
 
 export const logoutUser = async (refreshToken, accessToken) => {
   try {

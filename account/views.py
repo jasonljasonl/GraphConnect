@@ -49,22 +49,28 @@ class RegisterAPIView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def user_login(request):
-    if request.user.is_authenticated:
-        return redirect("success")
-
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+class LoginAPIView(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)
-            return redirect("success")
-        else:
-            return Response({"error": "Invalid credentials"}, status=400)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
 
-    return Response({"error": "Invalid request"}, status=400)
+            return Response(
+                {
+                    "message": "Connexion réussie",
+                    "access_token": access_token,
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"error": "Identifiants invalides"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 

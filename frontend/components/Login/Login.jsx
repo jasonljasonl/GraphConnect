@@ -7,32 +7,33 @@ export const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
 
-  const submit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage(null);
     setError(null);
 
     try {
-      const data = await loginUser(username, password);
+      const response = await loginUser(username, password);
+      console.log('Réponse API:', response);
 
-      localStorage.setItem("access_token", data.access);
-      localStorage.setItem("refresh_token", data.refresh);
-
-      axios.defaults.headers.common["Authorization"] = `Bearer ${data.access}`;
-
-      window.location.href = "/";
-    } catch (e) {
-      setError(e.message);
-      console.error("Login error", e);
+      if (response.access_token) {
+        localStorage.setItem('access_token', response.access_token);
+        setMessage('Connexion réussie!');
+      }
+    } catch (err) {
+      setError('Erreur lors de la connexion. Veuillez réessayer.');
     }
   };
 
   return (
     <div className="Auth-form-container">
-      <form className="Auth-form" onSubmit={submit}>
+      <form className="Auth-form" onSubmit={handleSubmit}>
         <div className="Auth-form-content">
           <h3 className="Auth-form-title">Sign In</h3>
           {error && <p style={{ color: "red" }}>{error}</p>}
+          {message && <p style={{ color: "green" }}>{message}</p>}
           <div className="form-group mt-3">
             <label>Username</label>
             <input
