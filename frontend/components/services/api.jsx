@@ -123,16 +123,16 @@ export const getChatUsers = async () => {
 export const loginUser = async (username, password) => {
   try {
     const { data } = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/api/login/`,
+      `https://graphconnect-695590394372.europe-west1.run.app/api/login/`,
       { username, password },
       { headers: { "Content-Type": "application/json" }, withCredentials: true }
     );
 
     console.log("🔍 Token reçu :", data);
 
-    return data; // Renvoie la réponse complète pour qu'on puisse tester les clés
+    return data;
   } catch (error) {
-    console.error("❌ Erreur lors de la connexion :", error.response?.data || error);
+    console.error('"❌ Erreur lors de la connexion' :", error.response?.data || error);
     throw error;
   }
 };
