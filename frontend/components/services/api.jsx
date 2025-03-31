@@ -123,6 +123,7 @@ export const loginUser = async (username, password) => {
       {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
+      }
     );
 
     return data;
