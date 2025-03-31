@@ -91,12 +91,25 @@ SIMPLE_JWT = {
 
 
 
-CORS_ORIGIN_WHITELIST = [
-     'http://localhost:3000',
-]
 CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
-    "https://graphconnect-frontend-695590394372.europe-west1.run.app",  # Your frontend URL
+    "http://localhost:3000",
+    "https://graphconnect-frontend-695590394372.europe-west1.run.app",
+]
+
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+    "accept",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://graphconnect-frontend-695590394372.europe-west1.run.app"
 ]
 
 
