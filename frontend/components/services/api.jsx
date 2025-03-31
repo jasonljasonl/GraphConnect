@@ -12,10 +12,13 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem("access_token");
     if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
+}, (error) => {
+    return Promise.reject(error);
 });
+
 
 
 
@@ -118,15 +121,19 @@ export const loginUser = async (username, password) => {
   try {
     const { data } = await axios.post(
       'https://graphconnect-695590394372.europe-west1.run.app/api/login/',
-      {
-        username: username,
-        password: password,
-      },
+      { username, password },
       {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       }
     );
+
+    if (data.access_token) {
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("refresh_token", data.refresh_token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${data.access_token}`;
+      console.log("Token stocké :", data.access_token);
+    }
 
     return data;
   } catch (error) {
@@ -134,6 +141,7 @@ export const loginUser = async (username, password) => {
     throw error;
   }
 };
+
 
 
 export const logoutUser = async (refreshToken, accessToken) => {
