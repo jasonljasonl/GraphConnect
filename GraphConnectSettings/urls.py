@@ -55,7 +55,8 @@ urlpatterns = [
     path("api/image_vision/", file_used_for_vision, name="file_for_vision"),
     path("api/recommendations/", PostRecommendationView.as_view(), name="post_recommendations"),
     path("api/chat/users/", get_chat_users, name="chat_users"),
-
+    path('api/chat/messages/<int:recipient_id>/', MessageViewSet.as_view({'get': 'list'}),name='messages-by-recipient'),
+    path('api/chat/messages/', MessageViewSet.as_view({'post': 'create'}), name='messages-create'),
     path("api/token/", jwt_views.TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
