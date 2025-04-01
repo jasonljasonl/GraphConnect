@@ -3,9 +3,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from storages.backends.gcloud import GoogleCloudStorage
-
+import uuid
 from django.conf import settings
-from GraphConnectSettings.settings import GS_BUCKET_NAME
 
 
 @api_view(['POST'])
@@ -19,7 +18,7 @@ def upload_file_to_storage(request):
         client = storage.Client()
         bucket = client.bucket('graph-connect_bucket')
 
-        blob = bucket.blob(uploaded_file.name)
+        blob = bucket.blob(f"{uuid.uuid4()}_{uploaded_file.name}")
         blob.upload_from_file(uploaded_file)
 
         file_url = f"https://storage.googleapis.com/{bucket.name}/{blob.name}"

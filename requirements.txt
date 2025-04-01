@@ -23,6 +23,7 @@ google==3.0.0
 google-api-core==2.24.2
 google-auth==2.38.0
 google-cloud-core==2.4.3
+django-storages>=1.13.0
 google-cloud-storage==3.1.0
 google-cloud-vision==3.10.1
 google-crc32c==1.7.1
@@ -63,3 +64,4 @@ gunicorn==23.0.0
 whitenoise==6.3.0
 cloud-sql-python-connector
 pg8000
+uuid
