@@ -18,15 +18,15 @@ import pg8000
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 PORT = int(os.environ.get("PORT", 8080))
 runserver.DEFAULT_PORT = PORT
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+#BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -206,8 +206,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'account.CustomUser'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'uploaded_images')
-MEDIA_URL = '/uploaded_images/'
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'uploaded_images')
+#MEDIA_URL = 'https://storage.googleapis.com/graph-connect_bucket/'
 
 ASGI_APPLICATION = 'GraphConnectSettings.asgi.application'
 CHANNEL_LAYERS = {
@@ -241,3 +241,23 @@ LOGGING = {
         },
     },
 }
+
+GS_BUCKET_NAME = 'graph-connect_bucket'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "google_services.storage_backends.PublicMediaStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "OPTIONS": {
+            "bucket_name": GS_BUCKET_NAME,
+            "location": "static",
+        },
+    },
+}
+
+STATIC_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/static/"
+STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+MEDIA_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/"
+DEFAULT_FILE_STORAGE = "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage"

@@ -2,6 +2,10 @@ from google.cloud import storage
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from storages.backends.gcloud import GoogleCloudStorage
+
+from django.conf import settings
+from GraphConnectSettings.settings import GS_BUCKET_NAME
 
 
 @api_view(['POST'])
@@ -24,3 +28,13 @@ def upload_file_to_storage(request):
 
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+class PublicMediaStorage(GoogleCloudStorage):
+    location = "media"
+    bucket_name = settings.GS_BUCKET_NAME
+    default_acl = "publicRead"
+
