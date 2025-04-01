@@ -23,7 +23,7 @@ const PostDetail = () => {
     const fetchPost = async () => {
       if (!API_BASE_URL) return;
       try {
-        const response = await axios.get(`${API_BASE_URL}/posts/${postId}/`);
+        const response = await axios.get(`${API_BASE_URL}posts/${postId}/`);
         setPost(response.data);
       } catch (err) {
         setError("Failed to load post");
@@ -35,7 +35,7 @@ const PostDetail = () => {
 
     useEffect(() => {
         if (!API_BASE_URL) return;
-        axios.get(`${API_BASE_URL}/account/`)
+        axios.get(`${API_BASE_URL}account/`)
             .then(response => {
                 setUsers(response.data);
             })
@@ -51,7 +51,7 @@ const PostDetail = () => {
 
     const getAuthorProfilePicture = (authorId) => {
         const user = users.find(user => user.id === authorId);
-        return user ? `${API_BASE_URL}${user.profile_picture}` : 'Unknown'; // Utilisez l'URL de base
+        return user ? `${API_BASE_URL}${user.profile_picture}` : 'Unknown';
     };
 
 

@@ -28,7 +28,7 @@ export default function Post() {
           return;
         }
 
-        const response = await axios.get(`${API_BASE_URL}/account/`, {
+        const response = await axios.get(`${API_BASE_URL}account/`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
 
@@ -51,7 +51,7 @@ export default function Post() {
     }
 
     axios
-      .get(`${API_BASE_URL}/posts/followed-posts/`, {
+      .get(`${API_BASE_URL}posts/followed-posts/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -69,7 +69,7 @@ export default function Post() {
       const counts = {};
       for (const post of posts) {
         try {
-          const response = await axios.get(`${API_BASE_URL}/posts/${post.id}/comment_count/`);
+          const response = await axios.get(`${API_BASE_URL}posts/${post.id}/comment_count/`);
           counts[post.id] = response.data.count;
         } catch (error) {
           console.error("Failed to fetch comment count for post:", post.id, error);
@@ -87,7 +87,7 @@ export default function Post() {
     if (!API_BASE_URL) return;
 
     axios
-      .get(`${API_BASE_URL}/account/`)
+      .get(`${API_BASE_URL}account/`)
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Failed to fetch users:", error));
   }, [API_BASE_URL]);
@@ -113,7 +113,7 @@ export default function Post() {
                 return;
             }
 
-            await axios.delete(`${API_BASE_URL}/posts/${postId}/delete/`, {
+            await axios.delete(`${API_BASE_URL}posts/${postId}/delete/`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

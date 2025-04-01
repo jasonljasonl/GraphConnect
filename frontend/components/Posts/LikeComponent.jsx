@@ -13,7 +13,7 @@ const LikeComponent = ({ postId, initialLikes }) => {
         const token = localStorage.getItem('access_token');
         if (!token || !postId || !API_BASE_URL) return;
 
-        fetch(`${API_BASE_URL}/check-like/${postId}/`, {
+        fetch(`${API_BASE_URL}check-like/${postId}/`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -40,7 +40,7 @@ const LikeComponent = ({ postId, initialLikes }) => {
 
         try {
             const response = await axios.post(
-                `${API_BASE_URL}/Home/${postId}/like/`,
+                `${API_BASE_URL}Home/${postId}/like/`,
                 {},
                 {
                     headers: {

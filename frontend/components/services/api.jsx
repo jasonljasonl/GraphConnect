@@ -154,7 +154,7 @@ export const loginUser = async (username, password) => {
 export const logoutUser = async (refreshToken, accessToken) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/account/logout/`,
+      `${API_BASE_URL}account/logout/`,
       { refresh_token: refreshToken },
       {
         headers: {

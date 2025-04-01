@@ -24,7 +24,7 @@ const RecommendedPosts = () => {
       try {
         if (!token || !API_BASE_URL) return;
 
-        const response = await axios.get(`${API_BASE_URL}/account/`, {
+        const response = await axios.get(`${API_BASE_URL}account/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -48,7 +48,7 @@ const RecommendedPosts = () => {
       }
 
       try {
-        const response = await axios.get(`${API_BASE_URL}/recommendations/`, {
+        const response = await axios.get(`${API_BASE_URL}recommendations/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -70,7 +70,7 @@ const RecommendedPosts = () => {
     if (!API_BASE_URL) return;
 
     axios
-      .get(`${API_BASE_URL}/account/`)
+      .get(`${API_BASE_URL}account/`)
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Failed to fetch users:", error));
   }, [API_BASE_URL]); // Ajoutez API_BASE_URL comme dépendance
@@ -81,7 +81,7 @@ const RecommendedPosts = () => {
       const counts = {};
       for (const post of recommendedPosts) {
         try {
-          const response = await axios.get(`${API_BASE_URL}/posts/${post.id}/comment_count/`);
+          const response = await axios.get(`${API_BASE_URL}posts/${post.id}/comment_count/`);
           counts[post.id] = response.data.count;
         } catch (error) {
           console.error("Failed to fetch comment count for post:", post.id, error);
@@ -115,7 +115,7 @@ const RecommendedPosts = () => {
         return;
       }
 
-      await axios.delete(`${API_BASE_URL}/posts/${postId}/delete/`, {
+      await axios.delete(`${API_BASE_URL}posts/${postId}/delete/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

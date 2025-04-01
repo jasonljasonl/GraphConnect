@@ -20,9 +20,8 @@ const CreatePostComponent = () => {
         const token = localStorage.getItem("access_token");
         if (!token) return;
 
-        // Utilisez la variable d'environnement pour l'URL de base de l'API
         const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-        const response = await axios.get(`${API_BASE_URL}/account/`, {
+        const response = await axios.get(`${API_BASE_URL}account/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -61,7 +60,7 @@ const CreatePostComponent = () => {
         imageFormData.append("file", image);
 
         const imageResponse = await axios.post(
-          `${API_BASE_URL}/storage_uploads/`,
+          `${API_BASE_URL}storage_uploads/`,
           imageFormData,
           {
             headers: {
@@ -76,7 +75,7 @@ const CreatePostComponent = () => {
         console.log(imageUrl);
       }
 
-      const visionResponse = await fetch(`${API_BASE_URL}/image_vision/`, {
+      const visionResponse = await fetch(`${API_BASE_URL}image_vision/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +103,7 @@ const CreatePostComponent = () => {
       if (imageUrl) formData.append("image_post", imageUrl);
 
       const postResponse = await axios.post(
-        `${API_BASE_URL}/posts/create_post/`,
+        `${API_BASE_URL}posts/create_post/`,
         formData,
         {
           headers: {

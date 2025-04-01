@@ -11,7 +11,6 @@ export default function CommentsList({ postId }) {
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
 
-    // Récupérer les commentaires
     useEffect(() => {
         const fetchComments = async () => {
             try {
