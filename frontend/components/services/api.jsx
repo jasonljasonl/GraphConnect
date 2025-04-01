@@ -36,7 +36,7 @@ axios.interceptors.request.use(
 
 
 export const getUsers = async () => {
-    return api.get("/account/");
+    return api.get("account/");
 };
 
 export const getUserProfile = async (username) => {
@@ -44,90 +44,90 @@ export const getUserProfile = async (username) => {
 };
 
 export const getCommentCount = async (postId) => {
-    return api.get(`/posts/${postId}/comment_count/`);
+    return api.get(`posts/${postId}/comment_count/`);
 };
 
 export const getConnectedUser = async () => {
-    return api.get("/connected-user/");
+    return api.get("connected-user/");
 };
 
 export const searchUsers = async (query) => {
-    return api.get(`/search/?q=${query}`);
+    return api.get(`search/?q=${query}`);
 };
 
 export const postComment = async (postId, commentData) => {
-    return api.post(`/posts/${postId}/posting_comment/`, commentData);
+    return api.post(`posts/${postId}/posting_comment/`, commentData);
 };
 
 export const getCommentsList = async () => {
-    return api.get("/commentsList/");
+    return api.get("commentsList/");
 };
 
 export const createPost = async (postData) => {
-    return api.post("/postsList/", postData);
+    return api.post("postsList/", postData);
 };
 
 export const getPost = async (postId) => {
-    return api.get(`/postsList/${postId}/`);
+    return api.get(`postsList/${postId}/`);
 };
 
 export const getAllPosts = async () => {
-    return api.get("/postsList/");
+    return api.get("postsList/");
 };
 
 export const updatePost = async (postId, postData) => {
-    return api.put(`/posts/${postId}/`, postData);
+    return api.put(`posts/${postId}/`, postData);
 };
 
 export const deletePost = async (postId) => {
-    return api.delete(`/posts/${postId}/`);
+    return api.delete(`posts/${postId}/`);
 };
 
 export const getUserPosts = async () => {
-    return api.get("/user-posts/");
+    return api.get("user-posts/");
 };
 
 export const followUser = async (username) => {
-    return api.post(`/${username}/follow/`);
+    return api.post(`account/${username}/follow/`);
 };
 
 
 export const getFollowers = async () => {
-    return api.get("/followers/");
+    return api.get("account/followers/");
 };
 
 export const getFollowing = async () => {
-    return api.get("/user/followed-users/");
+    return api.get("user/followed-users/");
 };
 
 export const getMessages = async (recipientId) => {
-    return api.get(`/chat/messages/${recipientId}/`);
+    return api.get(`chat/messages/${recipientId}/`);
 };
 
 export const sendPrivateMessage = async (messageData) => {
-    return api.post("/chat/messages/", messageData);
+    return api.post("chat/messages/", messageData);
 };
 
 export const checkPostLike = async (postId) => {
-    return api.get(`/check-like/${postId}/`);
+    return api.get(`check-like/${postId}/`);
 };
 
 export const likePost = async (postId) => {
-    return api.post(`/Home/${postId}/like/`);
+    return api.post(`https://graphconnect-695590394372.europe-west1.run.app/Home/${postId}/like/`);
 };
 
 export const getRecommendedPosts = async () => {
-    return api.get("/recommendations/");
+    return api.get("recommendations/");
 };
 
 export const updateUserProfile = async (formData) => {
-    return api.put("/account/update/", formData, {
+    return api.put("account/update/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
     });
 };
 
 export const getChatUsers = async () => {
-  return api.get("/chat/users/");
+  return api.get("chat/users/");
 };
 
 export const loginUser = async (username, password) => {
