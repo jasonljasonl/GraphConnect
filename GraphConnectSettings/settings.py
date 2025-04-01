@@ -246,10 +246,10 @@ GS_BUCKET_NAME = 'graph-connect_bucket'
 
 STORAGES = {
     "default": {
-        "BACKEND": "google_services.storage_backends.PublicMediaStorage",
+        "BACKEND": "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage",
     },
     "staticfiles": {
-        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "BACKEND": "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage",
         "OPTIONS": {
             "bucket_name": GS_BUCKET_NAME,
             "location": "static",
