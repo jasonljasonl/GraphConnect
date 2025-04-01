@@ -25,6 +25,7 @@ useEffect(() => {
   }
 }, [token]);
 
+console.log("Token envoyé :", token);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -36,12 +37,19 @@ useEffect(() => {
             Authorization: `Bearer ${token}`,
           },
         });
-
+        console.log("Réponse API :", response.data);
         setCurrentUser(response.data);
-
+        setIsAuth(true);
       } catch (error) {
-        console.error("Erreur lors de la récupération de l'utilisateur :", error);
-      }
+  console.error("Erreur lors de la récupération de l'utilisateur :", error);
+
+  if (error.response && error.response.status === 401) {
+    console.log("Token invalide, suppression du localStorage.");
+    localStorage.removeItem("access_token");
+    setIsAuth(false);
+  }
+}
+
     };
 
     fetchUserData();
