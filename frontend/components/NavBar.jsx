@@ -18,7 +18,7 @@ export function NavBar() {
 
 
    useEffect(() => {
-     if (localStorage.getItem('access_token') !== null) {
+     if ((token) !== null) {
         setIsAuth(true);
       }
     }, [isAuth]);
