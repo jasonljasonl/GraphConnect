@@ -17,11 +17,13 @@ export function NavBar() {
    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 
-   useEffect(() => {
-     if ((token) !== null) {
-        setIsAuth(true);
-      }
-    }, [isAuth]);
+useEffect(() => {
+  if (token) {
+    setIsAuth(true);
+  } else {
+    setIsAuth(false);
+  }
+}, [token]);
 
 
   useEffect(() => {
