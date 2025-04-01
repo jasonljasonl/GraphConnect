@@ -23,7 +23,7 @@ export const Login = () => {
       localStorage.setItem("refresh_token", data.refresh);
 
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.access}`;
-window.dispatchEvent(new Event("authChange"));
+
       window.location.href = "/";
     } catch (e) {
       setError(e.message);
