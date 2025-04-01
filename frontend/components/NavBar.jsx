@@ -15,9 +15,15 @@ export function NavBar() {
    const token = localStorage.getItem("access_token") || "";
    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-   useEffect(() => {
-      setIsAuth(!!token);
-   }, [token]);
+useEffect(() => {
+   if (token) {
+      setIsAuth(true);
+   } else {
+      setIsAuth(false);
+      setCurrentUser(null);
+   }
+}, [token, isAuth]);
+
 
    console.log("Token envoyé :", token);
 
@@ -58,6 +64,16 @@ export function NavBar() {
          .then((response) => setUsers(response.data))
          .catch((error) => console.error("Failed to fetch users:", error));
    }, [API_BASE_URL, isAuth]);
+
+useEffect(() => {
+   const handleAuthChange = () => {
+      setIsAuth(!!localStorage.getItem("access_token"));
+   };
+
+   window.addEventListener("authChange", handleAuthChange);
+   return () => window.removeEventListener("authChange", handleAuthChange);
+}, []);
+
 
    return (
       <div>
