@@ -16,23 +16,20 @@ export const Login = () => {
     setError(null);
 
     try {
-      const response = await loginUser(username, password);
-      console.log("Réponse API:", response);
+      const data = await loginUser(username, password);
 
-      const accessToken = response.access || response.access_token;
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refresh_token", data.refresh);
 
-      if (accessToken) {
-        localStorage.setItem("access_token", accessToken);
-        setMessage("Connexion réussie!");
-        navigate("/");
-      } else {
-        throw new Error("Token non reçu");
-      }
-    } catch (err) {
-      console.error("Erreur lors de la connexion :", err);
-      setError("Erreur lors de la connexion. Veuillez réessayer.");
+      axios.defaults.headers.common["Authorization"] = `Bearer ${data.access}`;
+
+      window.location.href = "/";
+    } catch (e) {
+      setError(e.message);
+      console.error("Login error", e);
     }
   };
+
 
   return (
     <div className="Auth-form-container">

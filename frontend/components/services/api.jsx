@@ -9,12 +9,13 @@ const api = axios.create({
     },
 });
 
-const accessToken = localStorage.getItem('access_token');
-
-if (accessToken) {
-  localStorage.setItem("access_token", accessToken);
-  axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-}
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
 
 axios.interceptors.request.use(
@@ -132,17 +133,17 @@ export const getChatUsers = async () => {
 export const loginUser = async (username, password) => {
   try {
     const { data } = await axios.post(
-      `https://graphconnect-695590394372.europe-west1.run.app/api/login/`,
+      "https://graphconnect-695590394372.europe-west1.run.app/api/token/",
       { username, password },
-      { headers: { "Content-Type": "application/json" }, withCredentials: true }
+      {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      }
     );
-
-    console.log("🔍 Token reçu :", data);
 
     return data;
   } catch (error) {
-    console.error("Erreur lors de la connexion' :", error.response?.data || error);
-    throw error;
+    throw new Error("Invalid credentials, please try again.");
   }
 };
 
