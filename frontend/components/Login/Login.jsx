@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Ajout pour la redirection
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/api";
 import RegisterForm from "./RegisterForm.jsx";
 
