@@ -13,6 +13,7 @@ const CreatePostComponent = () => {
   const [labels, setLabels] = useState([]);
 
   const navigate = useNavigate();
+  const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api";
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -20,7 +21,6 @@ const CreatePostComponent = () => {
         const token = localStorage.getItem("access_token");
         if (!token) return;
 
-        const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
         const response = await axios.get(`${API_BASE_URL}account/`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -53,7 +53,6 @@ const CreatePostComponent = () => {
 
     try {
       let imageUrl = null;
-      const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
       if (image) {
         const imageFormData = new FormData();
