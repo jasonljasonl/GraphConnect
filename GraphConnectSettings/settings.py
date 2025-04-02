@@ -243,7 +243,7 @@ LOGGING = {
     },
 }
 
-GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "chemin/vers/google_services/google_services_key/graphconnect-bc4257f16e4d.json")
+GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "./google_services/google_services_key/graphconnect-bc4257f16e4d.json")
 
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(GOOGLE_CREDENTIALS_PATH)
 
