@@ -242,11 +242,7 @@ LOGGING = {
         },
     },
 }
-
-GOOGLE_CREDENTIALS_PATH = os.getenv(
-    "GOOGLE_APPLICATION_CREDENTIALS",
-    os.path.join(BASE_DIR, 'google_services/google_services_key/graphconnect-bc4257f16e4d.json')
-)
+GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(GOOGLE_CREDENTIALS_PATH)
 
 GS_BUCKET_NAME = 'graph-connect_bucket'
