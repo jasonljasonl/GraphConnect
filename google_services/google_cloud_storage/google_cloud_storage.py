@@ -35,5 +35,4 @@ def upload_file_to_storage(request):
 class PublicMediaStorage(GoogleCloudStorage):
     location = "media"
     bucket_name = settings.GS_BUCKET_NAME
-    default_acl = "publicRead"
 
