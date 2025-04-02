@@ -15,7 +15,6 @@ from pathlib import Path
 import django.core.management.commands.runserver as runserver
 from google.cloud.sql.connector import Connector, IPTypes
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 #STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

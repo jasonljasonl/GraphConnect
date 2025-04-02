@@ -99,7 +99,7 @@ export default function Post() {
 
   const getAuthorProfilePicture = (authorId) => {
     const user = users.find((user) => user.id === authorId);
-    return user ? `${API_BASE_URL}${user.profile_picture}` : "/default-profile.png"; // Utilisez l'URL de base ici aussi
+    return user ? `${API_BASE_URL}${user.profile_picture}` : "/default-profile.png";
   };
 
 

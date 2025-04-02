@@ -85,9 +85,7 @@ const ProfilePage = () => {
     return (
         <div className="profile-container">
             <div className="user_informations">
-                {profile.profile_picture && (
-                    <img src={profile.profile_picture} alt="Profile" className="profile-picture" />
-                )}
+
                 <div>
                     <p>{profile.username}</p>
                     <div className="followers-number">
@@ -119,11 +117,7 @@ const ProfilePage = () => {
                     profile.posts.map((post) => (
                         <div key={post.id} className="post_list_component profile_post_list_component">
                             <div className="author_component">
-                                <img
-                                    src={profile.profile_picture}
-                                    alt="Author"
-                                    className="author_profile_picture_component"
-                                />
+
                                 <p className="post_author_component">{profile.username}</p>
 
                                 {user && user.username === profile.username && (

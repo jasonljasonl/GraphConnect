@@ -285,12 +285,12 @@ def user_posts_api(request, username):
 
     following = list(user.user_follows.values('id', 'username'))
 
-    followers = list(user.user_follows.all().filter(user_follows=user).values('id', 'username'))  # Relation inverse
+    followers = list(user.user_follows.all().filter(user_follows=user).values('id', 'username'))
 
     data = {
         'id': user.id,
         'username': user.username,
-        'profile_picture': user.profile_picture.url if user.profile_picture else None,
+   #     'profile_picture': user.profile_picture.url if user.profile_picture else None,
         'posts': list(posts),
         'followers': followers,
         'following': following
