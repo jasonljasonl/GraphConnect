@@ -14,8 +14,7 @@ from datetime import timedelta
 from pathlib import Path
 import django.core.management.commands.runserver as runserver
 from google.cloud.sql.connector import Connector, IPTypes
-import pg8000
-from google.oauth2 import service_account
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -242,8 +241,6 @@ LOGGING = {
         },
     },
 }
-GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-GS_CREDENTIALS = service_account.Credentials.from_service_account_file(GOOGLE_CREDENTIALS_PATH)
 
 GS_BUCKET_NAME = 'graph-connect_bucket'
 
