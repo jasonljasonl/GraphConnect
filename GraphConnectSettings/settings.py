@@ -206,12 +206,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'account.CustomUser'
 
-google_credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-if google_credentials_path:
-    print(f"✅ Chemin des credentials trouvé : {google_credentials_path}")
-else:
-    print("❌ Erreur : GOOGLE_APPLICATION_CREDENTIALS non défini")
-
+google_credentials = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+print(f"GOOGLE_APPLICATION_CREDENTIALS: {google_credentials}")
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'uploaded_images')
 #MEDIA_URL = 'https://storage.googleapis.com/graph-connect_bucket/'
 
