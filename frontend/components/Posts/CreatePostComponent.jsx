@@ -28,6 +28,7 @@ const CreatePostComponent = () => {
         });
 
         setUser(response.data);
+        console.log(user);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -48,7 +49,14 @@ const CreatePostComponent = () => {
 
     const formData = new FormData();
     formData.append("content", content);
-    formData.append("author", user.id);
+      if (user && user.id) {
+        formData.append("author", user.id);
+      } else {
+        setError("User ID is missing. Please log in again.");
+        return;
+      }
+
+
     if (image) formData.append("image_post", image);
 
     try {
