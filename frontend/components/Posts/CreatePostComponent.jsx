@@ -19,7 +19,10 @@ const CreatePostComponent = () => {
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem("access_token");
-        if (!token) return;
+        if (!token) {
+          setError("You need to be logged in to post.");
+          return;
+        }
 
         const response = await axios.get(`${API_BASE_URL}account/`, {
           headers: {
@@ -27,10 +30,14 @@ const CreatePostComponent = () => {
           },
         });
 
-        setUser(response.data);
-        console.log(user);
+        if (response.data && response.data.id) {
+          setUser(response.data); // Store the user data
+        } else {
+          setError("User data is missing. Please log in again.");
+        }
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetching user data:", error);
+        setError("Failed to fetch user data.");
       }
     };
 
@@ -47,16 +54,14 @@ const CreatePostComponent = () => {
       return;
     }
 
+    if (!user || !user.id) {
+      setError("User ID is missing. Please log in again.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("content", content);
-      if (user && user.id) {
-        formData.append("author", user.id);
-      } else {
-        setError("User ID is missing. Please log in again.");
-        return;
-      }
-
-
+    formData.append("author", user.id); // Use user.id to assign the author
     if (image) formData.append("image_post", image);
 
     try {
@@ -94,18 +99,15 @@ const CreatePostComponent = () => {
 
       if (visionResponse.ok) {
         setLabels(data.labels);
-          console.log("Detected Labels:", data.labels);
+        console.log("Detected Labels:", data.labels);
         setError('');
       } else {
         setError(data.error || 'Something went wrong');
       }
 
-
-    for (const label of data.labels)  {
-         formData.append('labels', label)
-        }
-
-
+      for (const label of data.labels) {
+        formData.append('labels', label);
+      }
 
       if (imageUrl) formData.append("image_post", imageUrl);
 
