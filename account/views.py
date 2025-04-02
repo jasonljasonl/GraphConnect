@@ -1,7 +1,6 @@
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.views import View
 from channels.auth import login, logout
@@ -190,14 +189,4 @@ class FollowedUserListView(generics.ListAPIView):
         followed_users_ids = user.follows.values_list("id", flat=True)
         return CustomUser.objects.filter(Q(id__in=followed_users_ids) | Q(id=user.id))
 
-
-class GetMyIPView(APIView):
-    def get(self, request):
-        try:
-            response = requests.get("https://api.ipify.org?format=json")
-            response.raise_for_status()
-            ip_data = response.json()
-            return Response({"your_ip": ip_data["ip"]})
-        except requests.exceptions.RequestException as e:
-            return Response({"error": str(e)}, status=500)
 

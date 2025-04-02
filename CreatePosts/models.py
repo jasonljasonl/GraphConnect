@@ -9,7 +9,7 @@ from django.http import JsonResponse
 class Post(models.Model):
     objects = models.Manager()
 
-    image_post = models.ImageField(upload_to='uploaded_images/', blank=True)
+    image_post = models.ImageField(upload_to='posts/', blank=True)
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     upload_date = models.DateTimeField(auto_now_add=True)
@@ -31,12 +31,12 @@ class Post(models.Model):
 class Comment(models.Model):
     objects = models.Manager()
 
-    image_comment = models.ImageField(upload_to='uploaded_images/', blank=True)
+    image_comment = models.ImageField(upload_to='comments/', blank=True)
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     upload_date = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_comment', blank=True)
-    related_post = ForeignKey(Post, on_delete=models.CASCADE, null=True, related_name="comments")  # ✅ Added related_name
+    related_post = ForeignKey(Post, on_delete=models.CASCADE, null=True, related_name="comments")
 
     def __str__(self):
         return self.content[:50]

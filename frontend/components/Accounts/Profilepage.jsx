@@ -86,7 +86,7 @@ const ProfilePage = () => {
         <div className="profile-container">
             <div className="user_informations">
                 {profile.profile_picture && (
-                    <img src={`http://127.0.0.1:8000${profile.profile_picture}`} alt="Profile" className="profile-picture" />
+                    <img src={profile.profile_picture} alt="Profile" className="profile-picture" />
                 )}
                 <div>
                     <p>{profile.username}</p>
@@ -120,7 +120,7 @@ const ProfilePage = () => {
                         <div key={post.id} className="post_list_component profile_post_list_component">
                             <div className="author_component">
                                 <img
-                                    src={`http://127.0.0.1:8000${profile.profile_picture}`}
+                                    src={profile.profile_picture}
                                     alt="Author"
                                     className="author_profile_picture_component"
                                 />
@@ -143,7 +143,7 @@ const ProfilePage = () => {
                             </div>
 
                             {post.image_post && (
-                                <img src={`http://127.0.0.1:8000/uploaded_images/${post.image_post}`} alt="Post" className="home_post_component" />
+                                <img src={post.image_post} alt="Post" className="home_post_component" />
                             )}
 
                             <p className="post_content_component">{post.content}</p>

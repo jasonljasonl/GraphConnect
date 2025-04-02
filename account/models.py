@@ -30,9 +30,8 @@ class CustomUserManager(BaseUserManager):
 
 # models.py
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    # Champs personnalisés
     encryption_key = models.CharField(max_length=128, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='uploaded_images/', blank=True)
+    profile_picture = models.ImageField(upload_to='profile_picture/', blank=True)
     username = models.CharField(unique=True, max_length=50)
     name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
@@ -50,10 +49,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     def save(self, *args, **kwargs):
-        if self.pk is None and self.password:  # Si l'utilisateur est nouveau et qu'il a un mot de passe
-            pass  # On laisse le mot de passe tel quel (en clair)
+        if self.pk is None and self.password:
+            pass
         if not self.encryption_key:
-            self.encryption_key = Fernet.generate_key().decode()  # Génère une clé de chiffrement si elle n'existe pas
+            self.encryption_key = Fernet.generate_key().decode()
         super().save(*args, **kwargs)
 
 
@@ -62,7 +61,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def following(self):
         return self.user_follows.all()
 
-    # Property to get users following the current user (reverse relationship)
     @property
     def followers(self):
         return CustomUser.objects.filter(user_follows=self)
