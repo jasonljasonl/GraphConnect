@@ -40,7 +40,7 @@ export const getUsers = async () => {
 };
 
 export const getUserProfile = async (username) => {
-    return api.get(`/profile/${username}/`);
+    return api.get(`profile/${username}/`);
 };
 
 export const getCommentCount = async (postId) => {

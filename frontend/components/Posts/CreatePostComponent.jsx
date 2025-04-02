@@ -13,7 +13,7 @@ const CreatePostComponent = () => {
   const [labels, setLabels] = useState([]);
 
   const navigate = useNavigate();
-  const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api";
+  const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
 
   useEffect(() => {
     const fetchUser = async () => {
