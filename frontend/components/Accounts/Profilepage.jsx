@@ -137,7 +137,7 @@ const ProfilePage = () => {
                             </div>
 
                             {post.image_post && (
-                                <img src={post.image_post} alt="Post" className="home_post_component" />
+                                <img src={`https://storage.googleapis.com/graph-connect_bucket/media/${post.image_post}`} alt="Post" className="home_post_component" />
                             )}
 
                             <p className="post_content_component">{post.content}</p>

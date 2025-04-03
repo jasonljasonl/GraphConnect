@@ -238,8 +238,7 @@ class PostCreateAPIView(APIView):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)
-            print(request.user)
-            print(request.user.id)
+
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
