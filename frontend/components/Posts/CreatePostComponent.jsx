@@ -21,7 +21,7 @@ const CreatePostComponent = () => {
         const token = localStorage.getItem("access_token");
         if (!token) return;
 
-        const response = await axios.get(`${API_BASE_URL}account/`, {
+        const response = await axios.get(`${API_BASE_URL}connected-user/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -32,9 +32,9 @@ const CreatePostComponent = () => {
         console.error("Error:", error);
       }
     };
-
     fetchUser();
   }, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

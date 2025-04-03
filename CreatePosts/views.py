@@ -237,7 +237,9 @@ class PostCreateAPIView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(author=request.user.pk)
+            serializer.save(author=request.user)
+            print(request.user)
+            print(request.user.id)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -290,7 +292,7 @@ def user_posts_api(request, username):
     data = {
         'id': user.id,
         'username': user.username,
-   #     'profile_picture': user.profile_picture.url if user.profile_picture else None,
+        'profile_picture': user.profile_picture.url if user.profile_picture else None,
         'posts': list(posts),
         'followers': followers,
         'following': following

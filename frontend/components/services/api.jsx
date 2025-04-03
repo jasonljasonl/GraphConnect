@@ -37,6 +37,7 @@ axios.interceptors.request.use(
 
 export const getUsers = async () => {
     return api.get("account/");
+    return api.get("account/");
 };
 
 export const getUserProfile = async (username) => {
