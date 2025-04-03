@@ -179,7 +179,7 @@ return (
 
             {post.image_post && (
               <img
-                src={post.image_post}
+                src={`https://storage.googleapis.com/graph-connect_bucket/media/${post.image_post}`}
                 alt="Post"
                 className="home_post_component"
               />

@@ -13,6 +13,10 @@ if [ ! -S /cloudsql/graphconnect:europe-west1:graphconnect-db/.s.PGSQL.5432 ]; t
   exit 1
 fi
 
+echo "Checking for missing migrations..."
+python manage.py makemigrations --check --dry-run || python manage.py makemigrations
+
+
 # Appliquer les migrations
 echo "Applying migrations..."
 python manage.py migrate --noinput
