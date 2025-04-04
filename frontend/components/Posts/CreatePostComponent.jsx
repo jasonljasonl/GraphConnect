@@ -49,7 +49,7 @@ const CreatePostComponent = () => {
     const formData = new FormData();
     formData.append("content", content);
     formData.append("author", user.id);
-    if (image) formData.append("image_post", image);
+
 
     try {
       let imageUrl = null;
