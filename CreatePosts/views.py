@@ -57,13 +57,10 @@ def delete_post_api(request, pk):
     post.delete()
     return Response({'message': 'Post deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
-class PostsListViewAPI(APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
-
-    def get(self, request, *args, **kwargs):
-        posts = Post.objects.all().values('id', 'content', 'image_post', 'upload_date', 'labels', 'author_id')
-        return Response(list(posts))
+class PostListView(ListView):
+    model = Post
+    template_name = 'post_list.html'
+    context_object_name = 'posts'
 
 
 class ViewPostView(DetailView):
@@ -253,16 +250,16 @@ class PostCreateAPIView(APIView):
 
 
 
-class FollowedPostsListViewAPI(APIView):
+class FollowedPostsListView(generics.ListAPIView):
+    serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        followed_posts = Post.objects.filter(
-            Q(author__in=user.follows.all()) | Q(author=user)
-        ).values('id', 'content', 'image_post', 'upload_date', 'labels', 'author_id')
-        return Response(list(followed_posts))
+    def get_queryset(self):
+        user = self.request.user
+
+        return Post.objects.filter(Q(author__in=user.follows.all()) | Q(author=user))
+
 
 
 
