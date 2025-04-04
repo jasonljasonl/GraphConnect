@@ -9,7 +9,7 @@ from django.http import JsonResponse
 class Post(models.Model):
     objects = models.Manager()
 
-    image_post = models.URLField(blank=True, null=True)
+    image_post = models.URLField(max_length=500, null=True, blank=True)
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     upload_date = models.DateTimeField(auto_now_add=True)
