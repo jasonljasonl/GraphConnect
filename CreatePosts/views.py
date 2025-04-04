@@ -250,15 +250,7 @@ class PostCreateAPIView(APIView):
 
 
 
-class FollowedPostsListView(generics.ListAPIView):
-    serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
 
-    def get_queryset(self):
-        user = self.request.user
-
-        return Post.objects.filter(Q(author__in=user.follows.all()) | Q(author=user))
 
 
 
@@ -277,6 +269,16 @@ class PostDetailSerializerView(generics.RetrieveAPIView):
 
 
 
+class FollowedPostsListView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    def get_queryset(self):
+        user = self.request.user
+
+        return Post.objects.filter(Q(author__in=user.follows.all()) | Q(author=user)).values(
+            'id', 'content', 'image_post', 'upload_date', 'labels'
+        )
 
 
 def user_posts_api(request, username):
@@ -292,7 +294,7 @@ def user_posts_api(request, username):
     data = {
         'id': user.id,
         'username': user.username,
-        'profile_picture': user.profile_picture.url if user.profile_picture else None,
+        'profile_picture': user.profile_picture if user.profile_picture else None,
         'posts': list(posts),
         'followers': followers,
         'following': following
