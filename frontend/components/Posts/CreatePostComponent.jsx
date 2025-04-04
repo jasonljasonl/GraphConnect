@@ -141,19 +141,24 @@ const CreatePostComponent = () => {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
+
             placeholder="Add a post..."
             required
             className="create_post_textarea"
           />
           <label htmlFor="file-input" className="post_form_input_img">
-            <IcBaselineImage />
+            <IcBaselineImage />📷📷
           </label>
-          <input
-            type="file"
-            onChange={(e) => setImage(e.target.files[0])}
-            className="create_post_form_input_img"
-            id="file-input"
-          />
+            <input
+              type="file"
+              style={{ display: "block", border: "1px solid red" }}
+              onChange={(e) => {
+                console.log("Selected file:", e.target.files[0]);
+                setImage(e.target.files[0]);
+              }}
+              id="file-input"
+            />
+
         </div>
         <button type="submit" className="send_button">
           Post
