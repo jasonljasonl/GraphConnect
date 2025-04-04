@@ -10,7 +10,7 @@ import chat_system
 from CreatePosts import views
 from CreatePosts.views import (
     check_like_status, CommentCreateAPIView, PostDetailSerializerView, get_comment_count,
-    check_comment_like_status, PostCreateAPIView, FollowedPostsListView,
+    check_comment_like_status, PostCreateAPIView, FollowedPostsListViewAPI,
     user_posts_api, delete_post_api, PostRecommendationView
 )
 from account.views import (
@@ -44,7 +44,7 @@ urlpatterns = [
     path("api/posts/<int:id>/", PostDetailSerializerView.as_view(), name="post_detail"),
     path("api/posts/<int:post_id>/comment_count/", get_comment_count, name="comment_count"),
     path("api/connected-user/", get_current_user_profile, name="current_user_profile"),
-    path("api/posts/followed-posts/", FollowedPostsListView.as_view(), name="followed_posts"),
+    path("api/posts/followed-posts/", FollowedPostsListViewAPI.as_view(), name="followed_posts"),
     path("api/user/followed-users/", FollowedUserListView.as_view(), name="followed_users"),
     path("api/user/<str:username>/follow/", FollowUserView, name="follow_user"),
     path("api/search/", UserSearchAPIView.as_view(), name="user_search"),
