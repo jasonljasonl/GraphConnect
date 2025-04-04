@@ -17,8 +17,6 @@ from google.cloud.sql.connector import Connector, IPTypes
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 PORT = int(os.environ.get("PORT", 8080))
@@ -68,7 +66,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 
 ]
 
@@ -138,17 +135,7 @@ WSGI_APPLICATION = 'GraphConnectSettings.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-connector = Connector()
 
-def getconn():
-    return connector.connect(
-        "graphconnect:europe-west1:graphconnect-db",
-        "pg8000",
-        user=os.environ.get("DATABASE_USER", "postgres"),
-        password=os.environ.get("DATABASE_PASSWORD", "jasonlndmsocialapp2025"),
-        db=os.environ.get("DATABASE_NAME", "postgres"),
-        ip_type=IPTypes.PUBLIC,
-    )
 
 DATABASES = {
     'default': {
