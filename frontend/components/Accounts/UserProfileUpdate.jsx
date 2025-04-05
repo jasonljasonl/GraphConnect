@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { getConnectedUser, updateUserProfile } from "../services/api";
 
 const UserProfileUpdate = () => {
@@ -14,14 +15,18 @@ const UserProfileUpdate = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await getConnectedUser();
+                const response = await axios.get(getConnectedUser, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                    },
+                });
                 setUserData({
                     username: response.data.username,
                     email: response.data.email,
                     profile_picture: response.data.profile_picture || null,
                 });
             } catch (error) {
-                console.error("Erreur lors de la récupération de l'utilisateur :", error);
+                console.error("Error fetching user data:", error);
             }
         };
 
@@ -53,26 +58,47 @@ const UserProfileUpdate = () => {
         if (userData.email) {
             formData.append("email", userData.email);
         }
+
         if (userData.profile_picture) {
-            formData.append("profile_picture", userData.profile_picture);
+            const imageFormData = new FormData();
+            imageFormData.append("profile_picture", userData.profile_picture);
+
+            try {
+                const uploadResponse = await axios.post(updateUserProfile, imageFormData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                    },
+                });
+
+                const imageUrl = uploadResponse.data.image_url;
+                formData.append("profile_picture", imageUrl);
+
+            } catch (uploadError) {
+                setMessage("Error uploading image.");
+                return;
+            }
         }
 
         try {
-            const response = await updateUserProfile(formData);
-            setMessage("Profile updated successfully");
+            await axios.put(updateUserProfile, formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                },
+            });
+            setMessage("Profile updated successfully.");
         } catch (error) {
-            console.error("Error :", error);
-            setMessage("Error updating profile");
+            setMessage("Error updating profile.");
         }
     };
 
     return (
         <div>
             <h2>Update Profile</h2>
-            {message && <p style={{ color: "green" }}>{message}</p>}
+            {message && <p style={{ color: message.includes("Error") ? "red" : "green" }}>{message}</p>}
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <div>
-                    <label>Username :</label>
+                    <label>Username:</label>
                     <input
                         type="text"
                         name="username"
@@ -81,7 +107,7 @@ const UserProfileUpdate = () => {
                     />
                 </div>
                 <div>
-                    <label>Email :</label>
+                    <label>Email:</label>
                     <input
                         type="email"
                         name="email"
@@ -90,7 +116,7 @@ const UserProfileUpdate = () => {
                     />
                 </div>
                 <div>
-                    <label>Profile Picture :</label>
+                    <label>Profile Picture:</label>
                     <input
                         type="file"
                         name="profile_picture"
@@ -106,4 +132,3 @@ const UserProfileUpdate = () => {
 };
 
 export default UserProfileUpdate;
-
