@@ -7,7 +7,7 @@ const ButtonToPost = ({ postId, initialComments }) => {
   const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
 
   return (
-    <Link to={`${API_BASE_URL}posts/${postId}`}>
+    <Link to={`posts/${postId}`}>
       <div>
         <Comment color='white' />
         <span className='comment_span'>{initialComments}</span>
