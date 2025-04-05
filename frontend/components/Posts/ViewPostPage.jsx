@@ -31,7 +31,7 @@ const PostDetail = () => {
     };
 
     fetchPost();
-  }, [postId, API_BASE_URL]);
+  }, [postId]);
 
     useEffect(() => {
         if (!API_BASE_URL) return;
@@ -42,7 +42,7 @@ const PostDetail = () => {
             .catch(error => {
                 console.error(error);
             });
-    }, [API_BASE_URL]);
+    }, []);
 
     const getAuthorUsername = (authorId) => {
     const user = users.find(user => user.id === authorId);
