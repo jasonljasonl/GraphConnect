@@ -24,7 +24,6 @@ export default function CommentsList({ postId }) {
         fetchComments();
     }, []);
 
-    // Récupérer les utilisateurs
     useEffect(() => {
         const fetchUsers = async () => {
             try {

@@ -7,7 +7,7 @@ const LikeComponent = ({ postId, initialLikes }) => {
     const [likeCount, setLikeCount] = useState(initialLikes);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
 
     useEffect(() => {
         const token = localStorage.getItem('access_token');
@@ -40,7 +40,7 @@ const LikeComponent = ({ postId, initialLikes }) => {
 
         try {
             const response = await axios.post(
-                `${API_BASE_URL}Home/${postId}/like/`,
+                `https://graphconnect-695590394372.europe-west1.run.app/Home/${postId}/like/`,
                 {},
                 {
                     headers: {
