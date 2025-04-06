@@ -86,14 +86,16 @@ const ProfilePage = () => {
         <div className="profile-container">
             <div className="user_informations">
 
-                <div>
+                <div >
                     <div className='author_component'>
                         <img className='author_profile_picture_component' src= {`https://storage.googleapis.com/graph-connect_bucket/media/${profile.profile_picture}`}/>
-                        <p>{profile.username}</p>
-                        <div className="followers-number">
-                        <p className="follows_component">{profile.following.length} Followers</p>
-                        <p className="follows_component">{profile.followers.length} Following</p>
-                    </div>
+                        <div className='name_and_followers'>
+                            <p>{profile.username}</p>
+                            <div className="followers-number">
+                                <p className="follows_component">{profile.following.length} Followers</p>
+                                <p className="follows_component">{profile.followers.length} Following</p>
+                            </div>
+                        </div>
 
                     </div>
 
