@@ -167,7 +167,6 @@ const RecommendedPosts = () => {
                       )}
                     </div>
                   )}
-                </div>
 
                 <img
                   src={post.image_post}
