@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getUserProfile, deletePost, followUser, getCurrentUser } from '../services/api.jsx';
-import { formatDistanceToNow } from 'date-fns';
-import { enUS } from 'date-fns/locale';
-import Like from '../Posts/LikeComponent.jsx';
-import ViewPost_CommentsButton from '../Posts/ViewPost_CommentsButton.jsx';
-import '../css/ProfilePage.css';
-import { IcBaselinePersonAddAlt } from '../assets/icons/Icons';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getConnectedUser, getUserProfile, followUser, deletePost } from "../services/api";
+import "../css/ProfilePage.css";
+import { formatDistanceToNow } from "date-fns";
+import { enUS } from "date-fns/locale";
+import IcBaselinePersonAddAlt from "../img_component/follow.jsx";
+import IcRoundMailOutline from "../img_component/message.jsx";
+import Like from "../Posts/LikeComponent.jsx";
+import ViewPost_CommentsButton from "../Posts/ViewPost_CommentsButton.jsx";
 
 export default function ProfilePage() {
   const { username } = useParams();
