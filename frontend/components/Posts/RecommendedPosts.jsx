@@ -17,7 +17,7 @@ const RecommendedPosts = () => {
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [commentCounts, setCommentCounts] = useState({});
   const navigate = useNavigate();
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Récupérez l'URL de base
+  const API_BASE_URL = 'https://graphconnect-695590394372.europe-west1.run.app/api/';
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -38,7 +38,7 @@ const RecommendedPosts = () => {
     };
 
     fetchUserData();
-  }, [token, API_BASE_URL]); // Ajoutez API_BASE_URL comme dépendance
+  }, [token, API_BASE_URL]);
 
   useEffect(() => {
     const fetchRecommendedPosts = async () => {
