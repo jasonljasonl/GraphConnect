@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { getUserProfile } from "../services/api";
+import '../css/AuthorInfo.css';
+
 
 const AuthorInfo = ({ username }) => {
     const [profile, setProfile] = useState(null);

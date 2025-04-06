@@ -4,6 +4,9 @@ import IcSharpSend from "../img_component/send.jsx";
 import IcBaselineImage from "../img_component/image_file.jsx";
 import '../css/CreatePostPage.css';
 import { useNavigate } from "react-router-dom";
+import AuthorInfo from '../Accounts/AuthorInfo.jsx';
+
+
 
 const CreatePostComponent = () => {
   const [content, setContent] = useState("");
@@ -11,6 +14,7 @@ const CreatePostComponent = () => {
   const [image, setImage] = useState(null);
   const [user, setUser] = useState(null);
   const [labels, setLabels] = useState([]);
+  const [previewImageUrl, setPreviewImageUrl] = useState(null);
 
   const navigate = useNavigate();
   const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
@@ -36,44 +40,42 @@ const CreatePostComponent = () => {
   }, []);
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError(null);
 
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      setError("You need to be logged in to post.");
-      return;
+  const token = localStorage.getItem("access_token");
+  if (!token) {
+    setError("You need to be logged in to post.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("content", content);
+  formData.append("author", user.id);
+
+  try {
+    let imageUrl = null;
+
+    if (image) {
+      const imageFormData = new FormData();
+      imageFormData.append("file", image);
+
+      const imageResponse = await axios.post(
+        `${API_BASE_URL}storage_uploads/`,
+        imageFormData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      imageUrl = imageResponse.data.file_url;
     }
 
-    const formData = new FormData();
-    formData.append("content", content);
-    formData.append("author", user.id);
-
-
-    try {
-      let imageUrl = null;
-
-      if (image) {
-        const imageFormData = new FormData();
-        imageFormData.append("file", image);
-
-        const imageResponse = await axios.post(
-          `${API_BASE_URL}storage_uploads/`,
-          imageFormData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        console.log("Image uploaded:", imageResponse.data);
-        imageUrl = imageResponse.data.file_url;
-        console.log(imageUrl);
-      }
-
+    if (imageUrl) {
       const visionResponse = await fetch(`${API_BASE_URL}image_vision/`, {
         method: 'POST',
         headers: {
@@ -86,56 +88,48 @@ const CreatePostComponent = () => {
 
       if (visionResponse.ok) {
         setLabels(data.labels);
-          console.log("Detected Labels:", data.labels);
-        setError('');
+        for (const label of data.labels) {
+          formData.append("labels", label);
+        }
       } else {
-        setError(data.error || 'Something went wrong');
+        console.warn("Vision API error:", data.error);
       }
 
-
-    for (const label of data.labels)  {
-         formData.append('labels', label)
-        }
-
-
-
-      if (imageUrl) formData.append("image_post", imageUrl);
-
-      const postResponse = await axios.post(
-        `${API_BASE_URL}posts/create_post/`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      console.log("Post added:", postResponse.data);
-
-      setContent("");
-      setImage(null);
-      navigate(`/`);
-    } catch (error) {
-      console.error("Error creating post:", error.response?.data);
-      setError("Failed to create post. Try again.");
+      formData.append("image_post", imageUrl);
     }
+
+    const postResponse = await axios.post(
+      `${API_BASE_URL}posts/create_post/`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    console.log("Post created:", postResponse.data);
+
+    setContent("");
+    setImage(null);
+    navigate(`/`);
+  } catch (error) {
+    console.error("Error creating post:", error.response?.data || error.message);
+    setError("Failed to create post. Try again.");
+  }
+};
+
+
+  const getAuthorUsername = () => {
+    return user ? user.username : "Anonymous";
   };
 
   return (
     <div className="post_div_form">
       <form onSubmit={handleSubmit} className="form_post">
-        {user && user.profile_picture ? (
-          <img
-            src={`${process.env.REACT_APP_API_BASE_URL}${user.profile_picture}`}
-            alt="Profil"
-            width="50"
-            className="post_author_profile_picture_component"
-          />
-        ) : (
-          <p>Aucune photo de profil</p>
-        )}
+          <AuthorInfo username={getAuthorUsername()} />
+
 
         <div className="create_post_textarea_div">
           <textarea
@@ -155,13 +149,30 @@ const CreatePostComponent = () => {
           id="file-input"
           style={{ display: "none" }}
           onChange={(e) => {
-            console.log("Selected file:", e.target.files[0]);
-            setImage(e.target.files[0]);
+            const file = e.target.files[0];
+            if (file) {
+              setImage(file);
+              setPreviewImageUrl(URL.createObjectURL(file));
+            }
           }}
         />
 
 
         </div>
+        {previewImageUrl && (
+                  <div style={{ marginTop: "16px" }}>
+                    <img
+                      src={previewImageUrl}
+                      alt="Prévisualisation"
+                      style={{
+                        maxWidth: "100px",
+                        maxHeight: "100px",
+                        borderRadius: "10px",
+                        objectFit: "cover"
+                      }}
+                    />
+                  </div>
+        )}
         <button type="submit" className="send_button">
           Post
         </button>

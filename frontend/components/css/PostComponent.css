@@ -14,25 +14,11 @@ ul {
     margin-bottom:50px;
 }
 
-
-.post_content_component, .author_component,.post_interactions,.post_upload_date   {
+.post_content_component,.post_interactions,.post_upload_date   {
     text-align: left;
     padding-left: 16px;
 }
 
-.author_component {
-    display:flex;
-    align-items: center
-    margin-bottom: 8px;
-}
-
-.author_profile_picture_component {
-    width:50px;
-    height:50px;
-    border-radius: 200px;
-    object-fit: cover;
-    margin-right: 8px;
-}
 
 .post_interactions {
     display:flex;
@@ -59,4 +45,8 @@ ul {
 .like_div_view_post_page {
     margin-left: 16px;
     margin-top: 16px
+}
+
+.view_post_post_content {
+    padding-bottom: 10%;
 }

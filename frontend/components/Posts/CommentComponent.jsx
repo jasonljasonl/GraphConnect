@@ -68,7 +68,7 @@ const CommentComponent = ({ postId }) => {
       <form onSubmit={handleSubmit} className="form_comment">
         {user && user.profile_picture ? (
           <img
-            src={`${API_BASE_URL}${user.profile_picture}`}
+            src={`https://storage.googleapis.com/graph-connect_bucket/media/${user.profile_picture}`}
             alt="Profil"
             width="50"
             className="comment_author_profile_picture_component"

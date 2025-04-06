@@ -6,7 +6,6 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 import IcBaselinePersonAddAlt from "../img_component/follow.jsx";
 import IcRoundMailOutline from "../img_component/message.jsx";
-import AuthorInfo from './AuthorInfo.jsx';
 
 const ProfilePage = () => {
     const { username } = useParams();
@@ -88,13 +87,16 @@ const ProfilePage = () => {
             <div className="user_informations">
 
                 <div>
-                    <AuthorInfo username={profile.username} />
-                </div>
-
-                    <div className="followers-number">
+                    <div className='author_component'>
+                        <img className='author_profile_picture_component' src= {`https://storage.googleapis.com/graph-connect_bucket/media/${profile.profile_picture}`}/>
+                        <p>{profile.username}</p>
+                        <div className="followers-number">
                         <p className="follows_component">{profile.following.length} Followers</p>
                         <p className="follows_component">{profile.followers.length} Following</p>
                     </div>
+
+                    </div>
+
 
                     {user && user.username !== profile.username && (
                         <div className="user_interactions_buttons">
@@ -113,6 +115,7 @@ const ProfilePage = () => {
                         </div>
                     )}
                 </div>
+            </div>
 
             <div className="post_list_div_component">
                 {profile.posts.length > 0 ? (
@@ -120,7 +123,9 @@ const ProfilePage = () => {
                         <div key={post.id} className="post_list_component profile_post_list_component">
                             <div className="author_component">
 
-                                <AuthorInfo username={profile.username} />
+                                    <img className='author_profile_picture_component' src= {`https://storage.googleapis.com/graph-connect_bucket/media/${profile.profile_picture}`}/>
+                                    <p>{profile.username}</p>
+
 
                                 {user && user.username === profile.username && (
                                     <div className="post-menu">
