@@ -119,8 +119,8 @@ const ProfilePage = () => {
                             <div className="author_component">
 
                                 <div className="post_author_component">
-                                    <p>{profile.username}<p>
-                                    <img src= {`https://storage.googleapis.com/graph-connect_bucket/media/${profile.profile_picture}`}>
+                                    <p>{profile.username}</p>
+                                    <img src= {`https://storage.googleapis.com/graph-connect_bucket/media/${profile.profile_picture}`}/>
 
                                 </div>
 
