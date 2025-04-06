@@ -113,7 +113,6 @@ const ProfilePage = () => {
                         </div>
                     )}
                 </div>
-            </div>
 
             <div className="post_list_div_component">
                 {profile.posts.length > 0 ? (
