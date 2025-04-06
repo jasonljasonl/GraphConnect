@@ -10,6 +10,7 @@ import ViewPost_CommentsButton from './ViewPost_CommentsButton.jsx';
 import '../css/PostComponent.css';
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
+import AuthorInfo from '../Accounts/AuthorInfo.jsx';
 
 
 const PostDetail = () => {
@@ -49,10 +50,7 @@ const PostDetail = () => {
     return user ? user.username : 'Unknown';
     };
 
-    const getAuthorProfilePicture = (authorId) => {
-        const user = users.find(user => user.id === authorId);
-        return user ? `${API_BASE_URL}${user.profile_picture}` : 'Unknown';
-    };
+
 
 
   if (error) return <p>{error}</p>;
@@ -60,10 +58,7 @@ const PostDetail = () => {
 
   return (
     <div className='view_post_post_content'>
-        <div className='author_component'>
-            <img src={getAuthorProfilePicture(post.author)} alt="" className="author_profile_picture_component" />
-            <p className='post_author_component'>{getAuthorUsername(post.author)}</p>
-        </div>
+        <AuthorInfo username={getAuthorUsername(post.author)} />
 
 {post.image_post && <img src={post.image_post} alt='' width='100%' />}
       <p className='view_post_post_description'>{post.content}</p>
