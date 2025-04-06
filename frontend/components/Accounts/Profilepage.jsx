@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getConnectedUser, getUserProfile, followUser, deletePost } from "../services/api";
+import {
+  getConnectedUser,
+  getUserProfile,
+  followUser,
+  deletePost,
+} from "../services/api";
 import "../css/ProfilePage.css";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 import IcBaselinePersonAddAlt from "../img_component/follow.jsx";
-import IcRoundMailOutline from "../img_component/message.jsx";
 import Like from "../Posts/LikeComponent.jsx";
 import ViewPost_CommentsButton from "../Posts/ViewPost_CommentsButton.jsx";
 
@@ -26,15 +30,15 @@ export default function ProfilePage() {
       try {
         const [profileResponse, currentUserResponse] = await Promise.all([
           getUserProfile(username),
-          getCurrentUser(),
+          getConnectedUser(),
         ]);
 
         setProfile(profileResponse.data);
         setCurrentUser(currentUserResponse.data);
-        setLoading(false);
       } catch (err) {
         console.error("Error fetching profile:", err);
         setError("Something went wrong, please try again later.");
+      } finally {
         setLoading(false);
       }
     };
@@ -49,7 +53,9 @@ export default function ProfilePage() {
       const counts = {};
       for (const post of profile.posts) {
         try {
-          const res = await fetch(`https://graphconnect-695590394372.europe-west1.run.app/api/posts/${post.id}/comment_count/`);
+          const res = await fetch(
+            `https://graphconnect-695590394372.europe-west1.run.app/api/posts/${post.id}/comment_count/`
+          );
           const data = await res.json();
           counts[post.id] = data.count;
         } catch (error) {
@@ -78,6 +84,7 @@ export default function ProfilePage() {
 
   const handleDeletePost = async (postId) => {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
+
     try {
       await deletePost(postId);
       setProfile((prevProfile) => ({
@@ -125,7 +132,10 @@ export default function ProfilePage() {
             </div>
           )}
           {isCurrentUser && (
-            <div className="update_profile_button" onClick={() => navigate("/update-profile/")}>
+            <div
+              className="update_profile_button"
+              onClick={() => navigate("/update-profile/")}
+            >
               Update Profile
             </div>
           )}
