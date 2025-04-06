@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import MessageComponent from "./MessageComponent";
 import { getUsers } from "../services/api";
+import AuthorInfo from '../Accounts/AuthorInfo.jsx';
 
 export default function ChatPage() {
   const { recipientId } = useParams();
@@ -39,24 +40,10 @@ export default function ChatPage() {
     return <div>{error}</div>;
   }
 
-  const getAuthorUsername = () => {
-    return user ? user.username : "Unknown";
-  };
-
-  const getAuthorProfilePicture = () => {
-    return user ? user.profile_picture : "/default-profile.png";
-  };
-
   return (
     <div>
       <div className="user_chatting_with">
-        <img
-          src={getAuthorProfilePicture()}
-          alt=""
-          className="author_profile_picture_component"
-          id="user_chatting_profile_picture"
-        />
-        <h3>{getAuthorUsername()}</h3>
+        <AuthorInfo username={user.username} profilePicture={user.profile_picture} />
       </div>
       <MessageComponent recipientId={recipientId} />
     </div>
