@@ -99,7 +99,7 @@ export default function Post() {
 
   const getAuthorProfilePicture = (authorId) => {
     const user = users.find((user) => user.id === authorId);
-    return user ? {user.profile_picture} : "/default-profile.png";
+    return user ? `${user.profile_picture}` : "/default-profile.png";
   };
 
 
