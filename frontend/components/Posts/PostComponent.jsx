@@ -6,7 +6,7 @@ import ViewPost_CommentsButton from "./ViewPost_CommentsButton.jsx";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
-
+import AuthorInfo from '../Accounts/AuthorInfo.jsx';
 
 export default function Post() {
   const [posts, setPosts] = useState([]);
@@ -139,21 +139,15 @@ return (
       <ul>
         {posts.map((post) => (
           <li key={post.id} className="post_list_component">
-            <div className="author_component">
-              <img
-                src={getAuthorProfilePicture(post.author)}
-                alt=""
-                className="author_profile_picture_component"
-              />
+            <div
+              className="author_component"
+              onClick={() =>
+                navigate(`/profile/${getAuthorUsername(post.author)}`)
+              }
+              style={{ cursor: "pointer" }}
+            >
+              <AuthorInfo username={getAuthorUsername(post.author)} />
 
-              <p
-                onClick={() =>
-                  navigate(`/profile/${getAuthorUsername(post.author)}`)
-                }
-                className="post_author_component"
-              >
-                {getAuthorUsername(post.author)}
-              </p>
 
               {currentUser && currentUser.id === post.author && (
                 <div className="post-menu">

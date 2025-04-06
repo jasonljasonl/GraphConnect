@@ -6,6 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 import IcBaselinePersonAddAlt from "../img_component/follow.jsx";
 import IcRoundMailOutline from "../img_component/message.jsx";
+import AuthorInfo from './AuthorInfo.jsx';
 
 const ProfilePage = () => {
     const { username } = useParams();
@@ -87,7 +88,9 @@ const ProfilePage = () => {
             <div className="user_informations">
 
                 <div>
-                    <p>{profile.username}</p>
+                    <AuthorInfo username={profile.username} />
+                </div>
+
                     <div className="followers-number">
                         <p className="follows_component">{profile.following.length} Followers</p>
                         <p className="follows_component">{profile.followers.length} Following</p>
@@ -118,11 +121,7 @@ const ProfilePage = () => {
                         <div key={post.id} className="post_list_component profile_post_list_component">
                             <div className="author_component">
 
-                                <div className="post_author_component">
-                                    <p>{profile.username}</p>
-                                    <img src= {`https://storage.googleapis.com/graph-connect_bucket/media/${profile.profile_picture}`}/>
-
-                                </div>
+                                <AuthorInfo username={profile.username} />
 
                                 {user && user.username === profile.username && (
                                     <div className="post-menu">
