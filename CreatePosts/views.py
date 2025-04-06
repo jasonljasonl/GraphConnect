@@ -361,7 +361,7 @@ class PostRecommendationView(APIView):
         index.add(post_vectors)
         print(f'Index: {index}')
 
-        k = 10000
+        k = 500
         distances, indices = index.search(query_vector, k)
 
         recommended_posts = []
@@ -369,6 +369,7 @@ class PostRecommendationView(APIView):
             post = all_posts[i]
             if post.id not in liked_post_ids:
                 recommended_posts.append(post)
+        recommended_posts = list({post.id: post for post in recommended_posts}.values())
 
         return Response({
             "recommended_posts": PostSerializer(recommended_posts, many=True).data

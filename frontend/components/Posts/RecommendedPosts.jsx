@@ -7,6 +7,9 @@ import { enUS } from "date-fns/locale";
 import Like from "../Posts/LikeComponent.jsx";
 import ViewPost_CommentsButton from "../Posts/ViewPost_CommentsButton.jsx";
 import { useNavigate } from "react-router-dom";
+import AuthorInfo from '../Accounts/AuthorInfo.jsx';
+
+
 
 const RecommendedPosts = () => {
   const [recommendedPosts, setRecommendedPosts] = useState([]);
@@ -64,7 +67,7 @@ const RecommendedPosts = () => {
     if (currentUser && API_BASE_URL) {
       fetchRecommendedPosts();
     }
-  }, [token, currentUser, API_BASE_URL]); // Ajoutez API_BASE_URL comme dépendance
+  }, [token, currentUser, API_BASE_URL]);
 
   useEffect(() => {
     if (!API_BASE_URL) return;
@@ -73,7 +76,7 @@ const RecommendedPosts = () => {
       .get(`${API_BASE_URL}account/`)
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Failed to fetch users:", error));
-  }, [API_BASE_URL]); // Ajoutez API_BASE_URL comme dépendance
+  }, [API_BASE_URL]);
 
   useEffect(() => {
     const fetchCommentCounts = async () => {
@@ -93,7 +96,7 @@ const RecommendedPosts = () => {
     if (recommendedPosts.length > 0 && API_BASE_URL) {
       fetchCommentCounts();
     }
-  }, [recommendedPosts, API_BASE_URL]); // Ajoutez API_BASE_URL comme dépendance
+  }, [recommendedPosts, API_BASE_URL]);
 
   const getAuthorUsername = (authorId) => {
     const user = users.find((user) => user.id === authorId);
@@ -102,7 +105,7 @@ const RecommendedPosts = () => {
 
   const getAuthorProfilePicture = (authorId) => {
     const user = users.find((user) => user.id === authorId);
-    return user ? `${API_BASE_URL}${user.profile_picture}` : "/default-profile.png"; // Utilisez l'URL de base
+    return user ? `${user.profile_picture}` : "/default-profile.png";
   };
 
   const handleDeletePost = async (postId) => {
@@ -142,20 +145,7 @@ const RecommendedPosts = () => {
           <div className="post_list_div_component">
             {recommendedPosts.map((post) => (
               <li key={post.id} className="post_list_component">
-                <div className="author_component">
-                  <img
-                    src={getAuthorProfilePicture(post.author)}
-                    alt=""
-                    className="author_profile_picture_component"
-                  />
-                  <p
-                    onClick={() =>
-                      navigate(`/profile/${getAuthorUsername(post.author)}`)
-                    }
-                    className="post_author_component"
-                  >
-                    {getAuthorUsername(post.author)}
-                  </p>
+                <AuthorInfo username={getAuthorUsername(post.author)} />
 
                   {currentUser && currentUser.id === post.author && (
                     <div className="post-menu">
@@ -180,7 +170,7 @@ const RecommendedPosts = () => {
                 </div>
 
                 <img
-                  src={`${API_BASE_URL}${post.image_post}`}
+                  src={post.image_post}
                   alt="image"
                   className="home_post_component"
                 />
