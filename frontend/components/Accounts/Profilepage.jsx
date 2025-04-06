@@ -118,7 +118,11 @@ const ProfilePage = () => {
                         <div key={post.id} className="post_list_component profile_post_list_component">
                             <div className="author_component">
 
-                                <p className="post_author_component">{profile.username}</p>
+                                <div className="post_author_component">
+                                    <p>{profile.username}<p>
+                                    <img src= {`https://storage.googleapis.com/graph-connect_bucket/media/${profile.profile_picture}`}>
+
+                                </div>
 
                                 {user && user.username === profile.username && (
                                     <div className="post-menu">

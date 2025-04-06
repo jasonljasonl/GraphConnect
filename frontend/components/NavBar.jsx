@@ -68,7 +68,7 @@ export function NavBar() {
               {isAuth && currentUser ? (
                 <Nav.Link href={`/profile/${currentUser.username}`}>
                   <img
-                    src={`https://graphconnect-695590394372.europe-west1.run.app/${currentUser.profile_picture}`}
+                    src={`https://storage.googleapis.com/graph-connect_bucket/media/${currentUser.profile_picture}`}
                     alt="profile"
                     className="author_profile_picture_component"
                   />
