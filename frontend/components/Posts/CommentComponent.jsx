@@ -9,6 +9,7 @@ const CommentComponent = ({ postId }) => {
   const [image, setImage] = useState(null);
   const [commentCount, setCommentCount] = useState(0);
   const [user, setUser] = useState(null);
+  const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
 
   useEffect(() => {
     const fetchCommentCount = async () => {

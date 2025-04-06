@@ -15,7 +15,7 @@ ul {
 }
 
 
-.post_content_component, .post_author_component, .author_component,.post_interactions,.post_upload_date   {
+.post_content_component, .author_component,.post_interactions,.post_upload_date   {
     text-align: left;
     padding-left: 16px;
 }
@@ -23,16 +23,17 @@ ul {
 .author_component {
     display:flex;
     align-items: center
+    margin-bottom: 8px;
 }
+
 .author_profile_picture_component {
     width:50px;
     height:50px;
     border-radius: 200px;
-    object-fit: cover
+    object-fit: cover;
+    margin-right: 8px;
 }
-.author_component{
-    margin-bottom: 16px;
-}
+
 .post_interactions {
     display:flex;
     justify-self:left;
