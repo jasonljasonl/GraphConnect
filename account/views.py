@@ -148,17 +148,15 @@ def get_current_user_profile(request):
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def update_user_profile(request):
-    user = request.user
-    serializer = CustomUserSerializer(user, data=request.data, partial=True)
-
-    if serializer.is_valid():
-        if 'profile_picture' in request.FILES:
-            user.profile_picture = request.FILES['profile_picture']
-
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = request.user
+        serializer = CustomUserSerializer(user, data=request.data, partial=True)  # partial=True allows updating only some fields
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])
@@ -168,11 +166,11 @@ def FollowUserView(request, username):
     user_to_follow = get_object_or_404(CustomUser, username=username)
     current_user = request.user
 
-    if current_user in user_to_follow.followers:  # Check the reverse relation
-        user_to_follow.followers.remove(current_user)
+    if user_to_follow in current_user.user_follows.all():
+        current_user.user_follows.remove(user_to_follow)
         message = "User unfollowed"
     else:
-        user_to_follow.followers.add(current_user)
+        current_user.user_follows.add(user_to_follow)
         message = "User followed"
 
     return Response({'message': message}, status=status.HTTP_200_OK)
