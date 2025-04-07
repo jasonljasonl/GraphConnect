@@ -32,6 +32,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     encryption_key = models.CharField(max_length=128, blank=True, null=True)
     profile_picture = models.URLField(max_length=500, blank=True, null=True)
+    profile_picture_upload = models.ImageField(upload_to='profile_picture/', blank=True, null=True)
     username = models.CharField(unique=True, max_length=50)
     name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
