@@ -121,10 +121,16 @@ export const getRecommendedPosts = async () => {
 };
 
 export const updateUserProfile = async (formData) => {
-    return api.put("account/update/", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+    const token = localStorage.getItem("access_token");
+
+    return axios.put("https://graphconnect-695590394372.europe-west1.run.app/api/account/update/", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+        },
     });
 };
+
 
 export const getChatUsers = async () => {
   return api.get("chat/users/");

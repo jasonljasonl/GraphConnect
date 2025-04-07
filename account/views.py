@@ -168,18 +168,14 @@ def FollowUserView(request, username):
     user_to_follow = get_object_or_404(CustomUser, username=username)
     current_user = request.user
 
-    if user_to_follow == current_user:
-        return Response({'error': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if user_to_follow in current_user.user_follows.all():
-        current_user.user_follows.remove(user_to_follow)
+    if current_user in user_to_follow.followers:  # Check the reverse relation
+        user_to_follow.followers.remove(current_user)
         message = "User unfollowed"
     else:
-        current_user.user_follows.add(user_to_follow)
+        user_to_follow.followers.add(current_user)
         message = "User followed"
 
     return Response({'message': message}, status=status.HTTP_200_OK)
-
 
 
 
