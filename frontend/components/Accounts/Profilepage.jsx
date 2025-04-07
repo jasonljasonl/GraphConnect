@@ -6,6 +6,8 @@ import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 import IcBaselinePersonAddAlt from "../img_component/follow.jsx";
 import IcRoundMailOutline from "../img_component/message.jsx";
+import Like from "../Posts/LikeComponent.jsx";
+import ViewPost_CommentsButton from "../Posts/ViewPost_CommentsButton.jsx";
 
 const ProfilePage = () => {
     const { username } = useParams();
@@ -15,6 +17,7 @@ const ProfilePage = () => {
     const [user, setUser] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(null);
     const navigate = useNavigate();
+    const [commentCounts, setCommentCounts] = useState({});
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -154,7 +157,13 @@ const ProfilePage = () => {
                             <p className="post_upload_date">
                                 {formatDistanceToNow(new Date(post.upload_date), { locale: enUS })} ago
                             </p>
-
+                           <div className="post_interactions">
+                              <Like postId={post.id} initialLikes={post.likes.length} />
+                              <ViewPost_CommentsButton
+                                postId={post.id}
+                                initialComments={commentCounts[post.id] || 0}
+                              />
+                           </div>
                         </div>
                     ))
                 ) : (

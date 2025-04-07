@@ -27,7 +27,7 @@ const RecommendedPosts = () => {
       try {
         if (!token || !API_BASE_URL) return;
 
-        const response = await axios.get(`${API_BASE_URL}account/`, {
+        const response = await axios.get(`${API_BASE_URL}connected-user/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -36,7 +36,7 @@ const RecommendedPosts = () => {
         setCurrentUser(response.data);
 
       } catch (error) {
-        console.error("Erreur lors de la récupération de l'utilisateur :", error);
+        console.error("Error:", error);
       }
     };
 
@@ -60,7 +60,7 @@ const RecommendedPosts = () => {
         console.log("API Response:", response.data);
         setRecommendedPosts(Array.isArray(response.data.recommended_posts) ? response.data.recommended_posts : []);
       } catch (err) {
-        setError(err.response ? err.response.data.error : "Erreur inconnue");
+        setError(err.response ? err.response.data.error : "Error");
       }
     };
 

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { getUserProfile } from "../services/api";
 import '../css/AuthorInfo.css';
+import { useNavigate } from "react-router-dom";
 
 
 const AuthorInfo = ({ username }) => {
     const [profile, setProfile] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProfile = async () => {
