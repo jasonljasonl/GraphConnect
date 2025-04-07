@@ -48,30 +48,21 @@ const UserProfileUpdate = () => {
         reader.readAsDataURL(file);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const formData = new FormData();
+const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if (userData.username) {
-            formData.append("username", userData.username);
-        }
-        if (userData.email) {
-            formData.append("email", userData.email);
-        }
+    const payload = {};
+    if (userData.username) payload.username = userData.username;
+    if (userData.email) payload.email = userData.email;
+    if (userData.profile_picture) payload.profile_picture = userData.profile_picture;
 
-        if (userData.profile_picture) {
-          formData.append("profile_picture", userData.profile_picture);
-        }
-
-
-        try {
-            const response = await updateUserProfile(formData);
-            setMessage("Profile updated successfully");
-        } catch (error) {
-            console.error("Error :", error);
-            setMessage("Error updating profile");
-        }
-    };
+    try {
+        const response = await updateUserProfile(payload);
+        setMessage("Profile updated successfully");
+    } catch (error) {
+        console.error("Error:", error);
+        setMessage("Error updating profile");
+    }
 
     return (
         <div>
@@ -96,16 +87,22 @@ const UserProfileUpdate = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <div>
-                    <label>Profile Picture:</label>
-                    <input
-                        type="file"
+                    <div>
+                      <label>Profile Picture URL:</label>
+                      <input
+                        type="text"
                         name="profile_picture"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                    />
-                    {preview && <img src={preview} alt="Preview" style={{ width: "100px", marginTop: "10px" }} />}
-                </div>
+                        value={userData.profile_picture || ""}
+                        onChange={handleChange}
+                      />
+                      {userData.profile_picture && (
+                        <img
+                          src={userData.profile_picture}
+                          alt="Preview"
+                          style={{ width: "100px", marginTop: "10px" }}
+                        />
+                      )}
+                    </div>
                 <button type="submit">Update</button>
             </form>
         </div>

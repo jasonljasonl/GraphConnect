@@ -120,15 +120,19 @@ export const getRecommendedPosts = async () => {
     return api.get("recommendations/");
 };
 
-export const updateUserProfile = async (formData) => {
-    const token = localStorage.getItem("access_token");
 
-    return axios.put("https://graphconnect-695590394372.europe-west1.run.app/api/account/update/", formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-        },
-    });
+export const updateUserProfile = async (data) => {
+    const response = await axios.put(
+        "https://graphconnect-695590394372.europe-west1.run.app/api/account/update/",
+        data,
+        {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+        }
+    );
+    return response;
 };
 
 
