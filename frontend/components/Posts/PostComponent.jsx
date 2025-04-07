@@ -28,7 +28,7 @@ export default function Post() {
           return;
         }
 
-        const response = await axios.get(`${API_BASE_URL}account/`, {
+        const response = await axios.get(`${API_BASE_URL}connected-user/`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
 
