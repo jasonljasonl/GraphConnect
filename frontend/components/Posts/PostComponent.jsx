@@ -141,9 +141,7 @@ return (
           <li key={post.id} className="post_list_component">
             <div
               className="author_component"
-              onClick={() =>
-                navigate(`/profile/${getAuthorUsername(post.author)}`)
-              }
+
               style={{ cursor: "pointer" }}
             >
               <AuthorInfo username={getAuthorUsername(post.author)} />

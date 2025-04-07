@@ -22,7 +22,10 @@ const AuthorInfo = ({ username }) => {
     if (!profile) return null;
 
     return (
-        <div className="author_component">
+        <div className="author_component"
+        onClick={() =>
+                navigate(`/profile/${profile.username}`)
+              }>
             <img
                 className="author_profile_picture_component"
                 src={`https://storage.googleapis.com/graph-connect_bucket/media/${profile.profile_picture}`}
