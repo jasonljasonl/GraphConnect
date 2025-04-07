@@ -145,6 +145,10 @@ const RecommendedPosts = () => {
           <div className="post_list_div_component">
             {recommendedPosts.map((post) => (
               <li key={post.id} className="post_list_component">
+              <div
+              className="author_component"
+              style={{ cursor: "pointer" }}
+                >
                 <AuthorInfo username={getAuthorUsername(post.author)} />
 
                   {currentUser && currentUser.id === post.author && (
@@ -167,6 +171,7 @@ const RecommendedPosts = () => {
                       )}
                     </div>
                   )}
+              </div>
             {post.image_post && (
                 <img
                   src={post.image_post}
