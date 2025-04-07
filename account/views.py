@@ -165,13 +165,17 @@ def update_user_profile(request):
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
 def FollowUserView(request, username):
-    user = get_object_or_404(CustomUser, username=username)
+    user_to_follow = get_object_or_404(CustomUser, username=username)
+    current_user = request.user
 
-    if request.user in user.user_follows.all():
-        user.user_follows.remove(request.user)
+    if user_to_follow == current_user:
+        return Response({'error': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if user_to_follow in current_user.user_follows.all():
+        current_user.user_follows.remove(user_to_follow)
         message = "User unfollowed"
     else:
-        user.user_follows.add(request.user)
+        current_user.user_follows.add(user_to_follow)
         message = "User followed"
 
     return Response({'message': message}, status=status.HTTP_200_OK)

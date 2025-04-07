@@ -60,25 +60,9 @@ const UserProfileUpdate = () => {
         }
 
         if (userData.profile_picture) {
-            const imageFormData = new FormData();
-            imageFormData.append("profile_picture", userData.profile_picture);
-
-            try {
-                const uploadResponse = await axios.post(updateUserProfile, imageFormData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-                    },
-                });
-
-                const imageUrl = uploadResponse.data.image_url;
-                formData.append("profile_picture", imageUrl);
-
-            } catch (uploadError) {
-                setMessage("Error uploading image.");
-                return;
-            }
+          formData.append("profile_picture", userData.profile_picture);
         }
+
 
         try {
             await axios.put(updateUserProfile, formData, {

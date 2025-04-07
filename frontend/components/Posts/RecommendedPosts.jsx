@@ -167,12 +167,13 @@ const RecommendedPosts = () => {
                       )}
                     </div>
                   )}
-
+            {post.image_post && (
                 <img
                   src={post.image_post}
                   alt="image"
                   className="home_post_component"
                 />
+                )}
                 <p className="post_content_component">{post.content}</p>
                 <p className="post_upload_date">
                   {formatDistanceToNow(new Date(post.upload_date), {
