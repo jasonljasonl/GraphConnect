@@ -65,15 +65,11 @@ const UserProfileUpdate = () => {
 
 
         try {
-            await axios.put(updateUserProfile, formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-        },
-            });
-            setMessage("Profile updated successfully.");
+            const response = await updateUserProfile(formData);
+            setMessage("Profile updated successfully");
         } catch (error) {
-            setMessage("Error updating profile.");
+            console.error("Error :", error);
+            setMessage("Error updating profile");
         }
     };
 

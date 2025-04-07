@@ -1,6 +1,7 @@
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.views import View
 from channels.auth import login, logout
@@ -148,32 +149,33 @@ def get_current_user_profile(request):
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def update_user_profile(request):
-    try:
-        user = request.user
-        serializer = CustomUserSerializer(user, data=request.data, partial=True)  # partial=True allows updating only some fields
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    user = request.user
+    serializer = CustomUserSerializer(user, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        if 'profile_picture' in request.FILES:
+            user.profile_picture = request.FILES['profile_picture']
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
 def FollowUserView(request, username):
-    user_to_follow = get_object_or_404(CustomUser, username=username)
-    current_user = request.user
+    try:
+        user = get_object_or_404(CustomUser, username=username)
 
-    if user_to_follow in current_user.user_follows.all():
-        current_user.user_follows.remove(user_to_follow)
-        message = "User unfollowed"
-    else:
-        current_user.user_follows.add(user_to_follow)
-        message = "User followed"
-
-    return Response({'message': message}, status=status.HTTP_200_OK)
+        if request.user in user.user_follows.all():
+            user.user_follows.remove(request.user)
+        else:
+            user.user_follows.add(request.user)
+        return JsonResponse({'message': 'User followed'})
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
 
 
 
