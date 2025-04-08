@@ -210,7 +210,6 @@ def upload_profile_picture(request):
         blob = bucket.blob(blob_name)
 
         blob.upload_from_file(file, content_type=file.content_type)
-        blob.make_public()
 
         return Response({"url": blob.public_url}, status=status.HTTP_200_OK)
 
