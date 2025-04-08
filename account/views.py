@@ -153,9 +153,6 @@ def update_user_profile(request):
     serializer = CustomUserSerializer(user, data=request.data, partial=True)
 
     if serializer.is_valid():
-        if 'profile_picture' in request.FILES:
-            user.profile_picture = request.FILES['profile_picture']
-
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
