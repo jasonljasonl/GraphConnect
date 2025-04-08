@@ -56,7 +56,7 @@ export default function MessagePage() {
             <li key={user.id}>
               <div className="user_message_div">
                 <img
-                  src={`https://storage.googleapis.com/graph-connect_bucket/media/${user.profile_picture || "/default-profile.png"}`}
+                  src={user.profile_picture || "/default-profile.png"}
                   alt={`Profile of ${user.username}`}
                   className="comment_author_profile_picture_component"
                   id="author_picture_message_page"
