@@ -6,7 +6,7 @@ const UserProfileUpdate = () => {
     const [userData, setUserData] = useState({
         username: "",
         email: "",
-        profile_picture: null, // Keep it as null initially
+        profile_picture: null,
     });
 
     const [message, setMessage] = useState("");
@@ -15,11 +15,7 @@ const UserProfileUpdate = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(getConnectedUser, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-                    },
-                });
+                const response = await getConnectedUser();
                 setUserData({
                     username: response.data.username,
                     email: response.data.email,
@@ -67,22 +63,14 @@ const UserProfileUpdate = () => {
         const token = localStorage.getItem("access_token");
 
         try {
-            await axios.put(updateUserProfile, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setMessage("Profile updated successfully.");
+            const response = await updateUserProfile(formData);
+            setMessage("Profile updated successfully");
         } catch (error) {
-            setMessage("Error updating profile.");
-            console.error("Error updating profile:", error);
-            if (error.response) {
-                console.error("Server response:", error.response.data);
-                console.error("Status code:", error.response.status);
-            }
+            console.error("Error :", error);
+            setMessage("Error updating profile");
         }
     };
+
 
     return (
         <div>
