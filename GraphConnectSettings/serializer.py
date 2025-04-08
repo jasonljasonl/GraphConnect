@@ -6,7 +6,7 @@ from chat_system.models import Message
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    profile_picture_url = serializers.CharField(source='profile_picture_url', read_only=True)
+    profile_picture_url = serializers.CharField(read_only=True)  # Remove source='profile_picture_url'
     profile_picture_upload = serializers.ImageField(required=False, allow_null=True, write_only=True)
 
     class Meta:
@@ -23,7 +23,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
             user.save() # This will trigger django-storages to upload and set the URL
 
         return user
-
 
 
 class PostSerializer(serializers.ModelSerializer):
