@@ -30,7 +30,7 @@ const AuthorInfo = ({ username }) => {
               }>
             <img
                 className="author_profile_picture_component"
-                src={`https://storage.googleapis.com/graph-connect_bucket/media/${profile.profile_picture}`}
+                src={profile.profile_picture}
                 alt="Profile"
             />
             <p>{profile.username}</p>
