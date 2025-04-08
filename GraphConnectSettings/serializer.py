@@ -6,12 +6,10 @@ from chat_system.models import Message
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    profile_picture_upload = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = CustomUser
-        fields = ['id','username', 'email', 'password', 'name', 'profile_picture_upload', 'profile_picture']
-        read_only_fields = ['profile_picture']
+        fields = ['id','username', 'email', 'password', 'name', 'profile_picture']
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(**validated_data)
