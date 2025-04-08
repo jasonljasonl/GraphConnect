@@ -52,7 +52,6 @@ const handleSubmit = async (e) => {
 
     try {
         if (userData.profile_picture instanceof File) {
-            // upload to cloud storage
             uploadedUrl = await uploadToCloud(userData.profile_picture);
         }
 

@@ -205,7 +205,7 @@ def upload_profile_picture(request):
 
     try:
         client = storage.Client()
-        bucket = client.bucket(settings.GCS_BUCKET_NAME)
+        bucket = client.bucket(settings.GS_BUCKET_NAME)
         blob_name = f"profile_picture/{uuid.uuid4()}_{file.name}"
         blob = bucket.blob(blob_name)
 
