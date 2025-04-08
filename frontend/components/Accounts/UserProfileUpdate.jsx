@@ -45,31 +45,51 @@ const UserProfileUpdate = () => {
         reader.readAsDataURL(file);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const formData = new FormData();
+const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if (userData.username) {
-            formData.append("username", userData.username);
-        }
-        if (userData.email) {
-            formData.append("email", userData.email);
-        }
+    let uploadedUrl = null;
 
-        if (userData.profile_picture) {
-            formData.append("profile_picture", userData.profile_picture);
+    try {
+        if (userData.profile_picture instanceof File) {
+            // upload to cloud storage
+            uploadedUrl = await uploadToCloud(userData.profile_picture);
         }
 
-        const token = localStorage.getItem("access_token");
+        const dataToSend = {
+            username: userData.username,
+            email: userData.email,
+        };
 
-        try {
-            const response = await updateUserProfile(formData);
-            setMessage("Profile updated successfully");
-        } catch (error) {
-            console.error("Error :", error);
-            setMessage("Error updating profile");
+        if (uploadedUrl) {
+            dataToSend.profile_picture = uploadedUrl;
         }
-    };
+
+        await updateUserProfile(dataToSend);
+        setMessage("Profile updated successfully");
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        setMessage("Error updating profile");
+    }
+};
+
+
+const uploadToCloud = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await axios.post(
+        "https://graphconnect-695590394372.europe-west1.run.app/api/account/upload-profile-picture/",
+        formData,
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                "Content-Type": "multipart/form-data",
+            },
+        }
+    );
+    return response.data.url;
+};
 
 
     return (

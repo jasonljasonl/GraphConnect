@@ -1,10 +1,13 @@
+import uuid
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.views import View
 from channels.auth import login, logout
+from google.cloud import storage
 from rest_framework import status, viewsets, generics
 from rest_framework.decorators import permission_classes, api_view, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -191,3 +194,25 @@ class FollowedUserListView(generics.ListAPIView):
         return CustomUser.objects.filter(Q(id__in=followed_users_ids) | Q(id=user.id))
 
 
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def upload_profile_picture(request):
+    file = request.FILES.get("file")
+
+    if not file:
+        return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        client = storage.Client()
+        bucket = client.bucket(settings.GCS_BUCKET_NAME)
+        blob_name = f"profile_picture/{uuid.uuid4()}_{file.name}"
+        blob = bucket.blob(blob_name)
+
+        blob.upload_from_file(file, content_type=file.content_type)
+        blob.make_public()
+
+        return Response({"url": blob.public_url}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
