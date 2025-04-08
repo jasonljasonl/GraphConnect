@@ -127,7 +127,7 @@ export const updateUserProfile = async (data) => {
         data,
         {
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
         }
