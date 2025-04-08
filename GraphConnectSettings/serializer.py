@@ -6,23 +6,16 @@ from chat_system.models import Message
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    profile_picture_url = serializers.CharField(read_only=True)  # Remove source='profile_picture_url'
-    profile_picture_upload = serializers.ImageField(required=False, allow_null=True, write_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'name', 'profile_picture', 'profile_picture_url', 'profile_picture_upload']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id','username', 'email', 'password', 'name', 'profile_picture']
 
     def create(self, validated_data):
-        profile_picture_file = validated_data.pop('profile_picture_upload', None)
         user = CustomUser.objects.create_user(**validated_data)
-
-        if profile_picture_file:
-            user.profile_picture = profile_picture_file  # Assign the file to the ImageField/FileField
-            user.save() # This will trigger django-storages to upload and set the URL
-
         return user
+
+
 
 
 class PostSerializer(serializers.ModelSerializer):
