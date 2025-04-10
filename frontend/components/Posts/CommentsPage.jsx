@@ -64,6 +64,10 @@ export default function CommentsList({ postId }) {
                                     className="comment_page_post_component"
                                 />
                             )}
+                            <p className="post_upload_date">
+                              {formatDistanceToNow(new Date(post.upload_date), { locale: enUS })}{" "}
+                              ago
+                            </p>
                         </div>
                     </li>
                 ))

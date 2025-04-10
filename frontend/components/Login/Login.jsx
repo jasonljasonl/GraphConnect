@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/api";
 import RegisterForm from "./RegisterForm.jsx";
 import axios from "axios";
+import '../css/LoginPage.css';
+
 
 export const Login = () => {
   const [username, setUsername] = useState("");
@@ -40,10 +42,9 @@ export const Login = () => {
           {error && <p style={{ color: "red" }}>{error}</p>}
           {message && <p style={{ color: "green" }}>{message}</p>}
           <div className="form-group mt-3">
-            <label>Username</label>
             <input
               className="form-control mt-1"
-              placeholder="Enter Username"
+              placeholder="Enter username"
               name="username"
               type="text"
               value={username}
@@ -52,7 +53,6 @@ export const Login = () => {
             />
           </div>
           <div className="form-group mt-3">
-            <label>Password</label>
             <input
               name="password"
               type="password"
