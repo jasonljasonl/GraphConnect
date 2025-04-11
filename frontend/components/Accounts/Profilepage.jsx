@@ -95,8 +95,8 @@ const ProfilePage = () => {
                         <div className='name_and_followers'>
                             <p>{profile.username}</p>
                             <div className="followers-number">
-                                <p className="follows_component">{profile.following.length} Followers</p>
-                                <p className="follows_component">{profile.followers.length} Following</p>
+                                <p className="follows_component">{profile.followers.length} Followers</p>
+                                <p className="follows_component">{profile.following.length} Following</p>
                             </div>
                         </div>
 

@@ -173,15 +173,19 @@ def FollowUserView(request, username):
     try:
         user_to_follow = get_object_or_404(CustomUser, username=username)
 
-        if user_to_follow == request.user:
-            return JsonResponse({'error': "You can't follow yourself."}, status=400)
+        if request.user == user_to_follow:
+            return JsonResponse({'error': 'You cannot follow yourself.'}, status=400)
 
-        if user_to_follow in request.user.user_follows.all():
-            request.user.user_follows.remove(user_to_follow)
-            return JsonResponse({'message': 'User unfollowed'})
+        if request.user in user_to_follow.user_follows.all():
+            user_to_follow.user_follows.remove(request.user)
+            request.user.followers.remove(user_to_follow)
+            action = 'unfollowed'
         else:
-            request.user.user_follows.add(user_to_follow)
-            return JsonResponse({'message': 'User followed'})
+            user_to_follow.user_follows.add(request.user)
+            request.user.followers.add(user_to_follow)
+            action = 'followed'
+
+        return JsonResponse({'message': f'User {action} successfully'}, status=200)
 
     except CustomUser.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
