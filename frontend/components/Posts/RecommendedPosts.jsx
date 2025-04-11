@@ -134,6 +134,7 @@ const RecommendedPosts = () => {
   };
 
   return (
+      <SearchBar />
        <PostComponent
       posts={recommendedPosts}
       users={users}

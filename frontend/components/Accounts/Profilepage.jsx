@@ -9,6 +9,7 @@ import IcRoundMailOutline from "../img_component/message.jsx";
 import Like from "../Posts/LikeComponent.jsx";
 import ViewPost_CommentsButton from "../Posts/ViewPost_CommentsButton.jsx";
 import PostComponent from "../Posts/PostComponent.jsx";
+import axios from "axios";
 
 
 const ProfilePage = () => {
