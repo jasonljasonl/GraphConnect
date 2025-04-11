@@ -1,10 +1,3 @@
-import React from "react";
-import Like from "./LikeComponent.jsx";
-import ViewPost_CommentsButton from "./ViewPost_CommentsButton.jsx";
-import AuthorInfo from '../Accounts/AuthorInfo.jsx';
-import { formatDistanceToNow } from "date-fns";
-import { enUS } from "date-fns/locale";
-
 export default function PostComponent({
   posts,
   users,
@@ -18,6 +11,10 @@ export default function PostComponent({
     const user = users.find((user) => user.id === authorId);
     return user ? user.username : "Unknown";
   };
+
+  if (!Array.isArray(posts)) {
+    return <p>No posts available</p>;
+  }
 
   return (
     <div className="post_list_div_component">
@@ -69,7 +66,7 @@ export default function PostComponent({
               </p>
 
               <div className="post_interactions">
-                <Like postId={post.id} initialLikes={post.likes.length} />
+                <Like postId={post.id} initialLikes={post.likes?.length || 0} />
                 <ViewPost_CommentsButton
                   postId={post.id}
                   initialComments={commentCounts[post.id] || 0}
