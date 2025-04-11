@@ -1,3 +1,12 @@
+import React from "react";
+import Like from "./LikeComponent.jsx";
+import ViewPost_CommentsButton from "./ViewPost_CommentsButton.jsx";
+import AuthorInfo from '../Accounts/AuthorInfo.jsx';
+import { formatDistanceToNow } from "date-fns";
+import { enUS } from "date-fns/locale";
+
+
+
 export default function PostComponent({
   posts,
   users,
