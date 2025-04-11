@@ -171,13 +171,22 @@ def update_user_profile(request):
 @authentication_classes([JWTAuthentication])
 def FollowUserView(request, username):
     try:
-        user = get_object_or_404(CustomUser, username=username)
+        user_to_follow = get_object_or_404(CustomUser, username=username)
 
-        if request.user in user.user_follows.all():
-            user.user_follows.remove(request.user)
+        if request.user == user_to_follow:
+            return JsonResponse({'error': 'You cannot follow yourself.'}, status=400)
+
+        if request.user in user_to_follow.user_follows.all():
+            user_to_follow.user_follows.remove(request.user)
+            request.user.followers.remove(user_to_follow)
+            action = 'unfollowed'
         else:
-            user.user_follows.add(request.user)
-        return JsonResponse({'message': 'User followed'})
+            user_to_follow.user_follows.add(request.user)
+            request.user.followers.add(user_to_follow)
+            action = 'followed'
+
+        return JsonResponse({'message': f'User {action} successfully'}, status=200)
+
     except CustomUser.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
