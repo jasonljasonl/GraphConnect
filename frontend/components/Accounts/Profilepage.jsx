@@ -86,11 +86,6 @@ const ProfilePage = () => {
     const toggleDropdown = (postId) => {
         setDropdownOpen(dropdownOpen === postId ? null : postId);
     };
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
 useEffect(() => {
     const fetchUsers = async () => {
         try {
@@ -108,6 +103,13 @@ useEffect(() => {
 
     fetchUsers();
 }, []);
+
+
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
 
     return (
         <div className="profile-container">
