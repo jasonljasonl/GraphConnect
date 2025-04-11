@@ -8,6 +8,8 @@ import IcBaselinePersonAddAlt from "../img_component/follow.jsx";
 import IcRoundMailOutline from "../img_component/message.jsx";
 import Like from "../Posts/LikeComponent.jsx";
 import ViewPost_CommentsButton from "../Posts/ViewPost_CommentsButton.jsx";
+import PostComponent from "../Posts/PostComponent.jsx";
+
 
 const ProfilePage = () => {
     const { username } = useParams();
@@ -15,15 +17,19 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
+    const [users, setUsers] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(null);
     const navigate = useNavigate();
     const [commentCounts, setCommentCounts] = useState({});
+    const [currentUser, setCurrentUser] = useState(null);
+
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 const response = await getConnectedUser();
                 setUser(response.data);
+                setCurrentUser(response.data);
             } catch (error) {
                 console.error("Error fetching user:", error);
             }
@@ -85,6 +91,24 @@ const ProfilePage = () => {
         return <div>Loading...</div>;
     }
 
+useEffect(() => {
+    const fetchUsers = async () => {
+        try {
+            const token = localStorage.getItem("access_token");
+            const res = await axios.get("https://graphconnect-695590394372.europe-west1.run.app/api/account/", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setUsers(res.data);
+        } catch (error) {
+            console.error("Failed to fetch users:", error);
+        }
+    };
+
+    fetchUsers();
+}, []);
+
     return (
         <div className="profile-container">
             <div className="user_informations">
@@ -122,54 +146,15 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            <div className="post_list_div_component">
-                {profile.posts.length > 0 ? (
-                    profile.posts.map((post) => (
-                        <div key={post.id} className="post_list_component profile_post_list_component">
-                            <div className="author_component">
-
-                                    <img className='author_profile_picture_component' src= {profile.profile_picture}/>
-                                    <p>{profile.username}</p>
-
-
-                                {user && user.username === profile.username && (
-                                    <div className="post-menu">
-                                        <button className="post-menu-button" onClick={() => toggleDropdown(post.id)}>
-                                            ...
-                                        </button>
-                                        {dropdownOpen === post.id && (
-                                            <div className="post-menu-dropdown">
-                                                <button onClick={() => handleDeletePost(post.id)} className="delete-post-button">
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-
-                            {post.image_post && (
-                                <img src={post.image_post} alt="Post" className="home_post_component" />
-                            )}
-
-                            <p className="post_content_component">{post.content}</p>
-
-                            <p className="post_upload_date">
-                                {formatDistanceToNow(new Date(post.upload_date), { locale: enUS })} ago
-                            </p>
-                           <div className="post_interactions">
-<Like postId={post.id} initialLikes={post.likes?.length || 0} />
-                              <ViewPost_CommentsButton
-                                postId={post.id}
-                                initialComments={commentCounts[post.id] || 0}
-                              />
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No posts.</p>
-                )}
-            </div>
+               <PostComponent
+                  posts={profile.posts}
+                  users={users}
+                  currentUser={currentUser}
+                  commentCounts={commentCounts}
+                  dropdownOpen={dropdownOpen}
+                  toggleDropdown={toggleDropdown}
+                  handleDeletePost={handleDeletePost}
+               />
         </div>
     );
 };
