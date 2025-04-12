@@ -290,7 +290,7 @@ def user_posts_api(request, username):
 
     following = Follow.objects.filter(from_user=user).values('to_user__id', 'to_user__username')
 
-    followers = list(user.followers.values('id', 'username'))
+    followers = list(user.followers.values('to_user__id', 'to_user__username'))
 
     data = {
         'id': user.id,
