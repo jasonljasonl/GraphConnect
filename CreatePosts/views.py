@@ -277,12 +277,11 @@ class FollowedPostsListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
 
-        return Post.objects.filter(Q(author__in=user.follows.all()) | Q(author=user))
+        return Post.objects.filter(Q(author__in=user.follow.all()) | Q(author=user))
 
 def user_posts_api(request, username):
     user = get_object_or_404(CustomUser, username=username)
 
-    # Récupérer les posts de l'utilisateur
     posts = Post.objects.filter(author=user).values(
         'id', 'content', 'image_post', 'upload_date', 'labels'
     )
