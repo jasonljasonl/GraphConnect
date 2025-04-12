@@ -44,5 +44,5 @@ class MessageSerializer(serializers.ModelSerializer):
 class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
-        fields = ['follower', 'followed', 'created_at']
-        read_only_fields = ['follower', 'created_at']
+        fields = ['from_user', 'to_user', 'created_at']
+        read_only_fields = ['to_user', 'created_at']
