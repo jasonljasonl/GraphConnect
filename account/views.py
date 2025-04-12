@@ -180,7 +180,7 @@ class FollowUserView(APIView):
         follower = request.user
         followed = get_object_or_404(CustomUser, username=username)
 
-        if Follow.objects.filter(follower=follower, followed=followed).exists():
+        if Follow.objects.filter(from_user=follower, to_user=followed).exists():
             return Response({"detail": "Already following."}, status=status.HTTP_400_BAD_REQUEST)
 
         follow = Follow.objects.create(follower=follower, followed=followed)
@@ -193,7 +193,7 @@ class FollowedUserListView(generics.ListAPIView):
     serializer_class = FollowSerializer
 
     def get_queryset(self):
-        return Follow.objects.filter(follower=self.request.user)
+        return Follow.objects.filter(from_user=self.request.user)
 
 
 @api_view(["POST"])
