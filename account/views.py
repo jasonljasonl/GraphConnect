@@ -10,7 +10,7 @@ from django.views import View
 from channels.auth import login, logout
 from django.views.decorators.csrf import csrf_exempt
 from google.cloud import storage
-from rest_framework import status, viewsets, generics
+from rest_framework import status, viewsets, generics, permissions
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import permission_classes, api_view, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -167,17 +167,22 @@ def update_user_profile(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @method_decorator(csrf_exempt, name='dispatch')
-class FollowUserView(generics.CreateAPIView):
-    queryset = Follow.objects.all()
-    serializer_class = FollowSerializer
-    permission_classes = [IsAuthenticated]
+class FollowUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    def perform_create(self, serializer):
-        follower = self.request.user
-        followed = CustomUser.objects.get(username=self.kwargs['username'])
-        serializer.save(follower=follower, followed=followed)
+    def post(self, request, username):
+        follower = request.user
+        followed = get_object_or_404(CustomUser, username=username)
+
+        if Follow.objects.filter(follower=follower, followed=followed).exists():
+            return Response({"detail": "Already following."}, status=status.HTTP_400_BAD_REQUEST)
+
+        follow = Follow.objects.create(follower=follower, followed=followed)
+        serializer = FollowSerializer(follow)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
