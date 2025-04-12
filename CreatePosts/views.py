@@ -276,8 +276,8 @@ class FollowedPostsListView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-
-        return Post.objects.filter(Q(author__in=user.following.all()) | Q(author=user))
+        followed_users = user.following.values_list('to_user', flat=True)
+        return Post.objects.filter(Q(author__in=followed_users) | Q(author=user))
 
 
 
