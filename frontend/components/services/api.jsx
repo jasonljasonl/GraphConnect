@@ -88,8 +88,19 @@ export const getUserPosts = async () => {
 };
 
 export const followUser = async (username) => {
-    return api.post(`account/${username}/follow/`);
+  const token = localStorage.getItem("access_token");
+
+  return api.post(
+    `account/${username}/follow/`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
+
 
 
 export const getFollowers = async () => {
