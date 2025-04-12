@@ -58,7 +58,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 
-    @property
     def following(self):
         return self.user_follows.all()
 
