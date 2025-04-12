@@ -15,7 +15,7 @@ from .models import Comment
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from rest_framework import viewsets, generics, status
 from CreatePosts.models import Post
-from account.models import CustomUser
+from account.models import CustomUser, Follow
 import numpy as np
 import faiss
 
@@ -279,6 +279,8 @@ class FollowedPostsListView(generics.ListAPIView):
 
         return Post.objects.filter(Q(author__in=user.follow.all()) | Q(author=user))
 
+
+
 def user_posts_api(request, username):
     user = get_object_or_404(CustomUser, username=username)
 
@@ -286,7 +288,7 @@ def user_posts_api(request, username):
         'id', 'content', 'image_post', 'upload_date', 'labels'
     )
 
-    following = list(user.following.values('id', 'username'))
+    following = Follow.objects.filter(from_user=user).values('to_user__id', 'to_user__username')
 
     followers = list(user.followers.values('id', 'username'))
 
@@ -296,10 +298,11 @@ def user_posts_api(request, username):
         'profile_picture': user.profile_picture.url if user.profile_picture else None,
         'posts': list(posts),
         'followers': followers,
-        'following': following
+        'following': list(following)
     }
 
     return JsonResponse(data)
+
 
 
 
