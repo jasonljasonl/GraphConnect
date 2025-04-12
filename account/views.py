@@ -20,7 +20,7 @@ import requests
 from GraphConnectSettings.serializer import CustomUserSerializer
 from django.contrib.auth import login, authenticate, logout
 
-from .models import CustomUser
+from .models import CustomUser, Follow
 
 
 # Create your views here.
@@ -176,27 +176,19 @@ def FollowUserView(request, username):
         if request.user == user_to_follow:
             return JsonResponse({'error': 'You cannot follow yourself.'}, status=400)
 
-        FollowRelation = CustomUser.user_follows.through
+        follow_relation = Follow.objects.filter(from_user=request.user, to_user=user_to_follow).first()
 
-        exists = FollowRelation.objects.filter(
-            from_user=request.user,
-            to_user=user_to_follow
-        ).exists()
-
-        if exists:
-            FollowRelation.objects.filter(
-                from_user=request.user,
-                to_user=user_to_follow
-            ).delete()
-            action = "unfollowed"
+        if follow_relation:
+            follow_relation.delete()
+            action = 'unfollowed'
         else:
-            FollowRelation.objects.create(
-                from_user=request.user,
-                to_user=user_to_follow
-            )
-            action = "followed"
+            Follow.objects.create(from_user=request.user, to_user=user_to_follow)
+            action = 'followed'
 
         return JsonResponse({'message': f'User {action} successfully'}, status=200)
+
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)

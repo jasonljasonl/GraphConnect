@@ -26,6 +26,13 @@ class CustomUserManager(BaseUserManager):
 
 
 
+class Follow(models.Model):
+    from_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='followers', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('from_user', 'to_user')
 
 
 # models.py
@@ -35,8 +42,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(unique=True, max_length=50)
     name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
-    user_follows = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="follows", blank=True)
-
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -49,19 +54,21 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     def save(self, *args, **kwargs):
-        if self.pk is None and self.password:
-            pass
         if not self.encryption_key:
             self.encryption_key = Fernet.generate_key().decode()
         super().save(*args, **kwargs)
 
-    @property
-    def followers(self):
-        FollowRelation = self.user_follows.through
-        return CustomUser.objects.filter(
-            user_follows__pk__in=FollowRelation.objects.filter(to_user=self).values('from_user'))
+    def follow(self, user):
+        if user != self:
+            Follow.objects.get_or_create(from_user=self, to_user=user)
+
+    def unfollow(self, user):
+        Follow.objects.filter(from_user=self, to_user=user).delete()
 
     @property
     def following(self):
-        FollowRelation = self.user_follows.through
-        return CustomUser.objects.filter(pk__in=FollowRelation.objects.filter(from_user=self).values('to_user'))
+        return CustomUser.objects.filter(following__from_user=self)
+
+    @property
+    def followers(self):
+        return CustomUser.objects.filter(followers__to_user=self)
