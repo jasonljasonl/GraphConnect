@@ -17,7 +17,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 import requests
 
-from GraphConnectSettings.serializer import CustomUserSerializer
+from GraphConnectSettings.serializer import CustomUserSerializer, FollowSerializer
 from django.contrib.auth import login, authenticate, logout
 
 from .models import CustomUser, Follow
@@ -165,46 +165,25 @@ def update_user_profile(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class FollowUserView(generics.CreateAPIView):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-@authentication_classes([JWTAuthentication])
-def FollowUserView(request, username):
-    try:
-        user_to_follow = get_object_or_404(CustomUser, username=username)
+    def perform_create(self, serializer):
+        follower = self.request.user
+        followed = CustomUser.objects.get(username=self.kwargs['username'])
+        serializer.save(follower=follower, followed=followed)
 
-        if request.user == user_to_follow:
-            return JsonResponse({'error': 'You cannot follow yourself.'}, status=400)
-
-        follow_relation = Follow.objects.filter(from_user=request.user, to_user=user_to_follow).first()
-
-        if follow_relation:
-            follow_relation.delete()
-            action = 'unfollowed'
-        else:
-            Follow.objects.create(from_user=request.user, to_user=user_to_follow)
-            action = 'followed'
-
-        return JsonResponse({'message': f'User {action} successfully'}, status=200)
-
-    except CustomUser.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
-
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 
 class FollowedUserListView(generics.ListAPIView):
-    serializer_class = CustomUserSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
+    serializer_class = FollowSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        followed_users_ids = user.follows.values_list("id", flat=True)
-        return CustomUser.objects.filter(Q(id__in=followed_users_ids) | Q(id=user.id))
-
+        return Follow.objects.filter(follower=self.request.user)
 
 
 @api_view(["POST"])
