@@ -168,10 +168,10 @@ def update_user_profile(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
 class FollowUserView(generics.CreateAPIView):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
-
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
