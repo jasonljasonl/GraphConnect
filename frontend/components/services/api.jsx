@@ -91,7 +91,7 @@ export const followUser = async (username) => {
   const token = localStorage.getItem("access_token");
 
   return api.post(
-    `account/${username}/follow/`,
+    `user/${username}/follow/`,
     {},
     {
       headers: {
