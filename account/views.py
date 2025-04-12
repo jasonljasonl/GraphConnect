@@ -177,23 +177,29 @@ def FollowUserView(request, username):
             return JsonResponse({'error': 'You cannot follow yourself.'}, status=400)
 
         FollowRelation = CustomUser.user_follows.through
-        already_follows = FollowRelation.objects.filter(
+
+        exists = FollowRelation.objects.filter(
             from_user=request.user,
             to_user=user_to_follow
         ).exists()
 
-        if already_follows:
-            request.user.user_follows.remove(user_to_follow)
-            action = 'unfollowed'
+        if exists:
+            FollowRelation.objects.filter(
+                from_user=request.user,
+                to_user=user_to_follow
+            ).delete()
+            action = "unfollowed"
         else:
-            request.user.user_follows.add(user_to_follow)
-            action = 'followed'
+            FollowRelation.objects.create(
+                from_user=request.user,
+                to_user=user_to_follow
+            )
+            action = "followed"
 
         return JsonResponse({'message': f'User {action} successfully'}, status=200)
 
-    except CustomUser.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
-
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 

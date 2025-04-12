@@ -55,12 +55,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             self.encryption_key = Fernet.generate_key().decode()
         super().save(*args, **kwargs)
 
-
-
-
-    def following(self):
-        return self.user_follows.all()
-
     @property
     def followers(self):
-        return CustomUser.objects.filter(user_follows=self)
+        FollowRelation = self.user_follows.through
+        return CustomUser.objects.filter(
+            user_follows__pk__in=FollowRelation.objects.filter(to_user=self).values('from_user'))
+
+    @property
+    def following(self):
+        FollowRelation = self.user_follows.through
+        return CustomUser.objects.filter(pk__in=FollowRelation.objects.filter(from_user=self).values('to_user'))
