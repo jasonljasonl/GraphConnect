@@ -56,19 +56,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         super().save(*args, **kwargs)
 
 
-    def follow(self, user):
-        if user != self:  # Ensure that you cannot follow yourself
-            self.user_follows.add(user)
-            user.followers.add(self)
-            self.save()
-            user.save()
 
-    def unfollow(self, user):
-        if user != self:
-            self.user_follows.remove(user)
-            user.followers.remove(self)
-            self.save()
-            user.save()
 
     @property
     def following(self):
