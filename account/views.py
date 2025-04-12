@@ -5,10 +5,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views import View
 from channels.auth import login, logout
+from django.views.decorators.csrf import csrf_exempt
 from google.cloud import storage
 from rest_framework import status, viewsets, generics
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import permission_classes, api_view, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -169,13 +172,13 @@ class FollowUserView(generics.CreateAPIView):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
 
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def perform_create(self, serializer):
         follower = self.request.user
         followed = CustomUser.objects.get(username=self.kwargs['username'])
         serializer.save(follower=follower, followed=followed)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
 
 
 
