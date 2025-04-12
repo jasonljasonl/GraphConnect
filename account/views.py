@@ -183,7 +183,7 @@ class FollowUserView(APIView):
         if Follow.objects.filter(from_user=follower, to_user=followed).exists():
             return Response({"detail": "Already following."}, status=status.HTTP_400_BAD_REQUEST)
 
-        follow = Follow.objects.create(follower=follower, followed=followed)
+        follow = Follow.objects.create(from_user=follower, to_user=followed)
         serializer = FollowSerializer(follow)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
