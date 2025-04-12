@@ -281,22 +281,25 @@ class FollowedPostsListView(generics.ListAPIView):
 
 def user_posts_api(request, username):
     user = get_object_or_404(CustomUser, username=username)
+
+    # Récupérer les posts de l'utilisateur
     posts = Post.objects.filter(author=user).values(
         'id', 'content', 'image_post', 'upload_date', 'labels'
     )
 
-    following = list(user.user_follows.values('id', 'username'))
+    following = list(user.following.values('id', 'username'))
 
-    followers = list(user.user_follows.all().filter(user_follows=user).values('id', 'username'))
+    followers = list(user.followers.values('id', 'username'))
 
     data = {
         'id': user.id,
         'username': user.username,
-        'profile_picture': user.profile_picture if user.profile_picture else None,
+        'profile_picture': user.profile_picture.url if user.profile_picture else None,
         'posts': list(posts),
         'followers': followers,
         'following': following
     }
+
     return JsonResponse(data)
 
 
