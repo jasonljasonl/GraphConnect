@@ -7,16 +7,13 @@ import IcRoundMailOutline from "../img_component/message.jsx";
 import PostsListTemplate from '../Templates/PostsListTemplate.jsx';
 import AuthorInfoTemplate from '../Templates/AuthorInfoTemplate.jsx';
 
-
 const ProfilePage = () => {
     const { username } = useParams();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
-    const [dropdownOpen, setDropdownOpen] = useState(null);
     const navigate = useNavigate();
-    const [commentCounts, setCommentCounts] = useState({});
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -76,51 +73,44 @@ const ProfilePage = () => {
         }
     };
 
-    const toggleDropdown = (postId) => {
-        setDropdownOpen(dropdownOpen === postId ? null : postId);
-    };
-
     if (loading) {
         return <div>Loading...</div>;
+    }
+
+    if (!profile) {
+        return <div>User profile not found.</div>;
     }
 
     return (
         <div className="profile-container">
             <div className="user_informations">
-
-                <div >
-                    <AuthorInfoTemplate username={username} />
-                            <div className="followers-number">
-                                <p className="follows_component">{profile.followers.length} Followers</p>
-                                <p className="follows_component">{profile.following.length} Following</p>
-                            </div>
-                        </div>
-
+                <div>
+                    <AuthorInfoTemplate username={profile.username} profilePicture={profile.profile_picture}/>
+                    <div className="followers-number">
+                        <p className="follows_component">{profile.followers.length} Followers</p>
+                        <p className="follows_component">{profile.following.length} Following</p>
                     </div>
-
-
-                    {user && user.username !== profile.username && (
-                        <div className="user_interactions_buttons">
-                            <div onClick={handleFollowClick} className="user_follow_button">
-                                <IcBaselinePersonAddAlt />
-                            </div>
-                            <div onClick={() => navigate(`/messages/${profile.id}`)} className="user_send_message_button">
-                                <IcRoundMailOutline />
-                            </div>
-                        </div>
-                    )}
-
-                    {user && user.username === profile.username && (
-                        <div onClick={() => navigate(`/account/update`)} className="update_profile_button">
-                            <p>Update Profile</p>
-                        </div>
-                    )}
                 </div>
+
+                {user && user.username !== profile.username && (
+                    <div className="user_interactions_buttons">
+                        <div onClick={handleFollowClick} className="user_follow_button">
+                            <IcBaselinePersonAddAlt />
+                        </div>
+                        <div onClick={() => navigate(`/messages/${profile.id}`)} className="user_send_message_button">
+                            <IcRoundMailOutline />
+                        </div>
+                    </div>
+                )}
+
+                {user && user.username === profile.username && (
+                    <div onClick={() => navigate(`/account/update`)} className="update_profile_button">
+                        <p>Update Profile</p>
+                    </div>
+                )}
             </div>
 
-
             <PostsListTemplate userPosts={profile.posts} />
-
         </div>
     );
 };
