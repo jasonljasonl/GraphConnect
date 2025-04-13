@@ -148,7 +148,7 @@ export default function PostsListTemplate({ userPosts, fetchPostsUrl }) {
                 {formatDistanceToNow(new Date(post.upload_date), { locale: enUS })} ago
               </p>
               <div className="post_interactions">
-                <Like postId={post.id} initialLikes={post.likes.length} />
+                <Like postId={post.id} initialLikes={Array.isArray(post.likes) ? post.likes.length : 0} />
                 <ViewPost_CommentsButton postId={post.id} initialComments={commentCounts[post.id] || 0} />
               </div>
             </li>
