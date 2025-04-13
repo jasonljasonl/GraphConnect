@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Post from '../components/Posts/PostComponent.jsx';
+import Homepage from '../components/Homepage.jsx';
 import GetUsers from '../components/Accounts/GetUsersComponent.jsx';
 import { NavBar } from '../components/NavBar.jsx';
 import { Login } from "../components/Login/Login";
