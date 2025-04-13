@@ -24,26 +24,6 @@ class PostsSerializerView(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
 
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Post
-    fields = ['content','image_post']
-    template_name = 'create_post.html'
-    success_url = reverse_lazy('post_list')
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
-class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
-        model = Post
-        fields = ['content', 'image_post']
-        template_name = 'create_post.html'
-        success_url = reverse_lazy('post_list')
-
-        def test_func(self, **kwargs):
-            post = self.get_object()
-            return self.request.user == post.author
-
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -57,70 +37,6 @@ def delete_post_api(request, pk):
     post.delete()
     return Response({'message': 'Post deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
-class PostListView(ListView):
-    model = Post
-    template_name = 'post_list.html'
-    context_object_name = 'posts'
-
-
-class ViewPostView(DetailView):
-        model = Post
-        template_name = 'view_post.html'
-        context_object_name = 'selected_post'
-
-        def get(self, request, pk):
-            selected_post = get_object_or_404(Post, id=pk)
-            return render(request, 'view_post.html', {'selected_post': selected_post})
-
-
-class CommentCreateView(LoginRequiredMixin, CreateView):
-    model = Comment
-    fields = ['image_comment','content']
-    template_name = 'create_comment.html'
-    success_url = reverse_lazy('post_list')
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
-        form.instance.related_post = post
-
-        return super().form_valid(form)
-
-
-class CommentsListView(ListView):
-    model = Comment
-    template_name = 'view_comment.html'
-    context_object_name = 'comments'
-
-    def get(self, request, pk):
-        selected_post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
-        comment_list = get_list_or_404(Comment)
-        return render(request, 'view_comment.html', {'selected_post': selected_post, 'comments':comment_list})
-
-
-
-
-class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Comment
-    fields = ['image_comment','content']
-    template_name = 'create_comment.html'
-    success_url = reverse_lazy('post_list')
-
-    def test_func(self, **kwargs):
-        comment = self.get_object()
-        return self.request.user == comment.author
-
-
-class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Comment
-    template_name = 'post_confirm_delete.html'
-    success_url = reverse_lazy('post_list')
-
-    def test_func(self, **kwargs):
-        comment = self.get_object()
-        return self.request.user == comment.author
-
-
 
 def get_comment_count(request, post_id):
     try:
@@ -130,19 +46,10 @@ def get_comment_count(request, post_id):
     except Post.DoesNotExist:
         return JsonResponse({"error": "Post not found"}, status=404)
 
-class CommentLikeView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        comment = get_object_or_404(Comment, id=kwargs['pk'])
-        if request.user in comment.likes.all():
-            comment.likes.remove(request.user)
-        else:
-            comment.likes.add(request.user)
-        return redirect('post_list')
-
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])  # Only authenticated users can like a post
-@authentication_classes([JWTAuthentication])  # Add JWT authentication
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
 def CommentLikeView(request,pk):
     try:
         comment = Comment.objects.get(id=pk)
@@ -157,9 +64,9 @@ def CommentLikeView(request,pk):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])  # Only authenticated users can like a post
-@authentication_classes([JWTAuthentication])  # Add JWT authentication
-def PostLikeView(request, pk):  # Use 'pk' here
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+def PostLikeView(request, pk):
     try:
         post = Post.objects.get(id=pk)
 
@@ -171,7 +78,6 @@ def PostLikeView(request, pk):  # Use 'pk' here
 
         return JsonResponse({'message': 'Post liked successfully'})
     except Post.DoesNotExist:
-        # Return an error response if the post is not found
         return JsonResponse({'error': 'Post not found'}, status=404)
 
 
@@ -183,8 +89,6 @@ def PostLikeView(request, pk):  # Use 'pk' here
 @authentication_classes([JWTAuthentication])
 def check_like_status(request, post_id):
     try:
-        print("Logged in user :", request.user)
-
         post = get_object_or_404(Post, id=post_id)
         user = request.user
 
@@ -192,9 +96,8 @@ def check_like_status(request, post_id):
 
         return Response({'liked': has_liked})
 
-    except Exception as e:
-        print("Error", str(e))
-        return Response({'error': str(e)}, status=500)
+    except Exception:
+        return Response({'error': 'An error occurred'}, status=500)
 
 
 
@@ -203,8 +106,6 @@ def check_like_status(request, post_id):
 @authentication_classes([JWTAuthentication])
 def check_comment_like_status(request, comment_id):
     try:
-        print("Logged in user :", request.user)
-
         comment = get_object_or_404(Comment, id=comment_id)
         user = request.user
 
@@ -212,9 +113,8 @@ def check_comment_like_status(request, comment_id):
 
         return Response({'liked': has_liked})
 
-    except Exception as e:
-        print("Error", str(e))
-        return Response({'error': str(e)}, status=500)
+    except Exception:
+        return Response({'error': 'An error occurred'}, status=500)
 
 
 class CommentCreateAPIView(APIView):
@@ -242,32 +142,14 @@ class PostCreateAPIView(APIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class CommentsSerializerView(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
-
 
 class PostDetailSerializerView(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = 'id'
-
-
-
 
 class FollowedPostsListView(generics.ListAPIView):
     serializer_class = PostSerializer
@@ -278,7 +160,6 @@ class FollowedPostsListView(generics.ListAPIView):
         user = self.request.user
         followed_users = user.following.values_list('to_user', flat=True)
         return Post.objects.filter(Q(author__in=followed_users) | Q(author=user))
-
 
 
 def user_posts_api(request, username):
@@ -302,11 +183,6 @@ def user_posts_api(request, username):
     }
 
     return JsonResponse(data)
-
-
-
-
-
 
 def labels_set(posts):
     all_labels = set()
@@ -344,27 +220,22 @@ class PostRecommendationView(APIView):
 
 
         label_list = labels_set(all_posts)
-        print(f'All labels: {label_list}')
 
         liked_post_ids = [post.id for post in liked_posts]
 
         liked_vectors = np.array([vectorize_labels(post.labels, label_list) for post in liked_posts],
                                  dtype=np.float32)
         liked_vectors = normalize_vectors(liked_vectors)
-        print(f'Liked vectors: {liked_vectors}')
 
         query_vector = np.mean(liked_vectors, axis=0, keepdims=True)
         query_vector = normalize_vectors(query_vector)
-        print(f'Query vector: {query_vector}')
 
 
         post_vectors = np.array([vectorize_labels(post.labels, label_list) for post in all_posts], dtype=np.float32)
         post_vectors = normalize_vectors(post_vectors)
-        print(f'All post vectors: {post_vectors}')
 
         index = faiss.IndexFlatIP(post_vectors.shape[1])
         index.add(post_vectors)
-        print(f'Index: {index}')
 
         k = 500
         distances, indices = index.search(query_vector, k)
@@ -379,5 +250,3 @@ class PostRecommendationView(APIView):
         return Response({
             "recommended_posts": PostSerializer(recommended_posts, many=True).data
         })
-
-

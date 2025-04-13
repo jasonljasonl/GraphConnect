@@ -4,7 +4,7 @@ import '../css/AuthorInfo.css';
 import { useNavigate } from "react-router-dom";
 
 
-const AuthorInfo = ({ username }) => {
+const AuthorInfoTemplate = ({ username }) => {
     const [profile, setProfile] = useState(null);
     const navigate = useNavigate();
 

@@ -22,7 +22,7 @@ function App() {
         <BrowserRouter>
             <NavBar />
             <Routes>
-                <Route path="/" element={<Post />} />
+                <Route path="/" element={<Homepage />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/posts/:postId" element={<ViewPostPage />} />

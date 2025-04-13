@@ -10,7 +10,7 @@ import ViewPost_CommentsButton from './ViewPost_CommentsButton.jsx';
 import '../css/PostComponent.css';
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
-import AuthorInfo from '../Accounts/AuthorInfo.jsx';
+import AuthorInfoTemplate from '../Templates/AuthorInfoTemplate.jsx';
 
 
 const PostDetail = () => {
@@ -58,7 +58,7 @@ const PostDetail = () => {
 
   return (
     <div className='view_post_post_content'>
-        <AuthorInfo username={getAuthorUsername(post.author)} />
+        <AuthorInfoTemplate username={getAuthorUsername(post.author)} />
 
 {post.image_post && <img src={post.image_post} alt='' width='100%' />}
       <p className='view_post_post_description'>{post.content}</p>

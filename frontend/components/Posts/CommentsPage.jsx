@@ -5,7 +5,7 @@ import '../css/CommentsPage.css';
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
-import AuthorInfo from '../Accounts/AuthorInfo.jsx';
+import AuthorInfoTemplate from '../Templates/AuthorInfoTemplate.jsx';
 
 
 
@@ -52,7 +52,7 @@ export default function CommentsList({ postId }) {
                 .map(comment => (
                     <li key={comment.id} className='comments_list_component'>
                         <div className='comment_content_div'>
-                            <AuthorInfo username={getAuthorUsername(comment.author)} />
+                            <AuthorInfoTemplate username={getAuthorUsername(comment.author)} />
 
                             <div className='content-like_div'>
                                 <p className='post_content_component'>{comment.content}</p>

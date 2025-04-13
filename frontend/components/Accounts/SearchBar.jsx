@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { searchUsers } from "../services/api";
-import AuthorInfo from '../Accounts/AuthorInfo.jsx';
+import AuthorInfoTemplate from '../Accounts/AuthorInfoTemplate.jsx';
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
@@ -63,7 +63,7 @@ const SearchBar = () => {
             }}
             style={{ cursor: "pointer" }}
           >
-            <AuthorInfo username={user.username} />
+            <AuthorInfoTemplate username={user.username} />
           </li>
         ))}
       </ul>

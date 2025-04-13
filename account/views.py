@@ -1,27 +1,20 @@
 import uuid
-
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
-from django.utils.decorators import method_decorator
-from django.views import View
-from channels.auth import login, logout
+from channels.auth import logout
 from django.views.decorators.csrf import csrf_exempt
 from google.cloud import storage
 from rest_framework import status, viewsets, generics, permissions
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import permission_classes, api_view, authentication_classes
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.decorators import permission_classes, api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
-import requests
 
 from GraphConnectSettings.serializer import CustomUserSerializer, FollowSerializer
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import authenticate, logout
 
 from .models import CustomUser, Follow
 
@@ -46,9 +39,9 @@ class RegisterAPIView(APIView):
                     "message": "Account successfully created",
                     "user": serializer.data,
                     "access_token": access_token,
-                    "refresh_token": str(refresh)
+                    "refresh_token": str(refresh),
                 },
-                status=status.HTTP_201_CREATED
+                status=status.HTTP_201_CREATED,
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -61,9 +54,6 @@ class LoginAPIView(APIView):
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            if not user.is_active:
-                return Response({"error": "Ce compte est désactivé"}, status=status.HTTP_403_FORBIDDEN)
-
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
@@ -71,7 +61,7 @@ class LoginAPIView(APIView):
                 {
                     "message": "Connexion réussie",
                     "access_token": access_token,
-                    "refresh_token": str(refresh)
+                    "refresh_token": str(refresh),
                 },
                 status=status.HTTP_200_OK,
             )
@@ -82,26 +72,29 @@ class LoginAPIView(APIView):
             )
 
 
-
-
 def user_logout(request):
     logout(request)
-
-    return redirect('login')
+    return redirect("login")
 
 
 class TokenRefreshView(APIView):
     def post(self, request):
         try:
-            refresh_token = request.data.get('refresh')
+            refresh_token = request.data.get("refresh")
             if not refresh_token:
-                return Response({'detail': 'Refresh token is missing'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"detail": "Refresh token is missing"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             token = RefreshToken(refresh_token)
             new_access_token = token.access_token
-            return Response({'access': str(new_access_token), 'refresh': refresh_token})
-        except Exception as e:
-            return Response({'detail': 'Invalid or expired refresh token'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"access": str(new_access_token), "refresh": refresh_token})
+        except Exception:
+            return Response(
+                {"detail": "Invalid or expired refresh token"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
 
 class LogoutView(APIView):
@@ -111,25 +104,19 @@ class LogoutView(APIView):
         try:
             refresh_token = request.data.get("refresh_token")
             if not refresh_token:
-                return Response({'detail': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"detail": "Refresh token is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             token = RefreshToken(refresh_token)
             token.blacklist()
             return Response(status=status.HTTP_205_RESET_CONTENT)
-        except Exception as e:
-            return Response({'detail': 'Invalid refresh token or error occurred'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-class UserFollowView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        user = get_object_or_404(CustomUser, id=kwargs['pk'])
-        if request.user != user:
-            if request.user in user.user_follows.all():
-                user.user_follows.remove(request.user)
-            else:
-                user.user_follows.add(request.user)
-        return redirect('customuser_list')
+        except Exception:
+            return Response(
+                {"detail": "Invalid refresh token or error occurred"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 
@@ -141,7 +128,6 @@ class UserSearchAPIView(APIView):
             serializer = CustomUserSerializer(users, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"message": "No query provided"}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @api_view(["GET"])
@@ -159,8 +145,8 @@ def update_user_profile(request):
     serializer = CustomUserSerializer(user, data=request.data, partial=True)
 
     if serializer.is_valid():
-        if 'profile_picture' in request.FILES:
-            user.profile_picture = request.FILES['profile_picture']
+        if "profile_picture" in request.FILES:
+            user.profile_picture = request.FILES["profile_picture"]
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -184,11 +170,10 @@ class FollowUserView(APIView):
 
         if qs.exists():
             qs.delete()
-            return Response({'detail': 'Unfollowed.'})
+            return Response({"detail": "Unfollowed."})
         else:
             Follow.objects.create(from_user=follower, to_user=followed)
-            return Response({'detail': 'Followed.'})
-
+            return Response({"detail": "Followed."})
 
 
 class FollowedUserListView(generics.ListAPIView):
@@ -216,5 +201,8 @@ def upload_profile_picture(request):
 
         return Response({"url": blob.public_url}, status=status.HTTP_200_OK)
 
-    except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Exception:
+        return Response(
+            {"error": "Internal Server Error during upload"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )

@@ -1,8 +1,7 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.conf import settings
-from django.db.models import CASCADE, ForeignKey
-from django.http import JsonResponse
+from django.db.models import ForeignKey
 
 
 # Create your models here.

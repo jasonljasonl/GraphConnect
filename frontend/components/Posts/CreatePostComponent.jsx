@@ -4,7 +4,7 @@ import IcSharpSend from "../img_component/send.jsx";
 import IcBaselineImage from "../img_component/image_file.jsx";
 import '../css/CreatePostPage.css';
 import { useNavigate } from "react-router-dom";
-import AuthorInfo from '../Accounts/AuthorInfo.jsx';
+import AuthorInfoTemplate from '../Templates/AuthorInfoTemplate.jsx';
 
 
 
@@ -128,7 +128,7 @@ const handleSubmit = async (e) => {
   return (
     <div className="post_div_form">
       <form onSubmit={handleSubmit} className="form_post">
-          <AuthorInfo username={getAuthorUsername()} />
+          <AuthorInfoTemplate username={getAuthorUsername()} />
 
 
         <div className="create_post_textarea_div">
@@ -163,7 +163,7 @@ const handleSubmit = async (e) => {
                   <div style={{ marginTop: "16px" }}>
                     <img
                       src={previewImageUrl}
-                      alt="Prévisualisation"
+                      alt="Previsualization"
                       style={{
                         maxWidth: "100px",
                         maxHeight: "100px",
