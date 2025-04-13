@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { searchUsers } from "../services/api";
-import AuthorInfoTemplate from '../Accounts/AuthorInfoTemplate.jsx';
+import AuthorInfoTemplate from '../Templates/AuthorInfoTemplate.jsx';
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
