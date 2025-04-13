@@ -6,7 +6,6 @@ from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
 import account
-import chat_system
 from CreatePosts import views
 from CreatePosts.views import (
     check_like_status, CommentCreateAPIView, PostDetailSerializerView, get_comment_count,

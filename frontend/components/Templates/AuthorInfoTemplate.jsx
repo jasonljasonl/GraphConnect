@@ -38,4 +38,4 @@ const AuthorInfoTemplate = ({ username }) => {
     );
 };
 
-export default AuthorInfo;
+export default AuthorInfoTemplate;
