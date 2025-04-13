@@ -180,12 +180,14 @@ class FollowUserView(APIView):
         follower = request.user
         followed = get_object_or_404(CustomUser, username=username)
 
-        if Follow.objects.filter(from_user=follower, to_user=followed).exists():
-            Follow.objects.filter(from_user=follower, to_user=followed).delete()
+        qs = Follow.objects.filter(from_user=follower, to_user=followed)
 
-        follow = Follow.objects.create(from_user=follower, to_user=followed)
-        serializer = FollowSerializer(follow)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if qs.exists():
+            qs.delete()
+            return Response({'detail': 'Unfollowed.'})
+        else:
+            Follow.objects.create(from_user=follower, to_user=followed)
+            return Response({'detail': 'Followed.'})
 
 
 
