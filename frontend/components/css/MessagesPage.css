@@ -1,0 +1,71 @@
+#author_picture_message_page {
+    width: 60px;
+    height: 60px;
+}
+.user_message_div {
+    display:flex;
+    justify-content: space-between;
+    padding: 8px 16px 8px 16px;
+}
+.user_message_div p {
+    place-self: center;
+}
+.user_private_message_div p, .current_user_private_message_div p {
+    display: flex;
+    padding: 8px 16px 8px 16px;
+    border-radius: 90px;
+    margin-bottom: 8px;
+}
+.user_private_message_div p {
+    background-color: #202020;
+    justify-self: left;
+    margin-left: 16px;
+}
+.current_user_private_message_div p {
+    background-color: #3E78B2;
+    justify-self: right;
+    margin-right: 16px;
+}
+.chat-box {
+    margin-bottom: 15%;
+}
+.chat-messages {
+    margin-bottom: 32px;
+}
+.send_message_textarea {
+    width:70%;
+    border-radius: 100px;
+    height: 35px;
+    padding: 0;
+}
+.textarea_button_div {
+    position: sticky;
+    bottom: 80px;
+}
+.textarea_button_div input{
+    width: 90%;
+}
+.textarea_button_div button {
+    position: absolute;
+    top: 50%;
+    right : 16px;
+    transform: translateY(-50%);
+}
+
+.user_chatting_with {
+    background-color: #242424;
+    display:flex;
+    padding-left: 16px;
+    padding-top: 16px;
+    border-bottom: 1px solid grey;
+    position: sticky;
+    top: 0;
+    margin-bottom: 16px;
+    align-items:center;
+}
+#user_chatting_profile_picture {
+    margin-right : 8px;
+}
+.send_message_textarea {
+    border-block-style: none;
+}
