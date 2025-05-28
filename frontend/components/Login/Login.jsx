@@ -64,7 +64,7 @@ export const Login = () => {
             />
           </div>
           <div className="d-grid gap-2 mt-3">
-            <button type="submit" className="btn btn-primary" className='login-button'>
+            <button type="submit" className="btn btn-primary login-button'>
               Log in
             </button>
           </div>
