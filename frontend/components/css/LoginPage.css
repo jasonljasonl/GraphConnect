@@ -28,6 +28,7 @@ input.form-control.mt-1 {
 
 .separation_div {
     display: flex;
+    margin-top: 28px;
 }
 
 .hr_div {
@@ -37,7 +38,7 @@ input.form-control.mt-1 {
 
 .div_or {
     padding-top: 8px;
-    margin-top: 28px;
+
 }
 
 .upload-icon-container {
