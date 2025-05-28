@@ -44,11 +44,7 @@ export const Login = () => {
           <div className="form-group mt-3">
             <input
               className="form-control mt-1"
-<<<<<<< HEAD
               placeholder="Username"
-=======
-              placeholder="Enter username"
->>>>>>> temp_cloud_run
               name="username"
               type="text"
               value={username}
@@ -61,29 +57,19 @@ export const Login = () => {
               name="password"
               type="password"
               className="form-control mt-1"
-<<<<<<< HEAD
               placeholder="Password"
-=======
-              placeholder="Enter password"
->>>>>>> temp_cloud_run
               value={password}
               required
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="d-grid gap-2 mt-3">
-<<<<<<< HEAD
             <button type="submit" className="btn btn-primary" className='login-button'>
               Log in
-=======
-            <button type="submit" className="btn btn-primary">
-              Submit
->>>>>>> temp_cloud_run
             </button>
           </div>
         </div>
       </form>
-<<<<<<< HEAD
 
       <div className='separation_div'>
         <div className='hr_div'>
@@ -97,8 +83,6 @@ export const Login = () => {
         </div>
     </div>
 
-=======
->>>>>>> temp_cloud_run
       <RegisterForm />
     </div>
   );
