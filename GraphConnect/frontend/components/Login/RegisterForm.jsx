@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 import { registerUser } from "../services/api";
+import '../css/LoginPage.css';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
+
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
@@ -15,6 +20,8 @@ const RegisterForm = () => {
     const [message, setMessage] = useState(null);
     const [error, setError] = useState(null);
 
+    const fileInputRef = useRef(null);
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -24,30 +31,44 @@ const RegisterForm = () => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setFormData({ ...formData, profile_picture: file });
+        if (file) {
+            setFormData({ ...formData, profile_picture: file });
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPreview(reader.result);
-        };
-        reader.readAsDataURL(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setFormData({ ...formData, profile_picture: null });
+            setPreview(null);
+        }
+    };
+
+    const handleIconClick = () => {
+        fileInputRef.current.click();
     };
 
     const uploadToCloud = async (file) => {
         const data = new FormData();
         data.append("file", file);
 
-        const response = await axios.post(
-            "https://graphconnect-695590394372.europe-west1.run.app/api/account/upload-profile-picture/",
-            data,
-            {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
-        return response.data.url;
+        try {
+            const response = await axios.post(
+                "https://graphconnect-695590394372.europe-west1.run.app/api/account/upload-profile-picture/",
+                data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+            return response.data.url;
+        } catch (uploadError) {
+            console.error("Error uploading profile picture:", uploadError);
+            throw new Error("Failed to upload profile picture.");
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -83,28 +104,41 @@ const RegisterForm = () => {
             setPreview(null);
         } catch (err) {
             console.error(err);
-            setError("Registration error.");
+            setError(err.response?.data?.detail || "Registration error. Please try again.");
         }
     };
 
     return (
         <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
             <h2 className="text-2xl font-semibold text-center mb-4">Registration</h2>
-            {message && <p className="text-green-500">{message}</p>}
-            {error && <p className="text-red-500">{error}</p>}
+            {message && <p className="text-green-500 text-center mb-2">{message}</p>}
+            {error && <p className="text-red-500 text-center mb-2">{error}</p>}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" />
                 <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" />
                 <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" />
                 <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" />
 
-                <div>
-                    <label>Profile Picture:</label>
-                    <input type="file" accept="image/*" onChange={handleFileChange} />
-                    {preview && <img src={preview} alt="Preview" style={{ width: "100px", marginTop: "10px" }} />}
+                <div className="flex flex-col items-center">
+                    <label className="mb-2 text-gray-700">Profile Picture:</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                    />
+
+                    <div className="upload-icon-container" onClick={handleIconClick}>
+                        {preview ? (
+                            <img src={preview} alt="Profile Preview" className="profile-preview-thumbnail" />
+                        ) : (
+                            <FontAwesomeIcon icon={faCamera} className="upload-icon" />
+                        )}
+                    </div>
                 </div>
 
-                <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+                <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 login-button">
                     Register
                 </button>
             </form>

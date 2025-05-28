@@ -44,7 +44,7 @@ export const Login = () => {
           <div className="form-group mt-3">
             <input
               className="form-control mt-1"
-              placeholder="Enter username"
+              placeholder="Username"
               name="username"
               type="text"
               value={username}
@@ -57,19 +57,32 @@ export const Login = () => {
               name="password"
               type="password"
               className="form-control mt-1"
-              placeholder="Enter password"
+              placeholder="Password"
               value={password}
               required
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="d-grid gap-2 mt-3">
-            <button type="submit" className="btn btn-primary">
-              Submit
+            <button type="submit" className="btn btn-primary" className='login-button'>
+              Log in
             </button>
           </div>
         </div>
       </form>
+
+      <div className='separation_div'>
+        <div className='hr_div'>
+            <hr />
+        </div>
+        <div className='div_or'>
+            <p>OR</p>
+        </div>
+        <div className='hr_div'>
+            <hr />
+        </div>
+    </div>
+
       <RegisterForm />
     </div>
   );
