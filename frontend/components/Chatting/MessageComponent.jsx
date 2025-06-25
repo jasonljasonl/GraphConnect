@@ -97,9 +97,10 @@ const MessageComponent = ({ recipientId }) => {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Write a message..."
-          className="send_message_textarea"
+          className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 private_message_input"
+
         />
-        <button onClick={sendMessage} className="send_button">
+        <button onClick={sendMessage} className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 private_message_button">
           Send
         </button>
       </div>

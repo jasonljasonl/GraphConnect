@@ -7,7 +7,8 @@ const LikeComponent = ({ postId, initialLikes }) => {
     const [likeCount, setLikeCount] = useState(initialLikes);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
+//    const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
+    const API_BASE_URL = "http://localhost:8080/api/";
 
     useEffect(() => {
         const token = localStorage.getItem('access_token');
@@ -40,7 +41,8 @@ const LikeComponent = ({ postId, initialLikes }) => {
 
         try {
             const response = await axios.post(
-                `https://graphconnect-695590394372.europe-west1.run.app/Home/${postId}/like/`,
+//                `https://graphconnect-695590394372.europe-west1.run.app/Home/${postId}/like/`,
+                `http://localhost:8080/Home/${postId}/like/`,
                 {},
                 {
                     headers: {
@@ -66,7 +68,7 @@ const LikeComponent = ({ postId, initialLikes }) => {
     return (
         <div className='like_div'>
             <div onClick={handleLikeClick} disabled={loading}>
-                {isLiked ? <HealthiconsHeart color='red' /> : <HealthiconsHeart color='white' />}
+                {isLiked ? <HealthiconsHeart color='red' /> : <HealthiconsHeart color='darkgrey' />}
             </div>
             <p>{likeCount}</p>
         </div>

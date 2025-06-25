@@ -3,6 +3,8 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@headlessui/react": "^2.2.4",
+    "@heroicons/react": "^2.2.0",
     "axios": "^1.7.9",
     "bootstrap": "^4.6.2",
     "date-fns": "^4.1.0",
@@ -15,6 +17,9 @@
   },
   "devDependencies": {
     "@iconify/react": "^5.2.0",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.4",
+    "tailwindcss": "^4.1.8",
     "vite": "^6.1.1"
   }
 }

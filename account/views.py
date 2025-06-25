@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from google.cloud import storage
 from rest_framework import status, viewsets, generics, permissions
 from rest_framework.decorators import permission_classes, api_view
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -26,6 +26,7 @@ class CustomUserSerializerView(viewsets.ModelViewSet):
 
 
 class RegisterAPIView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
         if serializer.is_valid():
@@ -186,6 +187,7 @@ class FollowedUserListView(generics.ListAPIView):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def upload_profile_picture(request):
+    """
     file = request.FILES.get("file")
 
     if not file:
@@ -206,3 +208,15 @@ def upload_profile_picture(request):
             {"error": "Internal Server Error during upload"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+    """
+    user = request.user
+    serializer = CustomUserSerializer(user, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        if 'profile_picture' in request.FILES:
+            user.profile_picture = request.FILES['profile_picture']
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

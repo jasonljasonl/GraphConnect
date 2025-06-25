@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "../css/MessagesPage.css";
 import { getChatUsers } from "../services/api";
 
+
+const LINK_BASE_URL = "http://localhost:8080";
+
+
 export default function MessagePage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,7 +60,7 @@ export default function MessagePage() {
             <li key={user.id}>
               <div className="user_message_div">
                 <img
-                  src={user.profile_picture || "/default-profile.png"}
+                  src={`${LINK_BASE_URL}${user.profile_picture || "/default-profile.png"}`}
                   alt={`Profile of ${user.username}`}
                   className="comment_author_profile_picture_component"
                   id="author_picture_message_page"

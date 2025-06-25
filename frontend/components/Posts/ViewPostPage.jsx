@@ -18,7 +18,8 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
   const [users, setUsers] = useState([]);
-  const API_BASE_URL = 'https://graphconnect-695590394372.europe-west1.run.app/api/';
+//  const API_BASE_URL = 'https://graphconnect-695590394372.europe-west1.run.app/api/';
+  const API_BASE_URL = 'http://localhost:8080/api/';
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -60,7 +61,7 @@ const PostDetail = () => {
     <div className='view_post_post_content'>
         <AuthorInfoTemplate username={getAuthorUsername(post.author)} />
 
-{post.image_post && <img src={post.image_post} alt='' width='100%' />}
+    {post.image_post && <img src={post.image_post} alt='' width='100%' />}
       <p className='view_post_post_description'>{post.content}</p>
       <p className='post_upload_date'>{formatDistanceToNow(new Date(post.upload_date), { locale: enUS })} ago</p>
 

@@ -13,7 +13,7 @@ import os.path
 from datetime import timedelta
 from pathlib import Path
 import django.core.management.commands.runserver as runserver
-from google.cloud.sql.connector import Connector, IPTypes
+#from google.cloud.sql.connector import Connector, IPTypes
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,15 +34,14 @@ SECRET_KEY = 'hSNU65CyUdhkPYOjHOOlP-oayH9z3It_x7_4WuZ5kx92g5Hz02G_2e0K6NB73tIpEY
 runserver.DEFAULT_PORT = str(PORT)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost','*']
 
 # Application definition
 
 INSTALLED_APPS = [
     'corsheaders',
-    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -93,7 +92,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://graphconnect-frontend-695590394372.europe-west1.run.app",
+#   "https://graphconnect-frontend-695590394372.europe-west1.run.app",
+    "http://localhost:8081"
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -107,7 +107,7 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://graphconnect-frontend-695590394372.europe-west1.run.app"
+#   "https://graphconnect-frontend-695590394372.europe-west1.run.app"
 ]
 
 
@@ -140,10 +140,14 @@ WSGI_APPLICATION = 'GraphConnectSettings.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME', 'postgres'),
-        'USER': os.getenv('DATABASE_USER', 'default_user'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'default_password'),
-        'HOST': '34.79.74.37',
+#       'NAME': os.environ.get('DATABASE_NAME', 'postgres'),
+        'NAME': os.environ.get('DATABASE_NAME', 'graphconnect'), #local variable
+#       'USER': os.getenv('DATABASE_USER', 'default_user'),
+        'USER': os.getenv('DATABASE_USER', 'postgres'), #local variable
+#       'PASSWORD': os.getenv('DATABASE_PASSWORD', 'default_password'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'jasonlndmsocialapp2025*'), #localvariable
+#       'HOST': '34.79.74.37',
+        'HOST': os.getenv('DATABASE_HOST', 'db'), #local variable
         'PORT': '5432',
     }
 }
@@ -192,7 +196,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'account.CustomUser'
 
 
-#MEDIA_ROOT = os.path.join(BASE_DIR, 'uploaded_images')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploaded_images')
+MEDIA_URL = '/uploaded_images/'
+
 #MEDIA_URL = 'https://storage.googleapis.com/graph-connect_bucket/'
 
 ASGI_APPLICATION = 'GraphConnectSettings.asgi.application'
@@ -228,22 +234,24 @@ LOGGING = {
     },
 }
 
-GS_BUCKET_NAME = 'graph-connect_bucket'
+#GS_BUCKET_NAME = 'graph-connect_bucket'
 
-STORAGES = {
-    "default": {
-        "BACKEND": "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage",
-        "OPTIONS": {
-            "bucket_name": GS_BUCKET_NAME,
-            "location": "static",
-        },
-    },
-}
 
-STATIC_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/static/"
-STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
-MEDIA_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/media/"
-DEFAULT_FILE_STORAGE = "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage"
+#STORAGES = {
+#    "default": {
+#        "BACKEND": "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage",
+#    },
+#    "staticfiles": {
+#        "BACKEND": "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage",
+#        "OPTIONS": {
+#            "bucket_name": GS_BUCKET_NAME,
+#            "location": "static",
+#        },
+#    },
+#}
+
+
+#STATIC_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/static/"
+#STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+#MEDIA_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/media/"
+#DEFAULT_FILE_STORAGE = "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage"

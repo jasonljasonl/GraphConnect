@@ -176,7 +176,7 @@ def user_posts_api(request, username):
     data = {
         'id': user.id,
         'username': user.username,
-        'profile_picture': user.profile_picture if user.profile_picture else None,
+        'profile_picture': user.profile_picture.url if user.profile_picture else None,
         'posts': list(posts),
         'followers': followers,
         'following': list(following)

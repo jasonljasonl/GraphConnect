@@ -45,7 +45,7 @@ const CommentLikeComponent = ({ commentId, initialLikes }) => {
     return (
         <div className="comment_like_div">
             <div onClick={handleLikeClick} disabled={loading}>
-                {isLiked ? <HealthiconsHeart color="red" /> : <HealthiconsHeart color="white" />}
+                {isLiked ? <HealthiconsHeart color="red" /> : <HealthiconsHeart color="darkgrey" />}
             </div>
             <p>{likeCount}</p>
             {error && <p className="error-message">{error}</p>}

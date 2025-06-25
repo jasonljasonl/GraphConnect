@@ -3,13 +3,16 @@ import { getCommentCount, getConnectedUser, postComment } from "../services/api"
 import IcSharpSend from "../img_component/send.jsx";
 import IcBaselineImage from "../img_component/image_file.jsx";
 
+
 const CommentComponent = ({ postId }) => {
   const [content, setContent] = useState("");
   const [error, setError] = useState(null);
   const [image, setImage] = useState(null);
   const [commentCount, setCommentCount] = useState(0);
   const [user, setUser] = useState(null);
-  const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
+//  const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
+  const LINK_BASE_URL = "http://localhost:8080";
+  const API_BASE_URL = "http://localhost:8080/api/";
 
   useEffect(() => {
     const fetchCommentCount = async () => {
@@ -68,7 +71,7 @@ const CommentComponent = ({ postId }) => {
       <form onSubmit={handleSubmit} className="form_comment">
         {user && user.profile_picture ? (
           <img
-            src={user.profile_picture}
+            src={`${LINK_BASE_URL}${user.profile_picture}`}
             alt="Profil"
             width="50"
             className="comment_author_profile_picture_component"
@@ -83,7 +86,7 @@ const CommentComponent = ({ postId }) => {
             onChange={(e) => setContent(e.target.value)}
             placeholder="Add a comment..."
             required
-            className="comment_textarea"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 comment-textarea"
           />
           <label htmlFor="file-input" className="comment_form_input_img">
             <IcBaselineImage />
@@ -95,7 +98,7 @@ const CommentComponent = ({ postId }) => {
             id="file-input"
           />
         </div>
-        <button type="submit" className="send_button">
+        <button type="submit" className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
           <IcSharpSend />
         </button>
 

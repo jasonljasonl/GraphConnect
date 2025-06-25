@@ -3,13 +3,8 @@
     width: 40%;
 }
 
-input.w-full.px-3.py-2.border.rounded-lg {
-    width:80%;
-    margin: 4px;
-    height: 20px;
-}
 
-input.form-control.mt-1 {
+input.form-control.mt-1, input.w-full.px-3.py-2.border.rounded-lg {
     width:94%;
     margin: 3px;
     height: 25px;
@@ -70,4 +65,8 @@ input.form-control.mt-1 {
   height: 100%;
   object-fit: cover;
   border-radius: 6px;
+}
+
+.profile_picture_div {
+    justify-items: center;
 }

@@ -8,15 +8,16 @@ import { enUS } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 import AuthorInfoTemplate from './AuthorInfoTemplate.jsx';
 
-export default function PostsListTemplate({ userPosts, fetchPostsUrl }) {
+export default function PostsListTemplate({ userPosts, fetchPostsUrl, isProfilePage = false }) {
   const [posts, setPosts] = useState(userPosts || []);
   const [users, setUsers] = useState([]);
   const [commentCounts, setCommentCounts] = useState({});
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(null);
-  const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
-
+  // const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
+  const API_BASE_URL = "http://localhost:8080/api";
+  const LINK_BASE_URL = "http://localhost:8080";
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -26,7 +27,7 @@ export default function PostsListTemplate({ userPosts, fetchPostsUrl }) {
           return;
         }
 
-        const response = await axios.get(`${API_BASE_URL}connected-user/`, {
+        const response = await axios.get(`${API_BASE_URL}/connected-user/`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
 
@@ -68,7 +69,7 @@ export default function PostsListTemplate({ userPosts, fetchPostsUrl }) {
       const counts = {};
       for (const post of posts) {
         try {
-          const response = await axios.get(`${API_BASE_URL}posts/${post.id}/comment_count/`);
+          const response = await axios.get(`${API_BASE_URL}/posts/${post.id}/comment_count/`);
           counts[post.id] = response.data.count;
         } catch (error) {
           console.error("Failed to fetch comment count for post:", post.id, error);
@@ -82,14 +83,16 @@ export default function PostsListTemplate({ userPosts, fetchPostsUrl }) {
     }
   }, [posts, API_BASE_URL]);
 
-  useEffect(() => {
-    if (!API_BASE_URL) return;
-
-    axios
-      .get(`${API_BASE_URL}account/`)
-      .then((response) => setUsers(response.data))
-      .catch((error) => console.error("Failed to fetch users:", error));
-  }, [API_BASE_URL]);
+    useEffect(() => {
+        if (!API_BASE_URL) return;
+        axios.get(`${API_BASE_URL}/account/`)
+            .then(response => {
+                setUsers(response.data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }, [API_BASE_URL]);
 
   const getAuthorUsername = (authorId) => {
     const user = users.find((user) => user.id === authorId);
@@ -131,6 +134,7 @@ export default function PostsListTemplate({ userPosts, fetchPostsUrl }) {
             <li key={post.id} className="post_list_component">
               <div className="author_component" style={{ cursor: "pointer" }}>
                 <AuthorInfoTemplate username={getAuthorUsername(post.author)} />
+
                 {currentUser && currentUser.id === post.author && (
                   <div className="post-menu">
                     <button className="post-menu-button" onClick={() => toggleDropdown(post.id)}>...</button>
@@ -142,7 +146,18 @@ export default function PostsListTemplate({ userPosts, fetchPostsUrl }) {
                   </div>
                 )}
               </div>
-              {post.image_post && <img src={post.image_post} alt="Post" className="home_post_component" />}
+                {post.image_post && (
+                  <img
+                    src={
+                      isProfilePage
+                        ? `${LINK_BASE_URL}/uploaded_images/${post.image_post}`
+                        : `${post.image_post}`
+                    }
+                    alt="Post"
+                    className="home_post_component"
+                  />
+                )}
+
               <p className="post_content_component">{post.content}</p>
               <p className="post_upload_date">
                 {formatDistanceToNow(new Date(post.upload_date), { locale: enUS })} ago

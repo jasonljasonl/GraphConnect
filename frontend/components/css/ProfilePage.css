@@ -3,7 +3,7 @@
     text-align: left;
     border-bottom: 1px solid grey;
     margin-bottom: 16px;
-    padding: 8px 0 8px 16px;
+    padding: 16px 0 16px 16px;
 }
 .profile-picture {
     width: 80px;
@@ -39,10 +39,10 @@
 .update_profile_button {
     width: 30%;
     text-align: center;
-    border-radius: 16px;
-    background-color: #3E78B2;
+    background-color: #204fa0;
     font-size: 12px;
     margin-top: 8px;
+    cursor: pointer;
 }
 
 .post-menu {

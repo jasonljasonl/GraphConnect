@@ -11,7 +11,8 @@ ul {
     border-bottom: 0.5px solid grey;
 }
 .post_list_div_component {
-    margin-bottom:15%;
+    margin-top: 16px;
+    margin-bottom:10%;
 }
 
 .post_content_component,.post_interactions,.post_upload_date   {

@@ -4,6 +4,9 @@ import '../css/AuthorInfo.css';
 import { useNavigate } from "react-router-dom";
 
 
+const API_BASE_URL = "http://localhost:8080/api";
+const LINK_BASE_URL = "http://localhost:8080";
+
 const AuthorInfoTemplate = ({ username }) => {
     const [profile, setProfile] = useState(null);
     const navigate = useNavigate();
@@ -30,7 +33,7 @@ const AuthorInfoTemplate = ({ username }) => {
               }>
             <img
                 className="author_profile_picture_component"
-                src={profile.profile_picture}
+                src={`${LINK_BASE_URL}${profile.profile_picture}`}
                 alt="Profile"
             />
             <p>{profile.username}</p>

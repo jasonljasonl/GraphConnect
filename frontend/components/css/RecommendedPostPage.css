@@ -1,11 +1,6 @@
-.search-container input {
-    margin-top: 16px;
-    width: 80%;
-    border-radius : 80px;
-    border: none;
-    padding: 10px;
+.search-container {
+    padding: 16px;
 }
-
-.search_div {
-    display:flex;
+.search-results {
+    margin-top: 16px;
 }

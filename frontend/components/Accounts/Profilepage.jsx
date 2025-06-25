@@ -7,6 +7,8 @@ import IcRoundMailOutline from "../img_component/message.jsx";
 import PostsListTemplate from '../Templates/PostsListTemplate.jsx';
 import AuthorInfoTemplate from '../Templates/AuthorInfoTemplate.jsx';
 
+const LINK_BASE_URL = "http://localhost:8080";
+
 const ProfilePage = () => {
     const { username } = useParams();
     const [profile, setProfile] = useState(null);
@@ -85,7 +87,7 @@ const ProfilePage = () => {
         <div className="profile-container">
             <div className="user_informations">
                 <div>
-                    <AuthorInfoTemplate username={profile.username} profilePicture={profile.profile_picture}/>
+                    <AuthorInfoTemplate username={profile.username} profilePicture={`${LINK_BASE_URL}${profile.profile_picture}`}/>
                     <div className="followers-number">
                         <p className="follows_component">{profile.followers.length} Followers</p>
                         <p className="follows_component">{profile.following.length} Following</p>
@@ -104,13 +106,13 @@ const ProfilePage = () => {
                 )}
 
                 {user && user.username === profile.username && (
-                    <div onClick={() => navigate(`/account/update`)} className="update_profile_button">
+                    <div onClick={() => navigate(`/account/update`)} className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-white-900 ring-inset hover:bg-gray-50 update_profile_button">
                         <p>Update Profile</p>
                     </div>
                 )}
             </div>
 
-            <PostsListTemplate userPosts={profile.posts} />
+            <PostsListTemplate userPosts={profile.posts} isProfilePage={true}/>
         </div>
     );
 };

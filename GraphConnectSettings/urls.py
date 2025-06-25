@@ -17,8 +17,8 @@ from account.views import (
     FollowedUserListView, FollowUserView, LoginAPIView
 )
 from chat_system.views import get_chat_users, MessageViewSet
-from google_services.google_cloud_storage.google_cloud_storage import upload_file_to_storage
-from google_services.google_vision.google_vision import file_used_for_vision
+#from google_services.google_cloud_storage.google_cloud_storage import upload_file_to_storage
+#from google_services.google_vision.google_vision import file_used_for_vision
 
 router = routers.DefaultRouter()
 router.register(r'postsList', views.PostsSerializerView, 'postsList')
@@ -50,12 +50,14 @@ urlpatterns = [
     path("api/profile/<str:username>/", user_posts_api, name="user_posts_api"),
     path("api/posts/<int:pk>/delete/", delete_post_api, name="post_delete"),
     path("api/account/update/", update_user_profile, name="update_user_profile"),
-    path("api/storage_uploads/", upload_file_to_storage, name="storage_uploads"),
-    path("api/image_vision/", file_used_for_vision, name="file_for_vision"),
+#   path("api/storage_uploads/", upload_file_to_storage, name="storage_uploads"),
+#   path("api/image_vision/", file_used_for_vision, name="file_for_vision"),
     path("api/recommendations/", PostRecommendationView.as_view(), name="post_recommendations"),
     path("api/chat/users/", get_chat_users, name="chat_users"),
     path('api/chat/messages/<int:recipient_id>/', MessageViewSet.as_view({'get': 'list'}),name='messages-by-recipient'),
     path('api/chat/messages/', MessageViewSet.as_view({'post': 'create'}), name='messages-create'),
     path("api/token/", jwt_views.TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]# + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

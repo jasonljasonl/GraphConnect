@@ -55,7 +55,7 @@ def get_chat_users(request):
             {
                 "id": user.id,
                 "username": user.username,
-                'profile_picture': user.profile_picture if user.profile_picture else None,
+                'profile_picture': user.profile_picture.url if user.profile_picture else None,
             }
             for user in chat_users
         ]

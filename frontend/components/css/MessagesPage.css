@@ -41,17 +41,19 @@
 .textarea_button_div {
     position: sticky;
     bottom: 80px;
+    width: 95%;
+    justify-self: center;
 }
-.textarea_button_div input{
-    width: 90%;
-}
+
 .textarea_button_div button {
     position: absolute;
     top: 50%;
-    right : 16px;
+    right : 0px;
     transform: translateY(-50%);
 }
-
+.private_message_input, .private_message_button {
+    border-radius: 20px;
+}
 .user_chatting_with {
     background-color: #242424;
     display:flex;

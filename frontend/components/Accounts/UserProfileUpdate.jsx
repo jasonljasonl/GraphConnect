@@ -78,7 +78,8 @@ const uploadToCloud = async (file) => {
     formData.append("file", file);
 
     const response = await axios.post(
-        "https://graphconnect-695590394372.europe-west1.run.app/api/account/upload-profile-picture/",
+//        "https://graphconnect-695590394372.europe-west1.run.app/api/account/upload-profile-picture/",
+        "http://localhost:8080/api/account/upload-profile-picture/",
         formData,
         {
             headers: {

@@ -16,3 +16,8 @@ nav {
 .navbar-nav {
     align-content: center;
 }
+
+.navbar_profile_picture {
+    width:28px;
+    height:28px;
+}
