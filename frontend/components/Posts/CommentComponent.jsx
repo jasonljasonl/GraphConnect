@@ -68,7 +68,7 @@ const CommentComponent = ({ postId }) => {
 
   return (
     <div className="comment_div_form">
-      <form onSubmit={handleSubmit} className="form_comment">
+      <form onSubmit={handleSubmit} className="form_comment max-w-3xl">
         {user && user.profile_picture ? (
           <img
             src={`${LINK_BASE_URL}${user.profile_picture}`}

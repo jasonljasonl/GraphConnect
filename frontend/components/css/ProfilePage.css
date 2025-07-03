@@ -1,3 +1,4 @@
+
 .user_informations {
     align-items: center;
     text-align: left;
@@ -49,8 +50,4 @@
     display: inline-block;
     margin-left: auto;
     padding-right:16px;
-}
-.post-menu-dropdown {
-    position: absolute;
-    right: 0;
 }

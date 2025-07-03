@@ -39,7 +39,7 @@ class Follow(models.Model):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     encryption_key = models.CharField(max_length=128, blank=True, null=True)
     #profile_picture = models.URLField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='uploaded_images/',null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='',null=True, blank=True)
     username = models.CharField(unique=True, max_length=50)
     name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)

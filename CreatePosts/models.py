@@ -9,7 +9,7 @@ class Post(models.Model):
     objects = models.Manager()
 
 #   image_post = models.URLField(max_length=500, null=True, blank=True)
-    image_post = models.ImageField(upload_to='uploaded_images/', blank=True, null=True)
+    image_post = models.ImageField(upload_to='', blank=True, null=True)
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     upload_date = models.DateTimeField(auto_now_add=True)
@@ -32,7 +32,7 @@ class Comment(models.Model):
     objects = models.Manager()
 
 #   image_comment = models.ImageField(upload_to='comments/', blank=True)
-    image_comment = models.ImageField(upload_to='uploaded_images/', blank=True, null=True)
+    image_comment = models.ImageField(upload_to='', blank=True, null=True)
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     upload_date = models.DateTimeField(auto_now_add=True)

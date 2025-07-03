@@ -1,13 +1,6 @@
 @import "tailwindcss";
 
 
-@media (min-width: 992px) {
-    max-width:
-}
-
-@media (min-width: 1200px) { ... }
-
-
 body {
     background-color: #0d1118;
     color: white

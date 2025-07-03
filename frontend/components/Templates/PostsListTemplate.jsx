@@ -109,7 +109,7 @@ export default function PostsListTemplate({ userPosts, fetchPostsUrl, isProfileP
         return;
       }
 
-      await axios.delete(`${API_BASE_URL}posts/${postId}/delete/`, {
+      await axios.delete(`${API_BASE_URL}/posts/${postId}/delete/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -123,6 +123,24 @@ export default function PostsListTemplate({ userPosts, fetchPostsUrl, isProfileP
   const toggleDropdown = (postId) => {
     setDropdownOpen(dropdownOpen === postId ? null : postId);
   };
+
+
+    const getImageUrl = (path) => {
+      if (!path) return null;
+
+      if (path.startsWith("http")) {
+        return path;
+      }
+
+      if (path.startsWith("/uploaded_images/")) {
+        return `${LINK_BASE_URL}${path}`;
+      }
+
+      return `${LINK_BASE_URL}/uploaded_images/${path}`;
+    };
+
+
+
 
   return (
     <div className="post_list_div_component">
@@ -147,15 +165,11 @@ export default function PostsListTemplate({ userPosts, fetchPostsUrl, isProfileP
                 )}
               </div>
                 {post.image_post && (
-                  <img
-                    src={
-                      isProfilePage
-                        ? `${LINK_BASE_URL}/uploaded_images/${post.image_post}`
-                        : `${post.image_post}`
-                    }
-                    alt="Post"
-                    className="home_post_component"
-                  />
+<img
+  src={getImageUrl(post.image_post)}
+  alt="Post"
+  className="w-full"
+/>
                 )}
 
               <p className="post_content_component">{post.content}</p>

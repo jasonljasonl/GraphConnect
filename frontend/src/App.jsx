@@ -16,62 +16,67 @@ import ProfilePage from '../components/Accounts/Profilepage.jsx';
 import UserProfileUpdate from '../components/Accounts/UserProfileUpdate.jsx';
 import RecommendedPosts from '../components/Posts/RecommendedPosts.jsx';
 import ProtectedRoute from '../components/ProtectedRoutes.jsx';
+import Layout from '../components/Layout.jsx';
+
 
 function App() {
     return (
         <BrowserRouter>
-            <NavBar />
-            <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/logout" element={<Logout />} />
+            <Layout>
 
-                <Route path="/" element={
-                    <ProtectedRoute>
-                        <Homepage />
-                    </ProtectedRoute>
-                } />
-                <Route path="/posts/:postId" element={
-                    <ProtectedRoute>
-                        <ViewPostPage />
-                    </ProtectedRoute>
-                } />
-                <Route path="/create_post" element={
-                    <ProtectedRoute>
-                        <CreatePostComponent />
-                    </ProtectedRoute>
-                } />
-                <Route path="/messages" element={
-                    <ProtectedRoute>
-                        <MessagePage />
-                    </ProtectedRoute>
-                } />
-                <Route path="/messages/:recipientId" element={
-                    <ProtectedRoute>
-                        <UserMessage />
-                    </ProtectedRoute>
-                } />
-                <Route path="/search" element={
-                    <ProtectedRoute >
-                        <SearchBar />
-                    </ProtectedRoute>
-                } />
-                <Route path="/account/update/" element={
-                    <ProtectedRoute>
-                        <UserProfileUpdate />
-                    </ProtectedRoute>
-                } />
-                <Route path="/profile/:username" element={
-                    <ProtectedRoute>
-                        <ProfilePage />
-                    </ProtectedRoute>
-                } />
-                <Route path="/discover" element={
-                    <ProtectedRoute>
-                        <RecommendedPosts />
-                    </ProtectedRoute>
-                } />
-            </Routes>
+                <Routes>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/logout" element={<Logout />} />
+
+                    <Route path="/" element={
+                        <ProtectedRoute>
+                            <Homepage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/posts/:postId" element={
+                        <ProtectedRoute>
+                            <ViewPostPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/create_post" element={
+                        <ProtectedRoute>
+                            <CreatePostComponent />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/messages" element={
+                        <ProtectedRoute>
+                            <MessagePage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/messages/:recipientId" element={
+                        <ProtectedRoute>
+                            <UserMessage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/search" element={
+                        <ProtectedRoute >
+                            <SearchBar />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/account/update/" element={
+                        <ProtectedRoute>
+                            <UserProfileUpdate />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/profile/:username" element={
+                        <ProtectedRoute>
+                            <ProfilePage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/discover" element={
+                        <ProtectedRoute>
+                            <RecommendedPosts />
+                        </ProtectedRoute>
+                    } />
+                </Routes>
+            </Layout>
+            <NavBar />
         </BrowserRouter>
     );
 }
