@@ -42,6 +42,6 @@ GraphConnect is built with a robust and scalable architecture, utilizing modern 
 * **FAISS (Facebook AI Similarity Search):** Employed for the nearest-neighbor search-based recommendation algorithm to efficiently handle large datasets.
 
 ---
-Due to budget constraints, the application has been configured to run in local mode, which disables Google Cloud and FAISS-related features (still available in the google_cloud_run branch).
+Due to budget constraints, the application has been configured to run in local mode, which disables Google Cloud and FAISS-related features (still available in the GraphConnect_cloud branch).
 
 As a result, the main branch (main) contains the local version of the application.
