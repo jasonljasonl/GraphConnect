@@ -1,0 +1,8 @@
+<h1>Connected as {{ user.get_username }}</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+<a href="{% url 'post_list' %}">Back to posts list</a>

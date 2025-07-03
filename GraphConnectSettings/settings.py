@@ -9,45 +9,107 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os.path
+from datetime import timedelta
 from pathlib import Path
+import django.core.management.commands.runserver as runserver
+#from google.cloud.sql.connector import Connector, IPTypes
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+
+PORT = int(os.environ.get("PORT", 8080))
+runserver.DEFAULT_PORT = PORT
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+#BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4)mksm689$=z+%nv#gskemq620^&23=95ir%8&wi6h)j*nvfu5'
+SECRET_KEY = 'hSNU65CyUdhkPYOjHOOlP-oayH9z3It_x7_4WuZ5kx92g5Hz02G_2e0K6NB73tIpEYc'
+runserver.DEFAULT_PORT = str(PORT)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost','*']
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'account',
+    'CreatePosts',
+    'chat_system',
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+#    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
+
+REST_FRAMEWORK = {
+     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+      ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+}
+
+SIMPLE_JWT = {
+     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=200),
+     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+     'ROTATE_REFRESH_TOKENS': True,
+     'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+#   "https://graphconnect-frontend-695590394372.europe-west1.run.app",
+    "http://localhost:8081"
+]
+
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+    "accept",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+#   "https://graphconnect-frontend-695590394372.europe-west1.run.app"
+]
+
 
 ROOT_URLCONF = 'GraphConnectSettings.urls'
 
@@ -73,15 +135,25 @@ WSGI_APPLICATION = 'GraphConnectSettings.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+#       'NAME': os.environ.get('DATABASE_NAME', 'postgres'),
+        'NAME': os.environ.get('DATABASE_NAME', 'graphconnect'), #local variable
+#       'USER': os.getenv('DATABASE_USER', 'default_user'),
+        'USER': os.getenv('DATABASE_USER', 'postgres'), #local variable
+#       'PASSWORD': os.getenv('DATABASE_PASSWORD', 'default_password'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'jasonlndmsocialapp2025*'), #localvariable
+#       'HOST': '34.79.74.37',
+        'HOST': os.getenv('DATABASE_HOST', 'db'), #local variable
+        'PORT': '5432',
     }
 }
 
 
-# Password validation
+
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -115,9 +187,71 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'account.CustomUser'
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploaded_images')
+MEDIA_URL = '/uploaded_images/'
+
+#MEDIA_URL = 'https://storage.googleapis.com/graph-connect_bucket/'
+
+ASGI_APPLICATION = 'GraphConnectSettings.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+#GS_BUCKET_NAME = 'graph-connect_bucket'
+
+
+#STORAGES = {
+#    "default": {
+#        "BACKEND": "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage",
+#    },
+#    "staticfiles": {
+#        "BACKEND": "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage",
+#        "OPTIONS": {
+#            "bucket_name": GS_BUCKET_NAME,
+#            "location": "static",
+#        },
+#    },
+#}
+
+
+#STATIC_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/static/"
+#STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+#MEDIA_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/media/"
+#DEFAULT_FILE_STORAGE = "google_services.google_cloud_storage.google_cloud_storage.PublicMediaStorage"
