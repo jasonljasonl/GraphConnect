@@ -25,6 +25,7 @@ GraphConnect is built with a robust and scalable architecture, utilizing modern 
 ### **Front-end**
 
 * **ReactJS:** A JavaScript library for building user interfaces.
+* * **Tailwind UI:** A collection of professionally designed, fully responsive UI components built with Tailwind CSS, making it easy to quickly build modern user interfaces.
 
 ### **Containerization & Deployment**
 
