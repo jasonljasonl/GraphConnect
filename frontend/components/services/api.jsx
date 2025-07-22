@@ -65,7 +65,6 @@ export const postComment = async (postId, commentData) => {
     {
       headers: {
         Authorization: `Bearer ${token}`,
-        // NE PAS définir Content-Type ici
       },
     }
   );
