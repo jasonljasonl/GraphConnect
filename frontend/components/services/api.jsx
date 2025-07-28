@@ -1,6 +1,5 @@
 import axios from "axios";
 
-//const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api";
 const API_BASE_URL = "http://localhost:8080/api";
 
 const api = axios.create({
@@ -136,7 +135,6 @@ export const checkPostLike = async (postId) => {
 };
 
 export const likePost = async (postId) => {
-//    return api.post(`https://graphconnect-695590394372.europe-west1.run.app/Home/${postId}/like/`);
     return api.post(`http://localhost:8080/Home/${postId}/like/`);
 };
 
@@ -147,7 +145,6 @@ export const getRecommendedPosts = async () => {
 
 export const updateUserProfile = async (data) => {
     const response = await axios.put(
-//        "https://graphconnect-695590394372.europe-west1.run.app/api/account/update/",
         "http://localhost:8080/api/account/update/",
         data,
         {
@@ -168,7 +165,6 @@ export const getChatUsers = async () => {
 export const loginUser = async (username, password) => {
   try {
     const { data } = await axios.post(
-//      "https://graphconnect-695590394372.europe-west1.run.app/api/token/",
       "http://localhost:8080/api/token/",
       { username, password },
       {
@@ -207,7 +203,6 @@ export const logoutUser = async (refreshToken, accessToken) => {
 
 export const registerUser = async (formData) => {
   try {
-//    const response = await axios.post(`https://graphconnect-695590394372.europe-west1.run.app/api/register/`, formData, {
     const response = await axios.post(`http://localhost:8080/api/register/`, formData, {
     headers: {
       "Content-Type": "application/json",
