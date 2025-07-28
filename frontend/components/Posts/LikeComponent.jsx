@@ -7,7 +7,6 @@ const LikeComponent = ({ postId, initialLikes }) => {
     const [likeCount, setLikeCount] = useState(initialLikes);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-//    const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
     const API_BASE_URL = "http://localhost:8080/api/";
 
     useEffect(() => {
@@ -41,7 +40,6 @@ const LikeComponent = ({ postId, initialLikes }) => {
 
         try {
             const response = await axios.post(
-//                `https://graphconnect-695590394372.europe-west1.run.app/Home/${postId}/like/`,
                 `http://localhost:8080/Home/${postId}/like/`,
                 {},
                 {
