@@ -55,7 +55,6 @@ const RegisterForm = () => {
 
         try {
             const response = await axios.post(
-                //"https://graphconnect-695590394372.europe-west1.run.app/api/account/upload-profile-picture/",
                 "http://localhost:8080/api/account/upload-profile-picture/",
                 data,
                 {
@@ -74,53 +73,7 @@ const RegisterForm = () => {
 
 
 
-/*
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setMessage(null);
-        setError(null);
 
-        try {
-            let profile_picture_url = null;
-
-            if (formData.profile_picture instanceof File) {
-                profile_picture_url = await uploadToCloud(formData.profile_picture);
-            }
-
-            const dataToSend = {
-                username: formData.username,
-                name: formData.name,
-                email: formData.email,
-                password: formData.password,
-                //profile_picture: profile_picture_url,
-                if (formData.profile_picture instanceof File) {
-                    form.append("profile_picture", formData.profile_picture);
-                }
-            };
-
-            //
-
-            await axios.post("http://localhost:8001/register/", form, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
-            });
-
-            setMessage("Registration successful!");
-            setFormData({
-                username: "",
-                name: "",
-                email: "",
-                password: "",
-                profile_picture: null,
-            });
-            setPreview(null);
-        } catch (err) {
-            console.error(err);
-            setError(err.response?.data?.detail || "Registration error. Please try again.");
-        }
-    };
-*/
 
 const handleSubmit = async (e) => {
     e.preventDefault();
