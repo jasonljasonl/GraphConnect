@@ -14,7 +14,6 @@ const CreatePostComponent = () => {
   const [previewImageUrl, setPreviewImageUrl] = useState(null);
 
   const navigate = useNavigate();
-  //  const API_BASE_URL = "https://graphconnect-695590394372.europe-west1.run.app/api/";
   const API_BASE_URL = "http://localhost:8080/api/";
   const LINK_BASE_URL = "http://localhost:8080";
 
@@ -55,36 +54,6 @@ const CreatePostComponent = () => {
     if (image) {
       formData.append("image_post", image);
     }
-
-    // const imageFormData = new FormData();
-    // imageFormData.append("file", image);
-    // const imageResponse = await axios.post(
-    //   `${API_BASE_URL}storage_uploads/`,
-    //   imageFormData,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //       "Content-Type": "multipart/form-data",
-    //     },
-    //   }
-    // );
-    // const imageUrl = imageResponse.data.file_url;
-    // formData.append("image_post", imageUrl);
-
-    // const visionResponse = await fetch(`${API_BASE_URL}image_vision/`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ file_url: imageUrl }),
-    // });
-    // const data = await visionResponse.json();
-    // if (visionResponse.ok) {
-    //   setLabels(data.labels);
-    //   for (const label of data.labels) {
-    //     formData.append("labels", label);
-    //   }
-    // }
 
     try {
       const postResponse = await axios.post(
