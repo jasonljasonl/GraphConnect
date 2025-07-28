@@ -8,7 +8,6 @@ const RecommendedPosts = () => {
   const [recommendedPosts, setRecommendedPosts] = useState([]);
   const [error, setError] = useState(null);
   const token = localStorage.getItem("access_token");
-//  const API_BASE_URL = 'https://graphconnect-695590394372.europe-west1.run.app/api/';
   const API_BASE_URL = 'http://localhost:8080/api/';
   const BASE_URL = 'http://localhost:8080/';
 
